@@ -1,0 +1,27 @@
+<!DOCTYPE form-validation PUBLIC
+     "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.4.0//EN"
+     "http://commons.apache.org/dtds/validator_1_4_0.dtd">
+<form-validation>
+	<global>
+		<validator name="int"
+			classname="com.ecomlib.validators.CommonValidator" method="validateInt"
+			methodParams="java.lang.Object,org.apache.commons.validator.Field"
+			msg="errors.int" />
+		<validator name="required"
+			classname="com.ecomlib.validators.CommonValidator" method="validateRequired"
+			methodParams="java.lang.Object,org.apache.commons.validator.Field"
+			msg="errors.required" />
+
+		<validator name="email"
+			classname="com.ecomlib.validators.CommonValidator" method="validateEmail"
+			methodParams="java.lang.Object,org.apache.commons.validator.Field"
+			msg="errors.email" />
+		
+		<validator name="in"
+			classname="com.ecomlib.validators.CommonValidator" method="validateInValue"
+			methodParams="java.lang.Object,org.apache.commons.validator.Field"
+			msg="errors.in" />
+
+	</global>
+
+</form-validation>

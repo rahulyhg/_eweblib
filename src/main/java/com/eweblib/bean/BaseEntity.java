@@ -41,12 +41,10 @@ public class BaseEntity {
 	@Column(name = CREATOR_ID)
 	@Expose
 	public String creatorId;
-	
 
 	public BaseEntity() {
 
 	}
-
 
 	public Date getCreatedOn() {
 		return createdOn;
@@ -80,12 +78,11 @@ public class BaseEntity {
 	public void setId(String uuid) {
 		this.id = uuid;
 	}
-	
 
 	/**
 	 * for Mybatis invoke insert columns EXP
 	 * 
-	 * @return  ${columnA},${columnB}
+	 * @return ${columnA},${columnB}
 	 */
 	public String getInsertColumnsExp() {
 		this.caculationColumnList();
@@ -95,6 +92,7 @@ public class BaseEntity {
 
 	/**
 	 * for Mybatis invoke columns
+	 * 
 	 * @return
 	 */
 	public String getInsertColumns() {
@@ -104,6 +102,7 @@ public class BaseEntity {
 
 	/**
 	 * for Mybatis invoke table name
+	 * 
 	 * @return
 	 */
 	public String getTable() {
@@ -114,10 +113,10 @@ public class BaseEntity {
 		else
 			throw new BeanStructureException("undefine POJO @Table, need Tablename(@Table(name))");
 	}
-	
-	
+
 	/**
 	 * for Mybatis invoke table name
+	 * 
 	 * @return
 	 */
 	public String getUniquLogColumn() {
@@ -138,16 +137,16 @@ public class BaseEntity {
 
 		return null;
 	}
-	
+
 	/**
 	 * for Mybatis invoke columns
+	 * 
 	 * @return
 	 */
 	public String getUpdateColumns() {
 		this.caculationColumnList();
 		return this.returnUpdateSet();
 	}
-
 
 	/**
 	 * 用于存放POJO的列信息
@@ -201,8 +200,7 @@ public class BaseEntity {
 
 		columnMap.put(this.getClass(), columnList);
 	}
-	
-	
+
 	/**
 	 * 用于计算类定义 需要POJO中的属性定义@Column(name)
 	 */
@@ -318,7 +316,7 @@ public class BaseEntity {
 	 */
 	@Override
 	public String toString() {
-		
+
 		return EweblibUtil.toJson(this);
 	}
 
@@ -326,6 +324,5 @@ public class BaseEntity {
 	public Map<String, Object> toMap() {
 		return EweblibUtil.toMap(this);
 	}
-
 
 }

@@ -1,8 +1,14 @@
 package com.eweblib.controller;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.eweblib.bean.BaseEntity;
 import com.eweblib.bean.EntityResults;
@@ -335,6 +343,97 @@ public abstract class AbstractController {
 		response.addCookie(account);
 		response.addCookie(ssid);
 	}
+	
+	
+
+	
+
+	protected String uploadFile(HttpServletRequest request, String relativeFilePath, String parameterName) {
+		String webPath = request.getSession().getServletContext().getRealPath("/");
+
+	    MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+		MultipartFile uploadFile = multipartRequest.getFile(parameterName);
+		String imgFileName = uploadFile.getOriginalFilename().toLowerCase().trim().replaceAll(" ", "");
+		
+		String ms = Long.toString(new Date().getTime());
+		imgFileName = ms + imgFileName;
+		if (EweblibUtil.isEmpty(imgFileName)){
+
+		}else{
+			
+			if( uploadFile.getSize() > 512 * 1024){
+				throw new ResponseException("图片大小不能超过512K");
+			}
+			if (imgFileName.endsWith("gif") || imgFileName.endsWith("jpg") || imgFileName.endsWith("png") | imgFileName.endsWith("jpeg")) {
+
+				InputStream inputStream = null;
+				try {
+					inputStream = uploadFile.getInputStream();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("inputStream", inputStream);
+				map.put("webPath",  webPath);
+				String fileName = uploadFile.getOriginalFilename().trim().replaceAll(" ", "");
+				map.put("fileName", fileName);
+
+				return createFile(map, relativeFilePath + fileName);
+			} else {
+				throw new ResponseException("请上传店铺图片照片! 只支持（GIF|JPG|PNG|JPEG）格式!");
+			}
+		}
+		
+		return null;
+		
+    }
+	
+	
+    public String createFile(Map<String, Object> params, String relativeFilePath) {
+	    InputStream is = (InputStream) params.get("inputStream");
+	    String wwwPath = (String) params.get("webPath");
+	    BufferedInputStream bis = null;
+	    FileOutputStream fos = null;
+	    try {
+	        bis = new BufferedInputStream(is);
+	        
+	        File file = new File(wwwPath + relativeFilePath);
+	        File folder = file.getParentFile();
+			if (!folder.exists()){
+				folder.mkdirs();
+			}
+	        fos = new FileOutputStream(file);
+	        
+	        byte[] buf = new byte[1024];    
+	        int size = 0;
+	        
+	        while ( (size = bis.read(buf)) != -1){
+	        	fos.write(buf, 0, size);
+	        }
+	        
+	        if(bis != null)
+        		bis.close();
+        	
+        	if (fos != null)
+        		fos.close();
+	        
+        } catch (FileNotFoundException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+        } catch (IOException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+        }
+	    return relativeFilePath;
+    }
+	
+	protected String genRandomRelativePath(String userId){
+		StringBuffer sb = new StringBuffer("/");
+		sb.append("upload/").append(userId).append("/");
+		return sb.toString();
+	}
+
 	
 
 

@@ -320,46 +320,57 @@ public abstract class AbstractController {
 
 	
 
-	protected String uploadFile(HttpServletRequest request, String relativeFilePath, String parameterName) {
+	protected String uploadFile(HttpServletRequest request, String relativeFilePath, String parameterName, int size, String[] suffixes) {
 		String webPath = request.getSession().getServletContext().getRealPath("/");
 
-	    MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 		MultipartFile uploadFile = multipartRequest.getFile(parameterName);
-		String imgFileName = uploadFile.getOriginalFilename().toLowerCase().trim().replaceAll(" ", "");
 		
-		String ms = Long.toString(new Date().getTime());
-		imgFileName = ms + imgFileName;
-		if (EweblibUtil.isEmpty(imgFileName)){
-
-		}else{
-			
-			if( uploadFile.getSize() > 512 * 1024){
-				throw new ResponseException("图片大小不能超过512K");
-			}
-			if (imgFileName.endsWith("gif") || imgFileName.endsWith("jpg") || imgFileName.endsWith("png") | imgFileName.endsWith("jpeg")) {
-
-				InputStream inputStream = null;
-				try {
-					inputStream = uploadFile.getInputStream();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				Map<String, Object> map = new HashMap<String, Object>();
-				map.put("inputStream", inputStream);
-				map.put("webPath",  webPath);
-				String fileName = uploadFile.getOriginalFilename().trim().replaceAll(" ", "");
-				map.put("fileName", fileName);
-
-				return createFile(map, relativeFilePath + fileName);
-			} else {
-				throw new ResponseException("请上传店铺图片照片! 只支持（GIF|JPG|PNG|JPEG）格式!");
-			}
+		if(uploadFile == null){
+			return null;
 		}
-		
+		String uploadFileName = uploadFile.getOriginalFilename().toLowerCase().trim().replaceAll(" ", "");
+
+		String ms = Long.toString(new Date().getTime());
+		uploadFileName = ms + uploadFileName;
+		if (EweblibUtil.isEmpty(uploadFileName)) {
+
+		} else {
+			// 512 * 1024
+			if (size > 0) {
+				if (uploadFile.getSize() > size * 1024) {
+					throw new ResponseException("文件大小不能超过" + size + "K");
+				}
+			}
+
+			if (suffixes != null) {
+				for (String suffix : suffixes) {
+					if (!uploadFileName.endsWith(suffix)) {
+						throw new ResponseException("请上传支持的文件格式：" + suffixes);
+					}
+				}
+			}
+
+			InputStream inputStream = null;
+			try {
+				inputStream = uploadFile.getInputStream();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("inputStream", inputStream);
+			map.put("webPath", webPath);
+			String fileName = uploadFile.getOriginalFilename().trim().replaceAll(" ", "");
+			map.put("fileName", fileName);
+
+			return createFile(map, relativeFilePath + fileName);
+
+		}
+
 		return null;
-		
-    }
+
+	}
 	
 	
     public String createFile(Map<String, Object> params, String relativeFilePath) {

@@ -1,8 +1,11 @@
 package com.eweblib.dbhelper;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.eweblib.bean.Pagination;
+import com.eweblib.util.EWeblibThreadLocal;
 import com.eweblib.util.EweblibUtil;
 
 public class DataBaseQueryBuilder {
@@ -28,6 +31,7 @@ public class DataBaseQueryBuilder {
 	private String distinctColumn = null;
 	
 	
+	private Set<String> limitColumnNames = new HashSet<String>();
 
 	public Integer getLimitStart() {
 		return limitStart;
@@ -72,6 +76,16 @@ public class DataBaseQueryBuilder {
 
 		this.table = table;
 		this.queryStr = queryStr;
+	}
+	
+	
+
+	public Set<String> getLimitColumnNames() {
+		return limitColumnNames;
+	}
+
+	public void setLimitColumnNames(Set<String> limitColumnNames) {
+		this.limitColumnNames = limitColumnNames;
 	}
 
 	public DataBaseQueryBuilder and(String key, Object value) {
@@ -186,7 +200,7 @@ public class DataBaseQueryBuilder {
 		if (joinColumns != null && joinColumns.length > 0) {
 
 			for (String column : joinColumns) {
-
+				setColumnNames(column);
 				String[] splitColumns = column.split(",");
 				if(splitColumns.length > 1){
 					column = splitColumns[0] + " as " + splitColumns[1] + " "; 
@@ -203,6 +217,18 @@ public class DataBaseQueryBuilder {
 
 	}
 	
+	private void setColumnNames(String column) {
+
+		if (EweblibUtil.isValid(column)) {
+			String[] splitColumns = column.split(",");
+			if (splitColumns.length > 1) {
+				column = splitColumns[0] + " as " + splitColumns[1] + " ";
+				this.limitColumnNames.add(splitColumns[1]);
+			} else {
+				this.limitColumnNames.add(column);
+			}
+		}
+	}
 	
 
 	public DataBaseQueryBuilder joinColumns(String tableAlias, List<String> joinColumns) {
@@ -218,7 +244,7 @@ public class DataBaseQueryBuilder {
 		if (joinColumns != null && joinColumns.size() > 0) {
 
 			for (String column : joinColumns) {
-
+				setColumnNames(column);
 				String[] splitColumns = column.split(",");
 				if(splitColumns.length > 1){
 					column = splitColumns[0] + " as " + splitColumns[1] + " "; 
@@ -305,7 +331,7 @@ public class DataBaseQueryBuilder {
 
 	private void appednLimitColumn(String column) {
 
-	    
+		setColumnNames(column);
 	    String[] splitColumns = column.split(",");
 		if(splitColumns.length > 1){
 			column = splitColumns[0] + " as " + splitColumns[1] + " "; 

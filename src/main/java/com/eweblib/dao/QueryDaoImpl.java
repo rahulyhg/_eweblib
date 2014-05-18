@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.Table;
@@ -66,24 +67,37 @@ public class QueryDaoImpl implements IQueryDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends BaseEntity> List<T> listByQuery(DataBaseQueryBuilder builder, Class<T> classzz) {
-	
 
 		builder = mergeQueryBuilder(builder, classzz);
 
 		List<Map<String, Object>> results = dao.listByQuery(builder);
 
-		List<T> entityList = new ArrayList<T>();
-		for (Map<String, Object> result : results) {
-			entityList.add((T) EweblibUtil.toEntity(result, classzz));
-		}
-		return entityList;
+		return mergeListValue(classzz, results, builder.getLimitColumnNames());
+
 	}
 	
 	public <T extends BaseEntity> List<T> listBySql(String sql, Class<T> classzz){
 		List<Map<String, Object>> results = dao.listBySql(sql);
 
+		List<T> entityList = mergeListValue(classzz, results, null);
+		return entityList;
+	}
+
+	public <T extends BaseEntity> List<T> mergeListValue(Class<T> classzz, List<Map<String, Object>> results, Set<String> keys) {
 		List<T> entityList = new ArrayList<T>();
+
 		for (Map<String, Object> result : results) {
+			if (result == null) {
+				result = new HashMap<String, Object>();
+			}
+
+			if (keys != null) {
+				for (String key : keys) {
+					if (result.get(key) == null) {
+						result.put(key, "");
+					}
+				}
+			}
 			entityList.add((T) EweblibUtil.toEntity(result, classzz));
 		}
 		return entityList;
@@ -95,16 +109,10 @@ public class QueryDaoImpl implements IQueryDao {
 	public <T extends BaseEntity> EntityResults<T> listByQueryWithPagnation(DataBaseQueryBuilder builder, Class<T> classzz) {
 
 		builder = mergeQueryBuilder(builder, classzz);
-		
+
 		List<Map<String, Object>> results = dao.listByQueryWithPagination(builder);
 
-		List<T> entityList = new ArrayList<T>();
-		for (Map<String, Object> result : results) {
-			if(result == null){
-				result = new HashMap<String, Object>();
-			}
-			entityList.add((T) EweblibUtil.toEntity(result, classzz));
-		}
+		List<T> entityList = mergeListValue(classzz, results, builder.getLimitColumnNames());
 
 		return toListBean(builder, entityList);
 

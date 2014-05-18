@@ -46,16 +46,16 @@ public class ControllerFilter extends AbstractController implements Filter {
 		HttpServletRequest srequest = (HttpServletRequest) request;
 		HttpServletResponse sresponse = (HttpServletResponse) response;
 		EWeblibThreadLocal.set(URL_PATH, srequest.getServletPath());
-		cookieCheck(srequest, sresponse);
+		//cookieCheck(srequest, sresponse);
 		if (srequest.getSession().getAttribute(BaseEntity.ID) != null) {
 			EWeblibThreadLocal.set(BaseEntity.ID, srequest.getSession().getAttribute(BaseEntity.ID));
 		}
 
 	
 
-		if (!EweblibUtil.isEmpty(EWeblibThreadLocal.getCurrentUserId())) {
-			forceLogin((HttpServletRequest) request, (HttpServletResponse) response);
-		} else {
+//		if (EweblibUtil.isEmpty(EWeblibThreadLocal.getCurrentUserId())) {
+//			forceLogin((HttpServletRequest) request, (HttpServletResponse) response);
+//		} else {
 
 			try {
 				loginCheck((HttpServletRequest) request);
@@ -83,7 +83,7 @@ public class ControllerFilter extends AbstractController implements Filter {
 				}
 
 			}
-		}
+//		}
 
 		EWeblibThreadLocal.removeAll();
 	}
@@ -153,5 +153,10 @@ public class ControllerFilter extends AbstractController implements Filter {
 			}
 		}
 	}
+
+	@Override
+    public void setLoginSessionInfo(HttpServletRequest request, HttpServletResponse response, BaseEntity user) {
+	    
+    }
 
 }

@@ -208,13 +208,13 @@ public abstract class AbstractController {
 	}
 
 	protected void forceLogin(HttpServletRequest request, HttpServletResponse response) {
-		clearLoginSession(request, response);
+		//clearLoginSession(request, response);
 
-		try {
-			response.sendRedirect("/login.jsp");
-		} catch (IOException e) {
-			logger.fatal("Write response data to client failed!", e);
-		}
+//		try {
+//			response.sendRedirect("/login.jsp");
+//		} catch (IOException e) {
+//			logger.fatal("Write response data to client failed!", e);
+//		}
 	}
 
 	/**
@@ -293,39 +293,12 @@ public abstract class AbstractController {
 		Enumeration<String> e =  request.getSession().getAttributeNames();
 		while (e.hasMoreElements()) {
 			String nextElement = e.nextElement();
-			if (!nextElement.endsWith("_User")) {
-				request.getSession().removeAttribute(nextElement);
-
-			}
+			request.getSession().removeAttribute(nextElement);
 		}
 	}
 	
 
-	protected void setLoginSessionInfo(HttpServletRequest request, HttpServletResponse response, User user) {
-		removeSessionInfo(request);
-
-//	    setSessionValue(request, User.USER_NAME, user.getUserName());
-//		setSessionValue(request, BaseEntity.ID, user.getId());
-//		
-//		String path = EweblibUtil.isEmpty(request.getContextPath()) ? "/" : request.getContextPath();
-//		if(request.getParameter("remember") != null || request.getAttribute("remember") != null){
-//			Cookie account = new Cookie("account",null);
-//            try {
-//	            account.setValue(URLEncoder.encode(user.getUserName(), "UTF-8"));
-//            } catch (UnsupportedEncodingException e) {
-//	            e.printStackTrace();
-//            }
-//			account.setMaxAge(3600*24*30);
-//			account.setPath(path);
-//			
-//			Cookie ssid = new Cookie("ssid", DataEncrypt.generatePassword(user.getUserName() + user.getPassword()));
-//			ssid.setMaxAge(3600*24*30);
-//			ssid.setPath(path);
-//			
-//			response.addCookie(account);
-//			response.addCookie(ssid);
-//		}
-    }
+    public abstract void setLoginSessionInfo(HttpServletRequest request, HttpServletResponse response, BaseEntity user);
 
 	protected void clearLoginSession(HttpServletRequest request, HttpServletResponse response){
 		removeSessionInfo(request);

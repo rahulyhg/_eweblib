@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.registry.infomodel.User;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -27,13 +28,11 @@ import com.eweblib.bean.BaseEntity;
 import com.eweblib.bean.EntityResults;
 import com.eweblib.bean.OrderBy;
 import com.eweblib.bean.Pagination;
-import com.eweblib.bean.User;
 import com.eweblib.constants.EWebLibConstants;
 import com.eweblib.exception.ResponseException;
 import com.eweblib.util.DataEncrypt;
 import com.eweblib.util.EWeblibThreadLocal;
 import com.eweblib.util.EweblibUtil;
-import com.google.gson.JsonSyntaxException;
 
 public abstract class AbstractController {
 	public static final String MSG = "msg";
@@ -305,27 +304,27 @@ public abstract class AbstractController {
 	protected void setLoginSessionInfo(HttpServletRequest request, HttpServletResponse response, User user) {
 		removeSessionInfo(request);
 
-	    setSessionValue(request, User.USER_NAME, user.getUserName());
-		setSessionValue(request, User.ID, user.getId());
-		
-		String path = EweblibUtil.isEmpty(request.getContextPath()) ? "/" : request.getContextPath();
-		if(request.getParameter("remember") != null || request.getAttribute("remember") != null){
-			Cookie account = new Cookie("account",null);
-            try {
-	            account.setValue(URLEncoder.encode(user.getUserName(), "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-	            e.printStackTrace();
-            }
-			account.setMaxAge(3600*24*30);
-			account.setPath(path);
-			
-			Cookie ssid = new Cookie("ssid", DataEncrypt.generatePassword(user.getUserName() + user.getPassword()));
-			ssid.setMaxAge(3600*24*30);
-			ssid.setPath(path);
-			
-			response.addCookie(account);
-			response.addCookie(ssid);
-		}
+//	    setSessionValue(request, User.USER_NAME, user.getUserName());
+//		setSessionValue(request, BaseEntity.ID, user.getId());
+//		
+//		String path = EweblibUtil.isEmpty(request.getContextPath()) ? "/" : request.getContextPath();
+//		if(request.getParameter("remember") != null || request.getAttribute("remember") != null){
+//			Cookie account = new Cookie("account",null);
+//            try {
+//	            account.setValue(URLEncoder.encode(user.getUserName(), "UTF-8"));
+//            } catch (UnsupportedEncodingException e) {
+//	            e.printStackTrace();
+//            }
+//			account.setMaxAge(3600*24*30);
+//			account.setPath(path);
+//			
+//			Cookie ssid = new Cookie("ssid", DataEncrypt.generatePassword(user.getUserName() + user.getPassword()));
+//			ssid.setMaxAge(3600*24*30);
+//			ssid.setPath(path);
+//			
+//			response.addCookie(account);
+//			response.addCookie(ssid);
+//		}
     }
 
 	protected void clearLoginSession(HttpServletRequest request, HttpServletResponse response){

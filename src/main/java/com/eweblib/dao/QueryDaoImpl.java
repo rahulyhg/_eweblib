@@ -1,5 +1,6 @@
 package com.eweblib.dao;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,6 +16,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.eweblib.annotation.column.FloatColumn;
+import com.eweblib.annotation.column.IntegerColumn;
 import com.eweblib.bean.BaseEntity;
 import com.eweblib.bean.EntityResults;
 import com.eweblib.bean.OrderBy;
@@ -86,6 +89,7 @@ public class QueryDaoImpl implements IQueryDao {
 	public <T extends BaseEntity> List<T> mergeListValue(Class<T> classzz, List<Map<String, Object>> results, Set<String> keys) {
 		List<T> entityList = new ArrayList<T>();
 
+
 		for (Map<String, Object> result : results) {
 			if (result == null) {
 				result = new HashMap<String, Object>();
@@ -93,9 +97,20 @@ public class QueryDaoImpl implements IQueryDao {
 
 			if (keys != null) {
 				for (String key : keys) {
-					if (result.get(key) == null) {
-						result.put(key, "");
+
+					try {
+						String className = classzz.getField(key).getType().getName();
+						if (className.equalsIgnoreCase("java.lang.String") || className.equalsIgnoreCase("java.util.Date")) {
+							if (result.get(key) == null) {
+								result.put(key, "");
+							}
+						}
+					} catch (NoSuchFieldException e) {
+						// do nothing
+					} catch (SecurityException e) {
+						// do nothing
 					}
+
 				}
 			}
 			entityList.add((T) EweblibUtil.toEntity(result, classzz));

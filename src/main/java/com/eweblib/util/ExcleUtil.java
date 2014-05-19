@@ -1,6 +1,5 @@
 package com.eweblib.util;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,7 +10,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -23,9 +21,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
-import com.eweblib.bean.BaseEntity;
-import com.eweblib.cfg.ConfigManager;
-
 public class ExcleUtil {
 
 	Workbook wb = null;
@@ -35,9 +30,10 @@ public class ExcleUtil {
 	private File file = null;
 	List<String[]> dataList = new ArrayList<String[]>(100);
 
-	public ExcleUtil(){}
-	
-	public ExcleUtil(InputStream is){
+	public ExcleUtil() {
+	}
+
+	public ExcleUtil(InputStream is) {
 		try {
 			wb = WorkbookFactory.create(is);
 		} catch (FileNotFoundException e) {
@@ -48,8 +44,8 @@ public class ExcleUtil {
 			e.printStackTrace();
 		}
 	}
-	
-	public ExcleUtil(File file){
+
+	public ExcleUtil(File file) {
 		try {
 			this.file = file;
 			fis = new FileInputStream(file);
@@ -62,12 +58,12 @@ public class ExcleUtil {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public ExcleUtil(String path) {
 		try {
 			this.path = path;
 			fis = new FileInputStream(path);
-//			fos = new FileOutputStream(path);
+			// fos = new FileOutputStream(path);
 			wb = WorkbookFactory.create(fis);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -79,63 +75,63 @@ public class ExcleUtil {
 
 	}
 
-    public List<String[]> getAllData(int sheetIndex) {
-    	dataList = new ArrayList<String[]>(100);
-        Sheet sheet = wb.getSheetAt(sheetIndex);
+	public List<String[]> getAllData(int sheetIndex) {
+		dataList = new ArrayList<String[]>(100);
+		Sheet sheet = wb.getSheetAt(sheetIndex);
 
-        for (Row row : sheet) {
+		for (Row row : sheet) {
 
-            if (row.getLastCellNum() > 0) {
-                String[] singleRow = new String[row.getLastCellNum()];
-                for (int i = 0; i < row.getLastCellNum(); i++) {
-                    Cell cell = row.getCell(i, Row.CREATE_NULL_AS_BLANK);
-                    switch (cell.getCellType()) {
-                    case Cell.CELL_TYPE_BLANK:
-                        singleRow[i] = "";
-                        break;
-                    case Cell.CELL_TYPE_BOOLEAN:
-                        singleRow[i] = Boolean.toString(cell.getBooleanCellValue());
-                        break;
+			if (row.getLastCellNum() > 0) {
+				String[] singleRow = new String[row.getLastCellNum()];
+				for (int i = 0; i < row.getLastCellNum(); i++) {
+					Cell cell = row.getCell(i, Row.CREATE_NULL_AS_BLANK);
+					switch (cell.getCellType()) {
+					case Cell.CELL_TYPE_BLANK:
+						singleRow[i] = "";
+						break;
+					case Cell.CELL_TYPE_BOOLEAN:
+						singleRow[i] = Boolean.toString(cell.getBooleanCellValue());
+						break;
 
-                    case Cell.CELL_TYPE_NUMERIC:
-                        if (DateUtil.isCellDateFormatted(cell)) {
-                            singleRow[i] = String.valueOf(cell.getDateCellValue());
-                        } else {
-                            cell.setCellType(Cell.CELL_TYPE_STRING);
-                            String temp = cell.getStringCellValue();
-                            //
-                            if (temp.indexOf(".") > -1) {
-                                singleRow[i] = String.valueOf(new Double(temp)).trim();
-                            } else {
-                                singleRow[i] = temp.trim();
-                            }
-                        }
-                        break;
-                    case Cell.CELL_TYPE_STRING:
-                        singleRow[i] = cell.getStringCellValue().trim();
-                        break;
-                    case Cell.CELL_TYPE_ERROR:
-                        singleRow[i] = "";
-                        break;
-                    case Cell.CELL_TYPE_FORMULA:
-                        cell.setCellType(Cell.CELL_TYPE_STRING);
-                        singleRow[i] = cell.getStringCellValue();
-                        if (singleRow[i] != null) {
-                            singleRow[i] = singleRow[i].replaceAll("#N/A", "").trim();
-                        }
-                        break;
-                    default:
-                        singleRow[i] = "";
-                        break;
-                    }
-                }
+					case Cell.CELL_TYPE_NUMERIC:
+						if (DateUtil.isCellDateFormatted(cell)) {
+							singleRow[i] = String.valueOf(cell.getDateCellValue());
+						} else {
+							cell.setCellType(Cell.CELL_TYPE_STRING);
+							String temp = cell.getStringCellValue();
+							//
+							if (temp.indexOf(".") > -1) {
+								singleRow[i] = String.valueOf(new Double(temp)).trim();
+							} else {
+								singleRow[i] = temp.trim();
+							}
+						}
+						break;
+					case Cell.CELL_TYPE_STRING:
+						singleRow[i] = cell.getStringCellValue().trim();
+						break;
+					case Cell.CELL_TYPE_ERROR:
+						singleRow[i] = "";
+						break;
+					case Cell.CELL_TYPE_FORMULA:
+						cell.setCellType(Cell.CELL_TYPE_STRING);
+						singleRow[i] = cell.getStringCellValue();
+						if (singleRow[i] != null) {
+							singleRow[i] = singleRow[i].replaceAll("#N/A", "").trim();
+						}
+						break;
+					default:
+						singleRow[i] = "";
+						break;
+					}
+				}
 
-                dataList.add(singleRow);
-            }
-        }
+				dataList.add(singleRow);
+			}
+		}
 
-        return dataList;
-    }
+		return dataList;
+	}
 
 	public int getRowNum(int sheetIndex) {
 		Sheet sheet = wb.getSheetAt(sheetIndex);
@@ -143,7 +139,7 @@ public class ExcleUtil {
 	}
 
 	public int getColumnNum(int sheetIndex) {
-		
+
 		Sheet sheet = wb.getSheetAt(sheetIndex);
 		Row row = sheet.getRow(0);
 		if (row != null && row.getLastCellNum() > 0) {
@@ -151,11 +147,11 @@ public class ExcleUtil {
 		}
 		return 0;
 	}
-	
+
 	public int getNumberOfSheets() {
 		return wb.getNumberOfSheets();
 	}
-	
+
 	public String getSheetName(int index) {
 		return wb.getSheetAt(index).getSheetName();
 	}
@@ -191,51 +187,48 @@ public class ExcleUtil {
 
 	}
 
-    public void addRow(int sheetIndex, String[] row, int rownum) throws Exception {
-        Sheet sheet = null;
+	public void addRow(int sheetIndex, String[] row, int rownum) throws Exception {
+		Sheet sheet = null;
 
-        try {
-            sheet = wb.getSheetAt(sheetIndex);
-        } catch (Exception e) {
-        }
-        if (sheet == null) {
-            sheet = (HSSFSheet) wb.createSheet();
-        }
+		try {
+			sheet = wb.getSheetAt(sheetIndex);
+		} catch (Exception e) {
+		}
+		if (sheet == null) {
+			sheet = (HSSFSheet) wb.createSheet();
+		}
 
-        Row addedRow = sheet.createRow(rownum);
-        Cell cell = null;
+		Row addedRow = sheet.createRow(rownum);
+		Cell cell = null;
 
-        int colnum = this.getColumnNum(sheetIndex);
-        int count = colnum < row.length ? colnum : row.length;
-        for (int i = 0; i < row.length; i++) {
-            cell = addedRow.createCell(i);
-            cell.setCellValue(row[i]);
-        }
+		int colnum = this.getColumnNum(sheetIndex);
+		int count = colnum < row.length ? colnum : row.length;
+		for (int i = 0; i < row.length; i++) {
+			cell = addedRow.createCell(i);
+			cell.setCellValue(row[i]);
+		}
 
-        fos = new FileOutputStream(this.file);
-        wb.write(this.fos);
-        fos.close();
-    }
-	
-	
-	public void createFile(File f){
-	    wb = new HSSFWorkbook();
-	    try {
-	        
-	        if(f.exists()){
-	            f.delete();
-	        }
-	        f.getParentFile().mkdirs();
-	        FileOutputStream fileOut = new FileOutputStream(f);
-            wb.write(fileOut);
-            fileOut.close();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+		fos = new FileOutputStream(this.file);
+		wb.write(this.fos);
+		fos.close();
 	}
-	
-	
+
+	public void createFile(File f) {
+		wb = new HSSFWorkbook();
+		try {
+
+			if (f.exists()) {
+				f.delete();
+			}
+			f.getParentFile().mkdirs();
+			FileOutputStream fileOut = new FileOutputStream(f);
+			wb.write(fileOut);
+			fileOut.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	public String getPath() {
 		return path;
@@ -244,57 +237,18 @@ public class ExcleUtil {
 	public void setPath(String path) {
 		this.path = path;
 	}
-	
-	/**创建设备清单excel文件*/
-	public static <T extends BaseEntity> String createEqcostExcel(String fileDir, String[] colunmTitleHeaders, String[] colunmHeaders, List<T> dataList) {
-		// String colunmTitleHeaders[] = new String[] { "No.", "物料代码", "产品名称",
-		// "规格型号", "单位", "数量", "成本单价"};
-		//
-		// String colunmHeaders[] = new String[] { };
-		//
-//		String fileDir = ConfigManager.getProperty("file_dir");
-		
-		if(EweblibUtil.isEmpty(fileDir)){
-			throw new IllegalArgumentException("please config file_dir in config.properties");
+
+	public static String getRowColumnValue(String[] row, Map<String, Integer> keyMap, String title) {
+
+		if (keyMap.get(title) == null) {
+			return null;
 		}
 
-		File f = new File(fileDir + UUID.randomUUID().toString() + ".xls");
-
-		ExcleUtil eu = new ExcleUtil();
-		eu.createFile(f);
-		eu = new ExcleUtil(f);
-
-		int i = 0;
-		try {
-			eu.addRow(0, colunmTitleHeaders, i);
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (keyMap.get(title) >= row.length) {
+			return null;
 		}
 
-		for (BaseEntity entity : dataList) {
-			Map<String, Object> map = entity.toMap();
-			int length = colunmHeaders.length;
-			String rowsData[] = new String[length];
-
-			int index = 0;
-			for (String key : colunmHeaders) {
-				if (map.get(key) == null) {
-					rowsData[index] = "";
-				} else {
-					rowsData[index] = map.get(key).toString();
-				}
-				index++;
-			}
-			try {
-				eu.addRow(0, rowsData, ++i);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		return f.getAbsolutePath();
+		return row[keyMap.get(title)].trim();
 	}
-	
-	
-	
+
 }

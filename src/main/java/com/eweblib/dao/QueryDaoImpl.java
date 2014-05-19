@@ -95,36 +95,40 @@ public class QueryDaoImpl implements IQueryDao {
 				result = new HashMap<String, Object>();
 			}
 
-			if (keys != null) {
-				for (String key : keys) {
-
-					try {
-						String className = classzz.getField(key).getType().getName();
-						if (className.equalsIgnoreCase("java.lang.String") || className.equalsIgnoreCase("java.util.Date")) {
-							if (result.get(key) == null) {
-								result.put(key, "");
-							}else{
-								
-								if (className.equalsIgnoreCase("java.util.Date")) {
-									//FIXME other solution for date field not datetime field?
-									if (result.get(key).toString().contains(" 00:00:00")) {
-										result.put(key, result.get(key).toString().replace(" 00:00:00", ""));
-									}
-								}
-							}
-						}
-					} catch (NoSuchFieldException e) {
-						// do nothing
-					} catch (SecurityException e) {
-						// do nothing
-					}
-
-				}
-			}
+			mergeEntityValue(classzz, keys, result);
 			entityList.add((T) EweblibUtil.toEntity(result, classzz));
 		}
 		return entityList;
 	}
+
+	public <T extends BaseEntity> void mergeEntityValue(Class<T> classzz, Set<String> keys, Map<String, Object> result) {
+	    if (keys != null) {
+	    	for (String key : keys) {
+
+	    		try {
+	    			String className = classzz.getField(key).getType().getName();
+	    			if (className.equalsIgnoreCase("java.lang.String") || className.equalsIgnoreCase("java.util.Date")) {
+	    				if (result.get(key) == null) {
+	    					result.put(key, "");
+	    				}else{
+	    					
+	    					if (className.equalsIgnoreCase("java.util.Date")) {
+	    						//FIXME other solution for date field not datetime field?
+	    						if (result.get(key).toString().contains(" 00:00:00")) {
+	    							result.put(key, result.get(key).toString().replace(" 00:00:00", ""));
+	    						}
+	    					}
+	    				}
+	    			}
+	    		} catch (NoSuchFieldException e) {
+	    			// do nothing
+	    		} catch (SecurityException e) {
+	    			// do nothing
+	    		}
+
+	    	}
+	    }
+    }
 	
 
 	@SuppressWarnings("unchecked")
@@ -203,7 +207,8 @@ public class QueryDaoImpl implements IQueryDao {
 
 	@Override
 	public <T extends BaseEntity> BaseEntity findOneByQuery(DataBaseQueryBuilder builder, Class<T> classzz) {
-		return EweblibUtil.toEntity(dao.findOneByQuery(builder), classzz);
+		Map<String, Object> result = dao.findOneByQuery(builder);
+		return EweblibUtil.toEntity(result, classzz);
 	}
 	
 	public <T extends BaseEntity> BaseEntity findById(String id, String table, Class<T> classzz) {
@@ -215,6 +220,7 @@ public class QueryDaoImpl implements IQueryDao {
 		if (EweblibUtil.isEmpty(result)) {
 			return null;
 		}
+		
 		return EweblibUtil.toEntity(result, classzz);
 	}
 	

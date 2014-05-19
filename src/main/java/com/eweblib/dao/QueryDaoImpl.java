@@ -103,6 +103,14 @@ public class QueryDaoImpl implements IQueryDao {
 						if (className.equalsIgnoreCase("java.lang.String") || className.equalsIgnoreCase("java.util.Date")) {
 							if (result.get(key) == null) {
 								result.put(key, "");
+							}else{
+								
+								if (className.equalsIgnoreCase("java.util.Date")) {
+									//FIXME other solution for date field not datetime field?
+									if (result.get(key).toString().contains(" 00:00:00")) {
+										result.put(key, result.get(key).toString().replace(" 00:00:00", ""));
+									}
+								}
 							}
 						}
 					} catch (NoSuchFieldException e) {

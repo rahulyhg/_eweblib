@@ -77,6 +77,18 @@ public class DateUtil {
 	}
 	
 	
+	public static Date getDate(String date, String format){
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		try {
+	        return sdf.parse(date);
+        } catch (ParseException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+        }
+		return null;
+	}
+	
+	
 	
 	public static String getDateStringByLong(Long times){
 	    SimpleDateFormat sdf = new SimpleDateFormat(format);

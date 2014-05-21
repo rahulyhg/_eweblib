@@ -108,10 +108,10 @@ public class EweblibUtil {
 		} else {
 			try {
 				result = Double.parseDouble(String.valueOf(value));
+				
 			} catch (NumberFormatException e) {
 
 				logger.error(String.format("Integer parameter illegal [%s]", value), e);
-				throw new ResponseException("ILEGAL_PARAMTERS");
 
 			}
 

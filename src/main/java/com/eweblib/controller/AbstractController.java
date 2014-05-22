@@ -288,6 +288,8 @@ public abstract class AbstractController {
 
 	protected void responseWithTxt(HttpServletRequest request, HttpServletResponse response, String txt) {
 		try {
+			response.setContentType("text/plain;charset=UTF-8");
+			response.addHeader("Accept-Encoding", "gzip, deflate");
 			response.getWriter().write(new String(txt.getBytes(), "utf-8"));
 		} catch (IOException e) {
 			logger.fatal("Write response data to client failed!", e);

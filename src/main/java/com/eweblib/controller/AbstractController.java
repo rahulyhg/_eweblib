@@ -1,23 +1,23 @@
 package com.eweblib.controller;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.io.InputStreamReader;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.registry.infomodel.User;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -30,7 +30,6 @@ import com.eweblib.bean.OrderBy;
 import com.eweblib.bean.Pagination;
 import com.eweblib.constants.EWebLibConstants;
 import com.eweblib.exception.ResponseException;
-import com.eweblib.util.DataEncrypt;
 import com.eweblib.util.EWeblibThreadLocal;
 import com.eweblib.util.EweblibUtil;
 
@@ -47,7 +46,7 @@ public abstract class AbstractController {
 		return EweblibUtil.toEntity(parametersMap, claszz);
 
 	}
-	
+
 	protected <T extends BaseEntity> List<T> parserListJsonParameters(HttpServletRequest request, boolean emptyParameter, Class<T> claszz) {
 		Map<String, Object> params = this.parserJsonParameters(request, false);
 		List<T> list = EweblibUtil.toJsonList(params, claszz);
@@ -58,6 +57,16 @@ public abstract class AbstractController {
 	protected HashMap<String, Object> parserJsonParameters(HttpServletRequest request, boolean emptyParameter) {
 		HashMap<String, Object> parametersMap = new HashMap<String, Object>();
 
+		String postStr = null;
+		try {
+			postStr = this.readStreamParameter(request.getInputStream());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		if (EweblibUtil.isValid(postStr)) {
+			parametersMap.put("body", postStr);
+		}
 
 		int filterLength = 0;
 
@@ -119,7 +128,7 @@ public abstract class AbstractController {
 			OrderBy order = new OrderBy();
 			order.setOrder(parametersMap.get("order").toString());
 			order.setSort(parametersMap.get("sort").toString());
-			
+
 			EWeblibThreadLocal.set(EWebLibConstants.DB_QUERY_ORDER_BY, order);
 
 		}
@@ -128,7 +137,7 @@ public abstract class AbstractController {
 		parametersMap.remove("updatedOn");
 		return parametersMap;
 	}
-	
+
 	protected void responseWithEntity(BaseEntity data, HttpServletRequest request, HttpServletResponse response) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("data", data);
@@ -149,8 +158,31 @@ public abstract class AbstractController {
 			responseMsg(null, ResponseStatus.SUCCESS, request, response, null);
 		}
 	}
-	
-	
+
+	// 从输入流读取post参数
+	protected String readStreamParameter(ServletInputStream in) {
+		StringBuilder buffer = new StringBuilder();
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new InputStreamReader(in));
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				buffer.append(line);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (null != reader) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return buffer.toString();
+	}
+
 	protected <T extends BaseEntity> void responseWithDataPagnationForApp(EntityResults<T> listBean, HttpServletRequest request, HttpServletResponse response) {
 		if (listBean != null) {
 			Map<String, Object> list = new HashMap<String, Object>();
@@ -161,12 +193,10 @@ public abstract class AbstractController {
 			responseMsg(null, ResponseStatus.SUCCESS, request, response, null);
 		}
 	}
-	
-	
 
 	protected <T extends BaseEntity> void responseWithDataPagnation(EntityResults<T> listBean, Map<String, Object> results, HttpServletRequest request, HttpServletResponse response) {
-		if(results == null){
-			results =  new HashMap<String, Object>();
+		if (results == null) {
+			results = new HashMap<String, Object>();
 		}
 		if (listBean != null) {
 			results.put("total", listBean.getPagnation().getTotal());
@@ -176,7 +206,7 @@ public abstract class AbstractController {
 			responseMsg(null, ResponseStatus.SUCCESS, request, response, null);
 		}
 	}
-	
+
 	protected <T extends BaseEntity> void responseWithListData(List<T> listBean, HttpServletRequest request, HttpServletResponse response) {
 		if (listBean != null) {
 			Map<String, Object> list = new HashMap<String, Object>();
@@ -186,7 +216,7 @@ public abstract class AbstractController {
 			responseMsg(null, ResponseStatus.SUCCESS, request, response, null);
 		}
 	}
-	
+
 	protected <T extends BaseEntity> void responseWithListDataForApp(List<T> listBean, HttpServletRequest request, HttpServletResponse response) {
 		if (listBean != null) {
 			Map<String, Object> list = new HashMap<String, Object>();
@@ -208,13 +238,13 @@ public abstract class AbstractController {
 	}
 
 	protected void forceLogin(HttpServletRequest request, HttpServletResponse response) {
-		//clearLoginSession(request, response);
+		// clearLoginSession(request, response);
 
-//		try {
-//			response.sendRedirect("/login.jsp");
-//		} catch (IOException e) {
-//			logger.fatal("Write response data to client failed!", e);
-//		}
+		// try {
+		// response.sendRedirect("/login.jsp");
+		// } catch (IOException e) {
+		// logger.fatal("Write response data to client failed!", e);
+		// }
 	}
 
 	/**
@@ -254,7 +284,7 @@ public abstract class AbstractController {
 		responseWithTxt(request, response, jsonReturn);
 
 	}
-	
+
 	protected void responseWithTxt(HttpServletRequest request, HttpServletResponse response, String txt) {
 		try {
 			response.getWriter().write(txt);
@@ -294,44 +324,39 @@ public abstract class AbstractController {
 	}
 
 	protected void removeSessionInfo(HttpServletRequest request) {
-	
-		Enumeration<String> e =  request.getSession().getAttributeNames();
+
+		Enumeration<String> e = request.getSession().getAttributeNames();
 		while (e.hasMoreElements()) {
 			String nextElement = e.nextElement();
 			request.getSession().removeAttribute(nextElement);
 		}
 	}
-	
 
-    public abstract void setLoginSessionInfo(HttpServletRequest request, HttpServletResponse response, BaseEntity user);
+	public abstract void setLoginSessionInfo(HttpServletRequest request, HttpServletResponse response, BaseEntity user);
 
-	protected void clearLoginSession(HttpServletRequest request, HttpServletResponse response){
+	protected void clearLoginSession(HttpServletRequest request, HttpServletResponse response) {
 		removeSessionInfo(request);
 
 		String path = EweblibUtil.isEmpty(request.getContextPath()) ? "/" : request.getContextPath();
 		Cookie account = new Cookie("account", null);
 		account.setMaxAge(0);
 		account.setPath(path);
-		
+
 		Cookie ssid = new Cookie("ssid", null);
 		ssid.setMaxAge(0);
 		ssid.setPath(path);
-		
+
 		response.addCookie(account);
 		response.addCookie(ssid);
 	}
-	
-	
-
-	
 
 	protected String uploadFile(HttpServletRequest request, String relativeFilePath, String parameterName, int size, String[] suffixes) {
 		String webPath = request.getSession().getServletContext().getRealPath("/");
 
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 		MultipartFile uploadFile = multipartRequest.getFile(parameterName);
-		
-		if(uploadFile == null){
+
+		if (uploadFile == null) {
 			return null;
 		}
 		String uploadFileName = uploadFile.getOriginalFilename().toLowerCase().trim().replaceAll(" ", "");
@@ -376,54 +401,50 @@ public abstract class AbstractController {
 		return null;
 
 	}
-	
-	
-    public String createFile(Map<String, Object> params, String relativeFilePath) {
-	    InputStream is = (InputStream) params.get("inputStream");
-	    String wwwPath = (String) params.get("webPath");
-	    BufferedInputStream bis = null;
-	    FileOutputStream fos = null;
-	    try {
-	        bis = new BufferedInputStream(is);
-	        
-	        File file = new File(wwwPath + relativeFilePath);
-	        File folder = file.getParentFile();
-			if (!folder.exists()){
+
+	public String createFile(Map<String, Object> params, String relativeFilePath) {
+		InputStream is = (InputStream) params.get("inputStream");
+		String wwwPath = (String) params.get("webPath");
+		BufferedInputStream bis = null;
+		FileOutputStream fos = null;
+		try {
+			bis = new BufferedInputStream(is);
+
+			File file = new File(wwwPath + relativeFilePath);
+			File folder = file.getParentFile();
+			if (!folder.exists()) {
 				folder.mkdirs();
 			}
-	        fos = new FileOutputStream(file);
-	        
-	        byte[] buf = new byte[1024];    
-	        int size = 0;
-	        
-	        while ( (size = bis.read(buf)) != -1){
-	        	fos.write(buf, 0, size);
-	        }
-	        
-	        if(bis != null)
-        		bis.close();
-        	
-        	if (fos != null)
-        		fos.close();
-	        
-        } catch (FileNotFoundException e) {
-	        // TODO Auto-generated catch block
-	        e.printStackTrace();
-        } catch (IOException e) {
-	        // TODO Auto-generated catch block
-	        e.printStackTrace();
-        }
-	    return relativeFilePath;
-    }
-	
-	protected String genRandomRelativePath(String userId){
+			fos = new FileOutputStream(file);
+
+			byte[] buf = new byte[1024];
+			int size = 0;
+
+			while ((size = bis.read(buf)) != -1) {
+				fos.write(buf, 0, size);
+			}
+
+			if (bis != null)
+				bis.close();
+
+			if (fos != null)
+				fos.close();
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return relativeFilePath;
+	}
+
+	protected String genRandomRelativePath(String userId) {
 		StringBuffer sb = new StringBuffer("/");
 		sb.append("upload/").append(userId).append("/");
 		return sb.toString();
 	}
-
-	
-
 
 	public enum ResponseStatus {
 

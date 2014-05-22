@@ -8,13 +8,18 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
 import com.eweblib.exception.BeanStructureException;
 import com.eweblib.util.EweblibUtil;
 import com.google.gson.annotations.Expose;
 
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class BaseEntity {
 
 	public static final String UPDATED_ON = "updatedOn";
@@ -26,7 +31,7 @@ public class BaseEntity {
 	public static final String ID = "id";
 
 	@Id
-	@Column(unique = true, name = ID)
+	@Column(unique = true, name = ID, length = 36)
 	@Expose
 	public String id;
 
@@ -38,7 +43,7 @@ public class BaseEntity {
 	@Expose
 	public Date updatedOn;
 
-	@Column(name = CREATOR_ID)
+	@Column(name = CREATOR_ID, length = 36)
 	@Expose
 	public String creatorId;
 

@@ -242,7 +242,6 @@ public abstract class AbstractController {
 		String jsonReturn = EweblibUtil.toJson(data);
 		String callback = request.getParameter("callback");
 
-
 		if (callback != null) {
 			if (data != null && data instanceof Map) {
 				jsonReturn = callback + "(" + jsonReturn + ");";
@@ -251,8 +250,14 @@ public abstract class AbstractController {
 				jsonReturn = callback + "();";
 			}
 		}
+
+		responseWithTxt(request, response, jsonReturn);
+
+	}
+	
+	protected void responseWithTxt(HttpServletRequest request, HttpServletResponse response, String txt) {
 		try {
-			response.getWriter().write(jsonReturn);
+			response.getWriter().write(txt);
 		} catch (IOException e) {
 			logger.fatal("Write response data to client failed!", e);
 		}

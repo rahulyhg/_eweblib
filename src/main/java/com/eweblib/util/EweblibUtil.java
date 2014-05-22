@@ -26,6 +26,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.thoughtworks.xstream.XStream;
 
 public class EweblibUtil {
 
@@ -54,7 +55,6 @@ public class EweblibUtil {
 
 		return false;
 	}
-	
 
 	public static Integer getInteger(Object value, int defaultValue) {
 		Integer result = null;
@@ -69,7 +69,7 @@ public class EweblibUtil {
 					result = Integer.parseInt(String.valueOf(value));
 				} catch (NumberFormatException e1) {
 					logger.error(String.format("Integer parameter illegal [%s]", value), e);
-				
+
 				}
 			}
 
@@ -108,7 +108,7 @@ public class EweblibUtil {
 		} else {
 			try {
 				result = Double.parseDouble(String.valueOf(value));
-				
+
 			} catch (NumberFormatException e) {
 
 				logger.error(String.format("Integer parameter illegal [%s]", value), e);
@@ -204,8 +204,6 @@ public class EweblibUtil {
 		}
 		return result.toString();
 	}
-	
-	
 
 	static JsonSerializer<Date> ser = new JsonSerializer<Date>() {
 		@Override
@@ -220,16 +218,13 @@ public class EweblibUtil {
 			return DateUtil.getDateTime(json.getAsString());
 		}
 	};
-	
-	
-	
 
 	public static <T extends BaseEntity> BaseEntity toEntity(Map<String, Object> data, Class<T> classzz) {
 		String json = new GsonBuilder().registerTypeAdapter(Date.class, ser).setDateFormat("yyyy-MM-dd HH:mm:ss").create().toJson(data);
 		return new GsonBuilder().registerTypeAdapter(Date.class, deser).create().fromJson(json, classzz);
 
 	}
-	
+
 	public static <T extends BaseEntity> BaseEntity toEntity(String data, Class<T> classzz) {
 		return new GsonBuilder().registerTypeAdapter(Date.class, deser).create().fromJson(data, classzz);
 
@@ -251,28 +246,43 @@ public class EweblibUtil {
 		return results;
 
 	}
-	
-	public static String toJson(BaseEntity entity){
+
+	public static String toJson(BaseEntity entity) {
 		return new GsonBuilder().registerTypeAdapter(Date.class, ser).create().toJson(entity);
 	}
-	
-	public static String toJson(Object data){
+
+	public static String toJson(Object data) {
 		return new GsonBuilder().registerTypeAdapter(Date.class, ser).create().toJson(data);
 	}
-	
-	public static Map<String, Object> toMap(BaseEntity entity){
+
+	public static Map<String, Object> toMap(BaseEntity entity) {
 		return new Gson().fromJson(entity.toString(), HashMap.class);
 	}
-	
-	public static Map<String, Object> toMap(String jsonStr){
+
+	public static Map<String, Object> toMap(String jsonStr) {
 		return new Gson().fromJson(jsonStr, HashMap.class);
 	}
-	public static String toString(Map<String, Object> data){
+
+	public static String toString(Map<String, Object> data) {
 		return new Gson().toJson(data);
 	}
-	
-	
 
+	public static <T extends BaseEntity> Object fromXml(String txt, Class<T> claszz) {
+		XStream xs = new XStream();
+		xs.alias("xml", claszz);
+		return xs.fromXML(txt);
+	}
+
+	public static <T extends BaseEntity> String toXml(BaseEntity entity, Map<String, Class> map) {
+
+		XStream xs = new XStream();
+		for (String key : map.keySet()) {
+			xs.alias(key, map.get(key));
+
+		}
+		return xs.toXML(entity);
+
+	}
 
 	public static <T extends BaseEntity> void updateJsonFieldWithType(Map<String, Object> params, Class<T> clz) {
 		Field[] fields = clz.getFields();
@@ -347,16 +357,14 @@ public class EweblibUtil {
 
 	}
 
-
-	/**判断字符串是否为数字和字母组成*/
-	public static boolean isCharNum(String str){
-		if(str != null){
+	/** 判断字符串是否为数字和字母组成 */
+	public static boolean isCharNum(String str) {
+		if (str != null) {
 			return str.matches("^[A-Za-z0-9]+$");
 		}
 		return false;
 	}
-	
-	
+
 	/**
 	 * @param args
 	 */

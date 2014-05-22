@@ -164,13 +164,14 @@ public abstract class AbstractController {
 		StringBuilder buffer = new StringBuilder();
 		BufferedReader reader = null;
 		try {
+
 			reader = new BufferedReader(new InputStreamReader(in));
 			String line = null;
 			while ((line = reader.readLine()) != null) {
 				buffer.append(line);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			// do nothing
 		} finally {
 			if (null != reader) {
 				try {

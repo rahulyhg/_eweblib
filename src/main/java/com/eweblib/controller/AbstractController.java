@@ -57,17 +57,6 @@ public abstract class AbstractController {
 	protected HashMap<String, Object> parserJsonParameters(HttpServletRequest request, boolean emptyParameter) {
 		HashMap<String, Object> parametersMap = new HashMap<String, Object>();
 
-		String postStr = null;
-		try {
-			postStr = this.readStreamParameter(request.getInputStream());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		if (EweblibUtil.isValid(postStr)) {
-			parametersMap.put("body", postStr);
-		}
-
 		int filterLength = 0;
 
 		Enumeration<?> parameterNames = request.getParameterNames();
@@ -135,6 +124,19 @@ public abstract class AbstractController {
 
 		parametersMap.remove("createdOn");
 		parametersMap.remove("updatedOn");
+
+		if (parametersMap.isEmpty()) {
+			String postStr = null;
+			try {
+				postStr = this.readStreamParameter(request.getInputStream());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			if (EweblibUtil.isValid(postStr)) {
+				parametersMap.put("body", postStr);
+			}
+		}
 		return parametersMap;
 	}
 
@@ -184,16 +186,16 @@ public abstract class AbstractController {
 		return buffer.toString();
 	}
 
-	protected <T extends BaseEntity> void responseWithDataPagnationForApp(EntityResults<T> listBean, HttpServletRequest request, HttpServletResponse response) {
-		if (listBean != null) {
-			Map<String, Object> list = new HashMap<String, Object>();
-			list.put("total", listBean.getPagnation().getTotal());
-			list.put("data", listBean.getEntityList());
-			responseMsg(list, ResponseStatus.SUCCESS, request, response, null);
-		} else {
-			responseMsg(null, ResponseStatus.SUCCESS, request, response, null);
-		}
-	}
+//	protected <T extends BaseEntity> void responseWithDataPagnationForApp(EntityResults<T> listBean, HttpServletRequest request, HttpServletResponse response) {
+//		if (listBean != null) {
+//			Map<String, Object> list = new HashMap<String, Object>();
+//			list.put("total", listBean.getPagnation().getTotal());
+//			list.put("data", listBean.getEntityList());
+//			responseMsg(list, ResponseStatus.SUCCESS, request, response, null);
+//		} else {
+//			responseMsg(null, ResponseStatus.SUCCESS, request, response, null);
+//		}
+//	}
 
 	protected <T extends BaseEntity> void responseWithDataPagnation(EntityResults<T> listBean, Map<String, Object> results, HttpServletRequest request, HttpServletResponse response) {
 		if (results == null) {
@@ -218,15 +220,15 @@ public abstract class AbstractController {
 		}
 	}
 
-	protected <T extends BaseEntity> void responseWithListDataForApp(List<T> listBean, HttpServletRequest request, HttpServletResponse response) {
-		if (listBean != null) {
-			Map<String, Object> list = new HashMap<String, Object>();
-			list.put("data", listBean);
-			responseMsg(list, ResponseStatus.SUCCESS, request, response, null);
-		} else {
-			responseMsg(null, ResponseStatus.SUCCESS, request, response, null);
-		}
-	}
+//	protected <T extends BaseEntity> void responseWithListDataForApp(List<T> listBean, HttpServletRequest request, HttpServletResponse response) {
+//		if (listBean != null) {
+//			Map<String, Object> list = new HashMap<String, Object>();
+//			list.put("data", listBean);
+//			responseMsg(list, ResponseStatus.SUCCESS, request, response, null);
+//		} else {
+//			responseMsg(null, ResponseStatus.SUCCESS, request, response, null);
+//		}
+//	}
 
 	protected void responseWithKeyValue(String key, String value, HttpServletRequest request, HttpServletResponse response) {
 		if (key == null) {
@@ -359,7 +361,7 @@ public abstract class AbstractController {
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 		MultipartFile uploadFile = multipartRequest.getFile(parameterName);
 
-		if (uploadFile == null) {
+		if (uploadFile == null || uploadFile.getSize() < 1) {
 			return null;
 		}
 		String uploadFileName = uploadFile.getOriginalFilename().toLowerCase().trim().replaceAll(" ", "");

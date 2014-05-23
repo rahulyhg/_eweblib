@@ -8,13 +8,13 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 public class DateUtil {
-	
+
 	private static Logger logger = LogManager.getLogger(DateUtil.class);
 	public static final String format = "yyyy-MM-dd HH:mm:ss";
-	
+
 	private static final String formatSimple = "yyyy-MM-dd";
-	
-	public static String getDateStringTime(Date date){
+
+	public static String getDateStringTime(Date date) {
 		SimpleDateFormat sdf = new SimpleDateFormat(format);
 		return sdf.format(date);
 	}
@@ -43,11 +43,12 @@ public class DateUtil {
 		}
 		return null;
 	}
+
 	public static Date getDateTime(String date) {
-	    
-	    if(EweblibUtil.isEmpty(date)){
-	        return null;
-	    }
+
+		if (EweblibUtil.isEmpty(date)) {
+			return null;
+		}
 		SimpleDateFormat sdf = new SimpleDateFormat(format);
 		if (EweblibUtil.isEmpty(date)) {
 			return null;
@@ -62,37 +63,41 @@ public class DateUtil {
 				sdf = new SimpleDateFormat("MM/dd/yyyy");
 				try {
 					return sdf.parse(date);
-				} catch (ParseException e2) {				
-//						e2.printStackTrace();	
+				} catch (ParseException e2) {
+					// e2.printStackTrace();
 					logger.error(e2);
 				}
 			}
 		}
 		return null;
 	}
-	
-	public static String getDateString(Date date){
+
+	public static String getDateString(Date date) {
 		SimpleDateFormat sdf = new SimpleDateFormat(formatSimple);
 		return sdf.format(date);
 	}
-	
-	
-	public static Date getDate(String date, String format){
+
+	public static Date getDate(String date, String format) {
 		SimpleDateFormat sdf = new SimpleDateFormat(format);
 		try {
-	        return sdf.parse(date);
-        } catch (ParseException e) {
-	        // TODO Auto-generated catch block
-	        e.printStackTrace();
-        }
+			return sdf.parse(date);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
-	
-	
-	
-	public static String getDateStringByLong(Long times){
-	    SimpleDateFormat sdf = new SimpleDateFormat(format);
-	    return sdf.format(new Date(times));
+
+	public static String getDateStringByLong(Long times) {
+		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		String time = sdf.format(new Date(times));
+
+		// FIXME other solution for date field not datetime field?
+		if (time.contains("00:00:00")) {
+			time = time.replace("00:00:00", "").trim();
+		}
+
+		return time;
 	}
-	
+
 }

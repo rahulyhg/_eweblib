@@ -125,18 +125,17 @@ public abstract class AbstractController {
 		parametersMap.remove("createdOn");
 		parametersMap.remove("updatedOn");
 
-		if (parametersMap.isEmpty()) {
-			String postStr = null;
-			try {
-				postStr = this.readStreamParameter(request.getInputStream());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			if (EweblibUtil.isValid(postStr)) {
-				parametersMap.put("body", postStr);
-			}
+		String postStr = null;
+		try {
+			postStr = this.readStreamParameter(request.getInputStream());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+
+		if (EweblibUtil.isValid(postStr)) {
+			parametersMap.put("body", postStr);
+		}
+
 		return parametersMap;
 	}
 

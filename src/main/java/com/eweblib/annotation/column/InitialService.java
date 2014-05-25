@@ -35,9 +35,9 @@ public class InitialService {
 	 */
 	public static void initSystem(IMyBatisDao dao, String packageName) throws SecurityException, ClassNotFoundException {
 
-//		initRoleItems(dao, packageName);
-//		setLoginPathValidation(packageName);
-//		createSystemDefaultGroups(dao);
+		initRoleItems(dao, packageName);
+		setLoginPathValidation(packageName);
+		createSystemDefaultGroups(dao);
 
 	}
 

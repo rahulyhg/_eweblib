@@ -10,6 +10,7 @@ import com.eweblib.dbhelper.DataBaseQueryBuilder;
 import com.eweblib.dbhelper.DataBaseQueryOpertion;
 import com.eweblib.exception.ResponseException;
 import com.eweblib.util.EWeblibThreadLocal;
+import com.eweblib.util.EweblibUtil;
 
 public abstract class AbstractService {
 
@@ -68,14 +69,16 @@ public abstract class AbstractService {
 	
 	protected void mergeKeywordQuery(DataBaseQueryBuilder builder, String keyword, String table, String[] queryKeys) {
 
-		if (keyword != null && queryKeys != null) {
-			DataBaseQueryBuilder keywordQuery = new DataBaseQueryBuilder(table);
+		if (EweblibUtil.isValid(keyword)) {
+			if (keyword != null && queryKeys != null) {
+				DataBaseQueryBuilder keywordQuery = new DataBaseQueryBuilder(table);
 
-			for (String key : queryKeys) {
-				keywordQuery.or(DataBaseQueryOpertion.LIKE, key, keyword);
+				for (String key : queryKeys) {
+					keywordQuery.or(DataBaseQueryOpertion.LIKE, key, keyword);
+				}
+
+				builder.and(keywordQuery);
 			}
-
-			builder.and(keywordQuery);
 		}
 
 	}

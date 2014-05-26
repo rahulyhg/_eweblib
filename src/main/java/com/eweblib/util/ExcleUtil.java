@@ -251,4 +251,44 @@ public class ExcleUtil {
 		return row[keyMap.get(title)].trim();
 	}
 
+	public static String createExcelListFile(List<Map<String, Object>> listMapData, String[] colunmTitleHeaders, String[] colunmHeaders, File f) {
+		if (f.exists()) {
+			f.delete();
+		}
+		f.getParentFile().mkdirs();
+
+		ExcleUtil eu = new ExcleUtil();
+		eu.createFile(f);
+		eu = new ExcleUtil(f);
+
+		int i = 0;
+		try {
+			eu.addRow(0, colunmTitleHeaders, i);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		for (Map<String, Object> map : listMapData) {
+			int length = colunmHeaders.length;
+			String rowsData[] = new String[length];
+
+			int index = 0;
+			for (String key : colunmHeaders) {
+				if (map.get(key) == null) {
+					rowsData[index] = "";
+				} else {
+					rowsData[index] = map.get(key).toString();
+				}
+				index++;
+			}
+			try {
+				eu.addRow(0, rowsData, ++i);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		return f.getAbsolutePath();
+	}
+
 }

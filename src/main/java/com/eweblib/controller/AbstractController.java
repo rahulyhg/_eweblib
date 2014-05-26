@@ -1,13 +1,16 @@
 package com.eweblib.controller;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -449,7 +452,35 @@ public abstract class AbstractController {
 		sb.append("upload/").append(userId).append("/");
 		return sb.toString();
 	}
+	
+	protected String genDownloadRandomRelativePath(String userId) {
+		StringBuffer sb = new StringBuffer("/");
+		sb.append("download/").append(userId).append("/");
+		return sb.toString();
+	}
 
+	
+
+	public void exportFile(HttpServletResponse response, String path) throws FileNotFoundException, IOException {
+	    // path是指欲下载的文件的路径。
+		File file = new File(path);
+		// 取得文件名。
+		String filename = file.getName();
+		InputStream fis = new BufferedInputStream(new FileInputStream(path));
+		byte[] buffer = new byte[fis.available()];
+		fis.read(buffer);
+		fis.close();
+		response.reset();
+		// 设置response的Header
+		response.addHeader("Content-Disposition", "attachment;filename=" + new String(filename.getBytes()));
+		response.addHeader("Content-Length", "" + file.length());
+		OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
+		response.setContentType("application/octet-stream");
+		toClient.write(buffer);
+		toClient.flush();
+		toClient.close();
+    }
+	
 	public enum ResponseStatus {
 
 		SUCCESS {

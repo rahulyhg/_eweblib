@@ -46,7 +46,6 @@ public class ControllerFilter extends AbstractController implements Filter {
 		HttpServletRequest srequest = (HttpServletRequest) request;
 		HttpServletResponse sresponse = (HttpServletResponse) response;
 		EWeblibThreadLocal.set(URL_PATH, srequest.getServletPath());
-		//cookieCheck(srequest, sresponse);
 		if (srequest.getSession().getAttribute(BaseEntity.ID) != null) {
 			EWeblibThreadLocal.set(BaseEntity.ID, srequest.getSession().getAttribute(BaseEntity.ID));
 		}
@@ -58,8 +57,8 @@ public class ControllerFilter extends AbstractController implements Filter {
 //		} else {
 
 			try {
-				loginCheck((HttpServletRequest) request);
-				roleCheck((HttpServletRequest) request);
+				//loginCheck((HttpServletRequest) request);
+				//roleCheck((HttpServletRequest) request);
 				filterChain.doFilter(request, response);
 			} catch (Exception e) {
 

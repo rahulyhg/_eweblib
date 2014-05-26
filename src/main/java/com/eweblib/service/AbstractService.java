@@ -101,5 +101,11 @@ public abstract class AbstractService {
 		}
 
 	}
+	
+	protected String genDownloadRandomRelativePath(String userId) {
+		StringBuffer sb = new StringBuffer("");
+		sb.append("download/").append(userId).append("/");
+		return sb.toString();
+	}
 
 }

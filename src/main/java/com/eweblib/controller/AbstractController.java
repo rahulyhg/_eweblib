@@ -294,7 +294,7 @@ public abstract class AbstractController {
 		try {
 			response.setContentType("text/plain;charset=UTF-8");
 			response.addHeader("Accept-Encoding", "gzip, deflate");
-			response.getWriter().write(new String(txt.getBytes(), "utf-8"));
+			response.getWriter().write(txt);
 		} catch (IOException e) {
 			logger.fatal("Write response data to client failed!", e);
 		}

@@ -14,6 +14,12 @@ public class Pagination {
 
 	}
 
+	public Pagination(int rows, int page) {
+
+		this.rows = rows;
+		this.page = page;
+	}
+
 	public int getRows() {
 		return rows;
 	}

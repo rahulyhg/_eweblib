@@ -113,10 +113,19 @@ public class BaseEntity {
 	public String getTable() {
 		this.caculationColumnList();
 		Table table = this.getClass().getAnnotation(Table.class);
+		String tableName = null;
 		if (table != null)
-			return table.name();
-		else
-			throw new BeanStructureException("undefine POJO @Table, need Tablename(@Table(name))");
+			tableName = table.name();
+
+		if (tableName == null) {
+			Entity entity = this.getClass().getAnnotation(Entity.class);
+			tableName = entity.name();
+		}
+
+		if (tableName == null)
+			throw new BeanStructureException("undefine POJO @Table or @Entity, need Tablename(@Table(name))");
+
+		return tableName;
 	}
 
 	/**

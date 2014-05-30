@@ -277,6 +277,7 @@ public class BaseEntity {
 				sb.append(',');
 			sb.append(column);
 		}
+		
 		return sb.toString();
 	}
 
@@ -300,8 +301,36 @@ public class BaseEntity {
 				sb.append("#{").append(column).append('}');
 			}
 		}
+		
 		return sb.toString();
 	}
+	
+	
+	/**
+	 * 用于获取Insert的字段映射累加
+	 * 
+	 * @return
+	 */
+	public String getBatchInsertColumnsExp() {
+		this.caculationColumnList();
+		StringBuilder sb = new StringBuilder();
+
+		List<String> list = columnMap.get(this.getClass());
+		int i = 0;
+		if (list != null) {
+			for (String column : list) {
+				// if (isNull(column))
+				// continue;
+
+				if (i++ != 0)
+					sb.append(',');
+				sb.append("#{item.").append(column).append('}');
+			}
+		}
+		
+		return sb.toString();
+	}
+
 
 	/**
 	 * 用于获取Update Set的字段累加

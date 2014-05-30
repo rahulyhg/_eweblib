@@ -16,6 +16,9 @@ public interface IQueryDao {
 	 * @return 1 成功， 其它错误
 	 */
 	public BaseEntity insert(BaseEntity entity);
+	
+	
+	public  <T extends BaseEntity> void batchInsert(List<T> entityList);
 
 	/**
 	 * 传人entity对象，数据操作取entity里面的table和id，其它属性和字段忽略

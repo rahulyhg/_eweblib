@@ -1,6 +1,5 @@
 package com.eweblib.dao;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,8 +15,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.eweblib.annotation.column.FloatColumn;
-import com.eweblib.annotation.column.IntegerColumn;
 import com.eweblib.bean.BaseEntity;
 import com.eweblib.bean.EntityResults;
 import com.eweblib.bean.OrderBy;
@@ -47,12 +44,8 @@ public class QueryDaoImpl implements IQueryDao {
 	@Override
 	public BaseEntity insert(BaseEntity entity) {
 
-		if (EweblibUtil.isEmpty(entity.getId())) {
-			entity.setId(UUID.randomUUID().toString());
-		}
-		entity.setCreatedOn(new Date());
-		entity.setUpdatedOn(new Date());
-		entity.setCreatorId(EWeblibThreadLocal.getCurrentUserId());
+		meregeEntityValue(entity);
+
 		int result = dao.insert(entity);
 
 		if (result == 1) {
@@ -60,12 +53,56 @@ public class QueryDaoImpl implements IQueryDao {
 		} else {
 			throw new ResponseException("保存失败");
 		}
-	
+
 		LogJDBCAppender.appendLog(entity, false, entity.getClass());
 		return entity;
 
 	}
-	
+
+	public void meregeEntityValue(BaseEntity entity) {
+		if (EweblibUtil.isEmpty(entity.getId())) {
+			entity.setId(UUID.randomUUID().toString());
+		}
+		entity.setCreatedOn(new Date());
+		entity.setUpdatedOn(new Date());
+		entity.setCreatorId(EWeblibThreadLocal.getCurrentUserId());
+	}
+
+	public <T extends BaseEntity> void batchInsert(List<T> entityList) {
+
+		String insertColumnsExp = null;
+		String insertColumns = null;
+		String table = null;
+		String batchInsertColumnsDefine = null;
+		for (BaseEntity entity : entityList) {
+			meregeEntityValue(entity);
+
+			if (insertColumns == null) {
+				insertColumns = entity.getInsertColumns();
+			}
+
+			if (insertColumnsExp == null) {
+				insertColumnsExp = entity.getInsertColumnsExp();
+			}
+
+			if (table == null) {
+				table = entity.getTable();
+			}
+
+			if (batchInsertColumnsDefine == null) {
+				batchInsertColumnsDefine = entity.getBatchInsertColumnsExp();
+			}
+		}
+
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put("table", table);
+		data.put("insertColumns", insertColumns);
+		data.put("batchInsertColumnsExp", batchInsertColumnsDefine);
+		data.put("insertColumnsExp", insertColumnsExp);
+		data.put("list", entityList);
+
+		dao.batchInsert(data);
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -78,8 +115,8 @@ public class QueryDaoImpl implements IQueryDao {
 		return mergeListValue(classzz, results, builder.getLimitColumnNames());
 
 	}
-	
-	public <T extends BaseEntity> List<T> listBySql(String sql, Class<T> classzz){
+
+	public <T extends BaseEntity> List<T> listBySql(String sql, Class<T> classzz) {
 		List<Map<String, Object>> results = dao.listBySql(sql);
 
 		List<T> entityList = mergeListValue(classzz, results, null);
@@ -88,7 +125,6 @@ public class QueryDaoImpl implements IQueryDao {
 
 	public <T extends BaseEntity> List<T> mergeListValue(Class<T> classzz, List<Map<String, Object>> results, Set<String> keys) {
 		List<T> entityList = new ArrayList<T>();
-
 
 		for (Map<String, Object> result : results) {
 			if (result == null) {
@@ -102,26 +138,25 @@ public class QueryDaoImpl implements IQueryDao {
 	}
 
 	public <T extends BaseEntity> void mergeEntityValue(Class<T> classzz, Set<String> keys, Map<String, Object> result) {
-	    if (keys != null) {
-	    	for (String key : keys) {
+		if (keys != null) {
+			for (String key : keys) {
 
-	    		try {
-	    			String className = classzz.getField(key).getType().getName();
-	    			if (className.equalsIgnoreCase("java.lang.String") || className.equalsIgnoreCase("java.util.Date")) {
-	    				if (result.get(key) == null) {
-	    					result.put(key, "");
-	    				}
-	    			}
-	    		} catch (NoSuchFieldException e) {
-	    			// do nothing
-	    		} catch (SecurityException e) {
-	    			// do nothing
-	    		}
+				try {
+					String className = classzz.getField(key).getType().getName();
+					if (className.equalsIgnoreCase("java.lang.String") || className.equalsIgnoreCase("java.util.Date")) {
+						if (result.get(key) == null) {
+							result.put(key, "");
+						}
+					}
+				} catch (NoSuchFieldException e) {
+					// do nothing
+				} catch (SecurityException e) {
+					// do nothing
+				}
 
-	    	}
-	    }
-    }
-	
+			}
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -138,8 +173,7 @@ public class QueryDaoImpl implements IQueryDao {
 	}
 
 	private <T extends BaseEntity> DataBaseQueryBuilder mergeQueryBuilder(DataBaseQueryBuilder builder, Class<T> classzz) {
-	
-		
+
 		if (builder == null) {
 
 			Table table = classzz.getAnnotation(Table.class);
@@ -150,33 +184,31 @@ public class QueryDaoImpl implements IQueryDao {
 		}
 		if (EWeblibThreadLocal.get(EWebLibConstants.DB_QUERY_ORDER_BY) != null) {
 			OrderBy order = (OrderBy) EWeblibThreadLocal.get(EWebLibConstants.DB_QUERY_ORDER_BY);
-			if(order.getOrder().equalsIgnoreCase("asc")){
+			if (order.getOrder().equalsIgnoreCase("asc")) {
 				builder.orderBy(order.getSort(), true);
-			}else{
+			} else {
 				builder.orderBy(order.getSort(), false);
 			}
 
 		}
 		if (EweblibUtil.isEmpty(builder.getOrderBy())) {
-			builder.orderBy(BaseEntity.CREATED_ON, false);			
+			builder.orderBy(BaseEntity.CREATED_ON, false);
 		}
-	    return builder;
-    }
+		return builder;
+	}
 
 	@Override
 	public void updateById(BaseEntity entity) {
-		
+
 		if (EweblibUtil.isEmpty(entity.getId())) {
 			throw new IllegalArgumentException("Must have id value when call updateById method");
 		}
-		//not need update created on field
+		// not need update created on field
 		entity.setUpdatedOn(new Date());
 		LogJDBCAppender.appendLog(entity, true, entity.getClass());
 		dao.updateById(entity);
-		
-	}
-	
 
+	}
 
 	@Override
 	public void updateByQuery(DataBaseQueryBuilder builder) {
@@ -192,8 +224,8 @@ public class QueryDaoImpl implements IQueryDao {
 	public void deleteAllByTableName(String table) {
 		dao.deleteAllByTableName(table);
 	}
-	
-	public void deleteByQuery(DataBaseQueryBuilder builder){
+
+	public void deleteByQuery(DataBaseQueryBuilder builder) {
 		dao.deleteByQuery(builder);
 	}
 
@@ -202,21 +234,20 @@ public class QueryDaoImpl implements IQueryDao {
 		Map<String, Object> result = dao.findOneByQuery(builder);
 		return EweblibUtil.toEntity(result, classzz);
 	}
-	
+
 	public <T extends BaseEntity> BaseEntity findById(String id, String table, Class<T> classzz) {
 		DataBaseQueryBuilder builder = new DataBaseQueryBuilder(table);
 		builder.and(EWebLibConstants.ID, id);
-		
+
 		Map<String, Object> result = dao.findOneByQuery(builder);
 
 		if (EweblibUtil.isEmpty(result)) {
 			return null;
 		}
-		
+
 		return EweblibUtil.toEntity(result, classzz);
 	}
-	
-	
+
 	public <T extends BaseEntity> BaseEntity findByKeyValue(String key, String value, String table, Class<T> classzz) {
 		DataBaseQueryBuilder builder = new DataBaseQueryBuilder(table);
 		builder.and(key, value);
@@ -253,14 +284,13 @@ public class QueryDaoImpl implements IQueryDao {
 		}
 		return false;
 	}
-	
-	public boolean exists(String key, String value, String table){
+
+	public boolean exists(String key, String value, String table) {
 		DataBaseQueryBuilder builder = new DataBaseQueryBuilder(table);
 		builder.and(key, value);
 		return this.exists(builder);
 	}
 
-	
 	public <T extends BaseEntity> List<T> distinctQuery(DataBaseQueryBuilder builder, Class<T> classzz) {
 		return listByQuery(builder, classzz);
 	}

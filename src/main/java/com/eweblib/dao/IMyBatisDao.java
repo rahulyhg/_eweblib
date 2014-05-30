@@ -10,6 +10,8 @@ public interface IMyBatisDao {
 
 	public int insert(BaseEntity entity);
 
+	public <T extends BaseEntity> int batchInsert(Map<String, Object> entityList);
+	
 	public List<Map<String, Object>> listByQuery(DataBaseQueryBuilder builder);
 	
 	public List<Map<String, Object>> listByQueryWithPagination(DataBaseQueryBuilder builder);

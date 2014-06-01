@@ -21,7 +21,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
-public class ExcleUtil {
+public class ExcelUtil {
 
 	Workbook wb = null;
 	InputStream fis = null;
@@ -30,10 +30,10 @@ public class ExcleUtil {
 	private File file = null;
 	List<String[]> dataList = new ArrayList<String[]>(100);
 
-	public ExcleUtil() {
+	public ExcelUtil() {
 	}
 
-	public ExcleUtil(InputStream is) {
+	public ExcelUtil(InputStream is) {
 		try {
 			wb = WorkbookFactory.create(is);
 		} catch (FileNotFoundException e) {
@@ -45,7 +45,7 @@ public class ExcleUtil {
 		}
 	}
 
-	public ExcleUtil(File file) {
+	public ExcelUtil(File file) {
 		try {
 			this.file = file;
 			fis = new FileInputStream(file);
@@ -59,7 +59,7 @@ public class ExcleUtil {
 		}
 	}
 
-	public ExcleUtil(String path) {
+	public ExcelUtil(String path) {
 		try {
 			this.path = path;
 			fis = new FileInputStream(path);
@@ -257,9 +257,9 @@ public class ExcleUtil {
 		}
 		f.getParentFile().mkdirs();
 
-		ExcleUtil eu = new ExcleUtil();
+		ExcelUtil eu = new ExcelUtil();
 		eu.createFile(f);
-		eu = new ExcleUtil(f);
+		eu = new ExcelUtil(f);
 
 		int i = 0;
 		try {

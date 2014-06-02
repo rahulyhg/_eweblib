@@ -15,7 +15,7 @@ public class ConfigManager {
 	private static Properties properties = new Properties();
 
 	public static IQueryDao dao;
-	
+
 	public static void setConfiguraion(String configFiles, IQueryDao dao) {
 		ConfigManager.dao = dao;
 		if (properties.isEmpty()) {
@@ -32,20 +32,28 @@ public class ConfigManager {
 
 			}
 		}
-		
-	}
 
+	}
 
 	public static String getProperty(String key) {
 		return properties.getProperty(key);
 	}
 
-	
-
 	public static void setProperties(String key, String value) {
 		properties.setProperty(key, value);
 	}
-	
+
+	public static void setProperties(String key, Object value) {
+		properties.put(key, value);
+
+	}
+
+	public static Object getPropertyObject(String key) {
+
+		return properties.get(key);
+
+	}
+
 	public static void remove(String key) {
 		properties.remove(key);
 	}

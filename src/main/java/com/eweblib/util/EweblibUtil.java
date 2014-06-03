@@ -13,6 +13,7 @@ import java.util.Set;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import com.eweblib.annotation.column.DoubleColumn;
 import com.eweblib.annotation.column.FloatColumn;
 import com.eweblib.annotation.column.IntegerColumn;
 import com.eweblib.bean.BaseEntity;
@@ -294,6 +295,10 @@ public class EweblibUtil {
 			} else if (field.isAnnotationPresent(FloatColumn.class)) {
 				if (params.get(field.getName()) != null) {
 					params.put(field.getName(), getFloat(params.get(field.getName()), 0.0f));
+				}
+			} else if (field.isAnnotationPresent(DoubleColumn.class)) {
+				if (params.get(field.getName()) != null) {
+					params.put(field.getName(), getDouble(params.get(field.getName()), 0d));
 				}
 			}
 		}

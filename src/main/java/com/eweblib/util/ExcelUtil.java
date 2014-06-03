@@ -21,6 +21,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
+import com.eweblib.bean.BaseEntity;
+
 public class ExcelUtil {
 
 	Workbook wb = null;
@@ -291,4 +293,17 @@ public class ExcelUtil {
 		return f.getAbsolutePath();
 	}
 
+	
+	public static <T extends BaseEntity> String createExcelListFileByEntity(List<T> list, String[] colunmTitleHeaders, String[] colunmHeaders, File f) {
+		
+		List<Map<String, Object>> listMapData  =new ArrayList<Map<String, Object>>();
+		if(list!=null){
+			for(T entity: list){
+				listMapData.add(entity.toMap());
+			}
+		}
+		
+		return createExcelListFile(listMapData, colunmTitleHeaders, colunmHeaders, f);
+		
+	}
 }

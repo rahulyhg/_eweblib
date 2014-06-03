@@ -17,9 +17,12 @@ import org.springframework.stereotype.Repository;
 
 import com.eweblib.bean.BaseEntity;
 import com.eweblib.bean.EntityResults;
+import com.eweblib.bean.Log;
+import com.eweblib.bean.LogItem;
 import com.eweblib.bean.OrderBy;
 import com.eweblib.bean.Pagination;
 import com.eweblib.constants.EWebLibConstants;
+import com.eweblib.controller.interceptor.ControllerFilter;
 import com.eweblib.dbhelper.DataBaseQueryBuilder;
 import com.eweblib.exception.ResponseException;
 import com.eweblib.log.LogJDBCAppender;
@@ -54,7 +57,11 @@ public class QueryDaoImpl implements IQueryDao {
 			throw new ResponseException("保存失败");
 		}
 
-		LogJDBCAppender.appendLog(entity, false, entity.getClass());
+		try {
+			createAddLog(null, entity);
+		} catch (Exception e) {
+			logger.error("create log failed for insert", e);
+		}
 		return entity;
 
 	}
@@ -205,7 +212,12 @@ public class QueryDaoImpl implements IQueryDao {
 		}
 		// not need update created on field
 		entity.setUpdatedOn(new Date());
-		LogJDBCAppender.appendLog(entity, true, entity.getClass());
+
+		try {
+			createUpdateLog(null, entity, findById(entity.getId(), entity.getTable(), entity.getClass()));
+		} catch (Exception e) {
+			logger.error("create log failed for update", e);
+		}
 		dao.updateById(entity);
 
 	}
@@ -293,6 +305,93 @@ public class QueryDaoImpl implements IQueryDao {
 
 	public <T extends BaseEntity> List<T> distinctQuery(DataBaseQueryBuilder builder, Class<T> classzz) {
 		return listByQuery(builder, classzz);
+	}
+
+	public void createUpdateLog(String userId, BaseEntity entity, BaseEntity old) {
+
+		if (EWeblibThreadLocal.get(ControllerFilter.URL_PATH) != null && !(entity instanceof Log) && !(entity instanceof LogItem)) {
+			if (EweblibUtil.isEmpty(userId)) {
+				userId = EWeblibThreadLocal.getCurrentUserId();
+			}
+
+			String path = EWeblibThreadLocal.get(ControllerFilter.URL_PATH).toString();
+
+			Log log = new Log();
+			log.setUserId(userId);
+			log.setUrlPath(path);
+			log.setLogType("update");
+			log.setTableName(entity.getTable());
+			log.setDataId(old.getId());
+
+			List<LogItem> list = new ArrayList<LogItem>();
+
+			Map<String, Object> map = entity.toMap();
+			map.remove("updatedOn");
+
+			Map<String, Object> oldMap = old.toMap();
+
+			for (String key : map.keySet()) {
+
+				if (entity.containsDbColumn(key)) {
+
+					Object ovalue = oldMap.get(key);
+					if (ovalue == null) {
+						ovalue = "";
+					}
+					if (ovalue == null || !ovalue.toString().equalsIgnoreCase(map.get(key).toString())) {
+						LogItem item = new LogItem();
+						item.setField(key);
+						item.setOldValue(ovalue.toString());
+						item.setNewValue(map.get(key).toString());
+						item.setTableName(log.getTableName());
+						list.add(item);
+					}
+
+				}
+			}
+
+			if (list.size() > 0) {
+				insert(log);
+				for (LogItem item : list) {
+					item.setLogId(log.getId());
+					insert(item);
+				}
+			}
+		}
+
+	}
+
+	public void createAddLog(String userId, BaseEntity entity) {
+		if (EWeblibThreadLocal.get(ControllerFilter.URL_PATH) != null && !(entity instanceof Log) && !(entity instanceof LogItem)) {
+			if (EweblibUtil.isEmpty(userId)) {
+				userId = EWeblibThreadLocal.getCurrentUserId();
+			}
+
+			Log log = new Log();
+			log.setUserId(userId);
+			log.setUrlPath(EWeblibThreadLocal.get(ControllerFilter.URL_PATH).toString());
+			log.setLogType("add");
+			log.setTableName(entity.getTable());
+			log.setDataId(entity.getId());
+			insert(log);
+
+			Map<String, Object> map = entity.toMap();
+			map.remove("updatedOn");
+			map.remove("createdOn");
+			for (String key : map.keySet()) {
+
+				if (entity.containsDbColumn(key)) {
+					LogItem item = new LogItem();
+					item.setLogId(log.getId());
+					item.setField(key);
+					item.setOldValue(null);
+					item.setNewValue(map.get(key).toString());
+					item.setTableName(log.getTableName());
+					insert(item);
+				}
+			}
+		}
+
 	}
 
 }

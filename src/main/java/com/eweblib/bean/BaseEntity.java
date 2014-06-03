@@ -225,6 +225,11 @@ public class BaseEntity {
 		return columnMap.get(this.getClass());
 
 	}
+	
+	public boolean containsDbColumn(String field) {
+
+		return this.getColumnList().contains(field);
+	}
 
 	/**
 	 * 获取用于WHERE的 有值字段表

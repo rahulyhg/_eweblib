@@ -33,6 +33,21 @@ public class EweblibUtil {
 
 	private static Logger logger = LogManager.getLogger(EweblibUtil.class);
 
+	public static String concat(String symbole, String[] concats) {
+
+		StringBuffer sb = new StringBuffer();
+
+		int i = 0;
+		for (String concat : concats) {
+			if (i == concats.length - 1) {
+				sb.append(concat);
+			} else {
+				sb.append(concat).append(symbole);
+			}
+		}
+		return sb.toString();
+	}
+
 	public static boolean isEmpty(Object param) {
 
 		if (param == null) {

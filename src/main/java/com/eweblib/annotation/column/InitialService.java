@@ -92,7 +92,6 @@ public class InitialService {
 		scanner.addIncludeFilter(new AnnotationTypeFilter(Permission.class));
 		List<String> roleIds = new ArrayList<String>();
 
-		// FIXME: 删除不存在的role，但是也需要删除group， user中相关联的数据
 		for (BeanDefinition bd : scanner.findCandidateComponents(packageName)) {
 			Class<?> classzz = Class.forName(bd.getBeanClassName());
 			Method metods[] = classzz.getMethods();

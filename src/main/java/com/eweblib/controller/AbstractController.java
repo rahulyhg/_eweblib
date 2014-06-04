@@ -383,8 +383,9 @@ public abstract class AbstractController {
 			if (suffixes != null) {
 				for (String suffix : suffixes) {
 					if (!uploadFileName.toLowerCase().endsWith(suffix)) {
-						//FIXME to string
-						throw new ResponseException("请上传支持的文件格式：" + suffixes);
+						// FIXME to string
+
+						throw new ResponseException("请上传支持的文件格式：" + EweblibUtil.concat(",", suffixes));
 					}
 				}
 			}

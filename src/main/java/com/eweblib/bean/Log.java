@@ -23,7 +23,7 @@ public class Log extends BaseEntity {
 
 	public static final String MESSAGE = "message";
 
-	public static final String TABLE_NAME = "Log";
+	public static final String TABLE_NAME = "AmsLog";
 
 	@Column(name = USER_ID)
 	@Expose

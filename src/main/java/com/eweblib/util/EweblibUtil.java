@@ -17,6 +17,7 @@ import com.eweblib.annotation.column.DoubleColumn;
 import com.eweblib.annotation.column.FloatColumn;
 import com.eweblib.annotation.column.IntegerColumn;
 import com.eweblib.bean.BaseEntity;
+import com.eweblib.cfg.ConfigManager;
 import com.eweblib.exception.ResponseException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -384,6 +385,13 @@ public class EweblibUtil {
 		}
 		return false;
 	}
+	
+	
+	public static  String getUrl(String path) {
+
+		return "http://".concat(ConfigManager.getProperty("WEI_XIN_HOST").toString()).concat("/").concat(path);
+	}
+
 
 	/**
 	 * @param args

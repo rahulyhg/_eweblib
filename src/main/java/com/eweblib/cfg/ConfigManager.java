@@ -18,7 +18,6 @@ public class ConfigManager {
 
 	public static void setConfiguraion(String configFiles, IQueryDao dao) {
 		ConfigManager.dao = dao;
-		if (properties.isEmpty()) {
 
 			String files[] = configFiles.split(",");
 
@@ -31,7 +30,7 @@ public class ConfigManager {
 				}
 
 			}
-		}
+	
 
 	}
 

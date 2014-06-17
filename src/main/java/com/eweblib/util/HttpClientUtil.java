@@ -61,7 +61,7 @@ public class HttpClientUtil {
 			response = httpClient.execute(httpget);
 			HttpEntity entity = response.getEntity();
 			if (entity != null) {
-				return EntityUtils.toString(entity);
+				return EntityUtils.toString(entity,  "UTF-8");
 			}
 
 		} catch (ClientProtocolException e) {
@@ -97,7 +97,7 @@ public class HttpClientUtil {
 			response = httpClient.execute(method);
 			HttpEntity entity = response.getEntity();
 			if (entity != null) {
-				return EntityUtils.toString(entity);
+				return EntityUtils.toString(entity,  "UTF-8");
 			}
 
 		} catch (ClientProtocolException e) {

@@ -83,7 +83,10 @@ public class HttpClientUtil {
 
 		Set<String> keys = parameters.keySet();
 		for (String key : keys) {
-			nameValuePairs.add(new BasicNameValuePair(key, parameters.get(key).toString()));
+
+			if (parameters.get(key) != null) {
+				nameValuePairs.add(new BasicNameValuePair(key, parameters.get(key).toString()));
+			}
 
 		}
 		UrlEncodedFormEntity rentity = null;

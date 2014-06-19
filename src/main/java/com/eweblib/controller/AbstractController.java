@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -61,6 +63,15 @@ public abstract class AbstractController {
 		HashMap<String, Object> parametersMap = new HashMap<String, Object>();
 
 		int filterLength = 0;
+		
+		Enumeration<?> headerNames = request.getHeaderNames();
+		
+		while (headerNames.hasMoreElements()) {
+
+			String pName = headerNames.nextElement().toString();
+			parametersMap.put(pName, request.getHeader(pName));
+
+		}
 
 		Enumeration<?> parameterNames = request.getParameterNames();
 		while (parameterNames.hasMoreElements()) {
@@ -358,7 +369,6 @@ public abstract class AbstractController {
 	}
 
 	protected String uploadFile(HttpServletRequest request, String relativeFilePath, String parameterName, int size, String[] suffixes) {
-		String webPath = request.getSession().getServletContext().getRealPath("/");
 
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 		MultipartFile uploadFile = multipartRequest.getFile(parameterName);
@@ -389,6 +399,8 @@ public abstract class AbstractController {
 					}
 				}
 			}
+			String fileName = uploadFile.getOriginalFilename().trim().replaceAll(" ", "");
+
 
 			InputStream inputStream = null;
 			try {
@@ -397,19 +409,25 @@ public abstract class AbstractController {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("inputStream", inputStream);
-			map.put("webPath", webPath);
-			String fileName = uploadFile.getOriginalFilename().trim().replaceAll(" ", "");
-			map.put("fileName", fileName);
-
-			return createFile(map, relativeFilePath + fileName);
+			
+			return uploadFileByInputStream(request, relativeFilePath, fileName, inputStream);
 
 		}
 
 		return null;
 
 	}
+
+	public String uploadFileByInputStream(HttpServletRequest request, String relativeFilePath, String fileName, InputStream inputStream) {
+	    String webPath = request.getSession().getServletContext().getRealPath("/");
+
+	    Map<String, Object> map = new HashMap<String, Object>();
+	    map.put("inputStream", inputStream);
+	    map.put("webPath", webPath);
+	    map.put("fileName", fileName);
+
+	    return createFile(map, relativeFilePath + fileName);
+    }
 
 	public String createFile(Map<String, Object> params, String relativeFilePath) {
 		InputStream is = (InputStream) params.get("inputStream");
@@ -482,6 +500,39 @@ public abstract class AbstractController {
 		toClient.flush();
 		toClient.close();
     }
+	
+	protected void addCookie(String key, String value, HttpServletResponse response) {
+
+		if (value != null) {
+			Cookie cookie = null;
+			try {
+				cookie = new Cookie(key, URLEncoder.encode(value, "UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			cookie.setMaxAge(3600);
+
+			cookie.setPath("/");
+			response.addCookie(cookie);
+		}
+
+	}
+	
+	
+	protected String getCookie(String key, HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();// 这样便可以获取一个cookie数组
+
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+
+				if (cookie.getName().equalsIgnoreCase(key)) {
+					return cookie.getValue();
+				}
+			}
+		}
+		return null;
+	}
 	
 	public enum ResponseStatus {
 

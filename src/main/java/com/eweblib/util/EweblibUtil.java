@@ -225,7 +225,7 @@ public class EweblibUtil {
 	static JsonSerializer<Date> ser = new JsonSerializer<Date>() {
 		@Override
 		public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
-			return src == null ? null : new JsonPrimitive(DateUtil.getDateStringByLong(src.getTime()));
+			return src == null ? new JsonPrimitive("") : new JsonPrimitive(DateUtil.getDateStringByLong(src.getTime()));
 		}
 	};
 

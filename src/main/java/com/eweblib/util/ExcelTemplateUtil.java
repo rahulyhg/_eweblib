@@ -1,4 +1,5 @@
 package com.eweblib.util;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -6,8 +7,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -71,7 +76,9 @@ public class ExcelTemplateUtil {
 				System.out.println("模板文件:" + srcXlsPath + "不存在!");
 				return;
 			}
-			fs = new POIFSFileSystem(new FileInputStream(fi));
+			FileInputStream fileInputStream = new FileInputStream(fi);
+			fs = new POIFSFileSystem(fileInputStream);
+			fileInputStream.close();
 			wb = new HSSFWorkbook(fs);
 			sheet = wb.getSheet(sheetName);
 		} catch (FileNotFoundException e) {
@@ -92,8 +99,94 @@ public class ExcelTemplateUtil {
 	 *            --字符串类型的数据
 	 */
 	public void setCellStrValue(int rowIndex, int cellnum, String value) {
-		HSSFCell cell = sheet.getRow(rowIndex).getCell(cellnum);
+		HSSFRow toRow = sheet.getRow(rowIndex);
+		HSSFCell cell = toRow.getCell(cellnum);
 		cell.setCellValue(value);
+
+		//
+		// if (rowIndex > 28 && rowIndex%2 == 0) {
+		//
+		// HSSFRow fromRow1 = sheet.getRow(7);
+		// HSSFRow fromRow2 = sheet.getRow(8);
+		// HSSFRow toRow1 = sheet.getRow(rowIndex + 1);
+		// for (Iterator cellIt = fromRow1.cellIterator(); cellIt.hasNext();) {
+		// HSSFCell tmpCell = (HSSFCell) cellIt.next();
+		// HSSFCell newCell = toRow1.createCell(tmpCell.getCellNum());
+		// copyCell(wb, tmpCell, newCell, false);
+		// }
+		//
+		// HSSFRow toRow2= sheet.getRow(rowIndex + 2);
+		// for (Iterator cellIt = fromRow2.cellIterator(); cellIt.hasNext();) {
+		// HSSFCell tmpCell = (HSSFCell) cellIt.next();
+		// HSSFCell newCell = toRow1.createCell(tmpCell.getCellNum());
+		// copyCell(wb, tmpCell, newCell, false);
+		// }
+		//
+		// }
+
+	}
+
+	public static void copyCellStyle(HSSFCellStyle fromStyle, HSSFCellStyle toStyle) {
+		toStyle.setAlignment(fromStyle.getAlignment());
+		// 边框和边框颜色
+		toStyle.setBorderBottom(fromStyle.getBorderBottom());
+		toStyle.setBorderLeft(fromStyle.getBorderLeft());
+		toStyle.setBorderRight(fromStyle.getBorderRight());
+		toStyle.setBorderTop(fromStyle.getBorderTop());
+		toStyle.setTopBorderColor(fromStyle.getTopBorderColor());
+		toStyle.setBottomBorderColor(fromStyle.getBottomBorderColor());
+		toStyle.setRightBorderColor(fromStyle.getRightBorderColor());
+		toStyle.setLeftBorderColor(fromStyle.getLeftBorderColor());
+
+		// 背景和前景
+		toStyle.setFillBackgroundColor(fromStyle.getFillBackgroundColor());
+		toStyle.setFillForegroundColor(fromStyle.getFillForegroundColor());
+
+		toStyle.setDataFormat(fromStyle.getDataFormat());
+		toStyle.setFillPattern(fromStyle.getFillPattern());
+		// toStyle.setFont(fromStyle.getFont(null));
+		toStyle.setHidden(fromStyle.getHidden());
+		toStyle.setIndention(fromStyle.getIndention());// 首行缩进
+		toStyle.setLocked(fromStyle.getLocked());
+		toStyle.setRotation(fromStyle.getRotation());// 旋转
+		toStyle.setVerticalAlignment(fromStyle.getVerticalAlignment());
+		toStyle.setWrapText(fromStyle.getWrapText());
+
+	}
+
+	public static void copyCell(HSSFWorkbook wb, HSSFCell srcCell, HSSFCell distCell, boolean copyValueFlag) {
+		HSSFCellStyle newstyle = wb.createCellStyle();
+		copyCellStyle(srcCell.getCellStyle(), newstyle);
+		// distCell.setEncoding(srcCell.getc.getEncoding());
+		// 样式
+		distCell.setCellStyle(newstyle);
+		// 评论
+		if (srcCell.getCellComment() != null) {
+			distCell.setCellComment(srcCell.getCellComment());
+		}
+		// 不同数据类型处理
+		int srcCellType = srcCell.getCellType();
+		distCell.setCellType(srcCellType);
+		if (copyValueFlag) {
+			if (srcCellType == HSSFCell.CELL_TYPE_NUMERIC) {
+				if (HSSFDateUtil.isCellDateFormatted(srcCell)) {
+					distCell.setCellValue(srcCell.getDateCellValue());
+				} else {
+					distCell.setCellValue(srcCell.getNumericCellValue());
+				}
+			} else if (srcCellType == HSSFCell.CELL_TYPE_STRING) {
+				distCell.setCellValue(srcCell.getRichStringCellValue());
+			} else if (srcCellType == HSSFCell.CELL_TYPE_BLANK) {
+				// nothing21
+			} else if (srcCellType == HSSFCell.CELL_TYPE_BOOLEAN) {
+				distCell.setCellValue(srcCell.getBooleanCellValue());
+			} else if (srcCellType == HSSFCell.CELL_TYPE_ERROR) {
+				distCell.setCellErrorValue(srcCell.getErrorCellValue());
+			} else if (srcCellType == HSSFCell.CELL_TYPE_FORMULA) {
+				distCell.setCellFormula(srcCell.getCellFormula());
+			} else { // nothing29
+			}
+		}
 	}
 
 	/**
@@ -186,4 +279,26 @@ public class ExcelTemplateUtil {
 			e.printStackTrace();
 		}
 	}
+
+	public void deletRow(int start, int i) {
+
+		int delstart = start;
+		while (start < i) {
+			HSSFRow row = sheet.getRow(start);
+			sheet.removeRow(row);
+			start = start + 1;
+		}
+
+		i = sheet.getLastRowNum();
+		HSSFRow tempRow;
+		while (i > 0) {
+			i--;
+			tempRow = sheet.getRow(i);
+			if (tempRow == null) {
+				sheet.shiftRows(i + 1, sheet.getLastRowNum(), -1);
+			}
+		}
+
+	}
+
 }

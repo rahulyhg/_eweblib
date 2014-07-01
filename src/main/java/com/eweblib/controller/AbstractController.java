@@ -46,7 +46,6 @@ public abstract class AbstractController {
 	protected <T extends BaseEntity> BaseEntity parserJsonParameters(HttpServletRequest request, boolean emptyParameter, Class<T> claszz) {
 		HashMap<String, Object> parametersMap = parserJsonParameters(request, emptyParameter);
 		EweblibUtil.updateJsonFieldWithType(parametersMap, claszz);
-		logger.debug(String.format("--------------Client post parameters for path [%s] is [%s]", request.getServletPath(), parametersMap));
 
 		return EweblibUtil.toEntity(parametersMap, claszz);
 
@@ -149,6 +148,8 @@ public abstract class AbstractController {
 		if (EweblibUtil.isValid(postStr)) {
 			parametersMap.put("body", postStr);
 		}
+
+		logger.debug(String.format("--------------Client post parameters for path [%s] is [%s]", request.getServletPath(), parametersMap));
 
 		return parametersMap;
 	}
@@ -278,7 +279,7 @@ public abstract class AbstractController {
 	 *            0:FAIL, 1: SUCCESS
 	 * @return
 	 */
-	private void responseMsg(Map<String, Object> data, ResponseStatus status, HttpServletRequest request, HttpServletResponse response, String msgKey) {
+	protected void responseMsg(Map<String, Object> data, ResponseStatus status, HttpServletRequest request, HttpServletResponse response, String msgKey) {
 		if (data == null) {
 			data = new HashMap<String, Object>();
 		}

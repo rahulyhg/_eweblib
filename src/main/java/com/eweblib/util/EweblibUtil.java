@@ -13,6 +13,7 @@ import java.util.Set;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import com.eweblib.annotation.column.BooleanColumn;
 import com.eweblib.annotation.column.DoubleColumn;
 import com.eweblib.annotation.column.FloatColumn;
 import com.eweblib.annotation.column.IntegerColumn;
@@ -237,6 +238,8 @@ public class EweblibUtil {
 	};
 
 	public static <T extends BaseEntity> BaseEntity toEntity(Map<String, Object> data, Class<T> classzz) {
+		EweblibUtil.updateJsonFieldWithType(data, classzz);
+
 		String json = new GsonBuilder().registerTypeAdapter(Date.class, ser).setDateFormat("yyyy-MM-dd HH:mm:ss").create().toJson(data);
 		return new GsonBuilder().registerTypeAdapter(Date.class, deser).create().fromJson(json, classzz);
 
@@ -315,6 +318,16 @@ public class EweblibUtil {
 			} else if (field.isAnnotationPresent(DoubleColumn.class)) {
 				if (params.get(field.getName()) != null) {
 					params.put(field.getName(), getDouble(params.get(field.getName()), 0d));
+				}
+			}else if (field.isAnnotationPresent(BooleanColumn.class)) {
+				if (params.get(field.getName()) != null) {
+					String text = params.get(field.getName()).toString();
+					if(text.equalsIgnoreCase("1") || text.equalsIgnoreCase("true")){
+						params.put(field.getName(), true);
+					}else{
+						params.put(field.getName(), false);
+					}
+					
 				}
 			}
 		}

@@ -45,7 +45,6 @@ public abstract class AbstractController {
 
 	protected <T extends BaseEntity> BaseEntity parserJsonParameters(HttpServletRequest request, boolean emptyParameter, Class<T> claszz) {
 		HashMap<String, Object> parametersMap = parserJsonParameters(request, emptyParameter);
-		EweblibUtil.updateJsonFieldWithType(parametersMap, claszz);
 
 		return EweblibUtil.toEntity(parametersMap, claszz);
 

@@ -291,7 +291,7 @@ public class ExcelTemplateUtil {
 
 		i = sheet.getLastRowNum();
 		HSSFRow tempRow;
-		while (i > 0) {
+		while (i > 30) {
 			i--;
 			tempRow = sheet.getRow(i);
 			if (tempRow == null) {

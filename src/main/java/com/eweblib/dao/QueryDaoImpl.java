@@ -244,6 +244,9 @@ public class QueryDaoImpl implements IQueryDao {
 	@Override
 	public <T extends BaseEntity> BaseEntity findOneByQuery(DataBaseQueryBuilder builder, Class<T> classzz) {
 		Map<String, Object> result = dao.findOneByQuery(builder);
+		
+		mergeEntityValue(classzz, builder.getLimitColumnNames(), result);
+		
 		return EweblibUtil.toEntity(result, classzz);
 	}
 

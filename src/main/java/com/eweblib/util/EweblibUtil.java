@@ -17,6 +17,7 @@ import com.eweblib.annotation.column.BooleanColumn;
 import com.eweblib.annotation.column.DoubleColumn;
 import com.eweblib.annotation.column.FloatColumn;
 import com.eweblib.annotation.column.IntegerColumn;
+import com.eweblib.annotation.column.ObjectColumn;
 import com.eweblib.bean.BaseEntity;
 import com.eweblib.cfg.ConfigManager;
 import com.eweblib.exception.ResponseException;
@@ -246,16 +247,22 @@ public class EweblibUtil {
 	}
 
 	public static <T extends BaseEntity> BaseEntity toEntity(String data, Class<T> classzz) {
-		return new GsonBuilder().registerTypeAdapter(Date.class, deser).create().fromJson(data, classzz);
+
+		return toEntity(new GsonBuilder().registerTypeAdapter(Date.class, deser).create().fromJson(data, Map.class), classzz);
 
 	}
 
-	public static <T extends BaseEntity> List<T> toJsonList(Map<String, Object> params, Class<T> clz) {
+	public static <T extends BaseEntity> List<T> toJsonList(Map<String, Object> params, Class<T> clz, String key) {
 		List<T> results = new ArrayList<T>();
 
-		if (!EweblibUtil.isEmpty(params.get("rows"))) {
+		if (!EweblibUtil.isEmpty(params.get(key))) {
+			List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+			if (params.get(key) instanceof String) {
 
-			List<Map<String, Object>> list = (List<Map<String, Object>>) new Gson().fromJson((String) params.get("rows"), List.class);
+				list = (List<Map<String, Object>>) new Gson().fromJson((String) params.get(key), List.class);
+			} else if (params.get(key) instanceof List) {
+				list = (List<Map<String, Object>>) params.get(key);
+			}
 
 			for (Map<String, Object> obj : list) {
 				updateJsonFieldWithType(obj, clz);
@@ -264,6 +271,12 @@ public class EweblibUtil {
 
 		}
 		return results;
+
+	}
+
+	public static <T extends BaseEntity> List<T> toJsonList(Map<String, Object> params, Class<T> clz) {
+
+		return toJsonList(params, clz, "rows");
 
 	}
 
@@ -304,7 +317,7 @@ public class EweblibUtil {
 
 	}
 
-	public static <T extends BaseEntity> void updateJsonFieldWithType(Map<String, Object> params, Class<T> clz) {
+	public static <T extends BaseEntity> void updateJsonFieldWithType(Map<String, Object> params, Class<?> clz) {
 		Field[] fields = clz.getFields();
 		for (Field field : fields) {
 			if (field.isAnnotationPresent(IntegerColumn.class)) {
@@ -319,17 +332,51 @@ public class EweblibUtil {
 				if (params.get(field.getName()) != null) {
 					params.put(field.getName(), getDouble(params.get(field.getName()), 0d));
 				}
-			}else if (field.isAnnotationPresent(BooleanColumn.class)) {
+			} else if (field.isAnnotationPresent(BooleanColumn.class)) {
 				if (params.get(field.getName()) != null) {
 					String text = params.get(field.getName()).toString();
-					if(text.equalsIgnoreCase("1") || text.equalsIgnoreCase("true")){
+					if (text.equalsIgnoreCase("1") || text.equalsIgnoreCase("true")) {
 						params.put(field.getName(), true);
-					}else{
+					} else {
 						params.put(field.getName(), false);
 					}
-					
+
+				}
+			} else if (field.isAnnotationPresent(ObjectColumn.class)) {
+				Object v = params.get(field.getName());
+
+				if (EweblibUtil.isEmpty(v)) {
+					params.remove(field.getName());
+				} else {
+					if (v instanceof Map) {
+
+						try {
+							updateJsonFieldWithType((Map<String, Object>) v, Class.forName(field.getGenericType().toString().replaceAll("class", "").trim()));
+						} catch (ClassNotFoundException e) {
+							// do nothing
+						}
+					} else if (v instanceof List) {
+						List<Map<String, Object>> list = (List<Map<String, Object>>) v;
+						String className = field.getGenericType().toString().replaceAll("class", "").trim();
+						className = className.replaceAll("java.util.List", "");
+
+						className = className.replaceAll("<", "");
+						className = className.replaceAll(">", "");
+						for (Map<String, Object> data : list) {
+
+							try {
+								updateJsonFieldWithType(data, Class.forName(className.trim()));
+							} catch (ClassNotFoundException e) {
+								e.printStackTrace();
+								// do nothing
+							}
+						}
+
+					}
+
 				}
 			}
+
 		}
 
 	}
@@ -398,13 +445,11 @@ public class EweblibUtil {
 		}
 		return false;
 	}
-	
-	
-	public static  String getUrl(String path) {
+
+	public static String getUrl(String path) {
 
 		return "http://".concat(ConfigManager.getProperty("WEI_XIN_HOST").toString()).concat("/").concat(path);
 	}
-
 
 	/**
 	 * @param args

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.eweblib.bean.Pagination;
-import com.eweblib.util.EWeblibThreadLocal;
 import com.eweblib.util.EweblibUtil;
 
 public class DataBaseQueryBuilder {
@@ -154,7 +153,7 @@ public class DataBaseQueryBuilder {
 		return this;
 	}
 
-	public DataBaseQueryBuilder join(String leftTable, String rightTable, String leftKey, String rightKey) {
+	public DataBaseQueryBuilder leftJoin(String leftTable, String rightTable, String leftKey, String rightKey) {
 
 		if (this.queryStr != null) {
 			throw new RuntimeException("Must set join table first before set query operation");

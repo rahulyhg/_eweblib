@@ -391,12 +391,18 @@ public abstract class AbstractController {
 			}
 
 			if (suffixes != null) {
+				boolean fileCheck = false;
 				for (String suffix : suffixes) {
-					if (!uploadFileName.toLowerCase().endsWith(suffix)) {
+					if (uploadFileName.toLowerCase().endsWith(suffix)) {
 						// FIXME to string
 
-						throw new ResponseException("请上传支持的文件格式：" + EweblibUtil.concat(",", suffixes));
+						fileCheck = true;
+						break;
 					}
+				}
+
+				if (!fileCheck) {
+					throw new ResponseException("请上传支持的文件格式：" + EweblibUtil.concat(",", suffixes));
 				}
 			}
 			String fileName = uploadFile.getOriginalFilename().trim().replaceAll(" ", "");

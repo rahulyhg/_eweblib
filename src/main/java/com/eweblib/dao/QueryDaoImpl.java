@@ -151,7 +151,7 @@ public class QueryDaoImpl implements IQueryDao {
 				try {
 					String className = classzz.getField(key).getType().getName();
 					if (className.equalsIgnoreCase("java.lang.String") || className.equalsIgnoreCase("java.util.Date")) {
-						if (result.get(key) == null) {
+						if (result!=null && result.get(key) == null) {
 							result.put(key, "");
 						}
 					}

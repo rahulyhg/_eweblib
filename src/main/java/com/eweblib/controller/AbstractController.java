@@ -507,7 +507,7 @@ public abstract class AbstractController {
 		toClient.close();
     }
 	
-	protected void addCookie(String key, String value, HttpServletResponse response) {
+	protected void addCookie(String key, String value, HttpServletResponse response, int age) {
 
 		if (value != null) {
 			Cookie cookie = null;
@@ -517,7 +517,7 @@ public abstract class AbstractController {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			cookie.setMaxAge(3600);
+			cookie.setMaxAge(age);
 
 			cookie.setPath("/");
 			response.addCookie(cookie);

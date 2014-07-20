@@ -243,7 +243,7 @@ public abstract class AbstractController {
 //		}
 //	}
 
-	protected void responseWithKeyValue(String key, String value, HttpServletRequest request, HttpServletResponse response) {
+	protected void responseWithKeyValue(String key, Object value, HttpServletRequest request, HttpServletResponse response) {
 		if (key == null) {
 			responseWithData(null, request, response);
 		} else {

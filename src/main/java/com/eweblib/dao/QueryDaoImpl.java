@@ -199,7 +199,7 @@ public class QueryDaoImpl implements IQueryDao {
 			}
 
 		}
-		if (EweblibUtil.isEmpty(builder.getOrderBy())) {
+		if (EweblibUtil.isEmpty(builder.getOrderBy()) && !builder.isDisableOrder()) {
 			builder.orderBy(BaseEntity.CREATED_ON, false);
 		}
 		return builder;

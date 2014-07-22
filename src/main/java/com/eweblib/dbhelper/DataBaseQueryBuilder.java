@@ -30,8 +30,28 @@ public class DataBaseQueryBuilder {
 	private String distinctColumn = null;
 
 	private String groupBy = null;
+	
+	
+	private boolean disableOrder = false;
 
 	private Set<String> limitColumnNames = new HashSet<String>();
+	
+
+	public String getGroupBy() {
+		return groupBy;
+	}
+
+	public void setGroupBy(String groupBy) {
+		this.groupBy = groupBy;
+	}
+
+	public boolean isDisableOrder() {
+		return disableOrder;
+	}
+
+	public void setDisableOrder(boolean removeOrder) {
+		this.disableOrder = removeOrder;
+	}
 
 	public Integer getLimitStart() {
 		return limitStart;
@@ -383,6 +403,12 @@ public class DataBaseQueryBuilder {
 	}
 	
 	
+	public DataBaseQueryBuilder disableOrderBy() {
+		
+		this.disableOrder = true;
+		
+		return this;
+	}
 
 	public DataBaseQueryBuilder groupBy(String table, String column) {
 

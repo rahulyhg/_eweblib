@@ -333,14 +333,17 @@ public class EweblibUtil {
 					params.put(field.getName(), getDouble(params.get(field.getName()), 0d));
 				}
 			} else if (field.isAnnotationPresent(BooleanColumn.class)) {
-				if (params.get(field.getName()) != null) {
-					String text = params.get(field.getName()).toString();
-					if (text.equalsIgnoreCase("1") || text.equalsIgnoreCase("true")) {
-						params.put(field.getName(), true);
-					} else {
-						params.put(field.getName(), false);
-					}
+				
+				if (params != null && field != null) {
+					if (params.get(field.getName()) != null) {
+						String text = params.get(field.getName()).toString();
+						if (text.equalsIgnoreCase("1") || text.equalsIgnoreCase("true")) {
+							params.put(field.getName(), true);
+						} else {
+							params.put(field.getName(), false);
+						}
 
+					}
 				}
 			} else if (field.isAnnotationPresent(ObjectColumn.class)) {
 				Object v = params.get(field.getName());

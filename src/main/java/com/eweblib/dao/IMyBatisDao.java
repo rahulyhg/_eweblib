@@ -31,6 +31,9 @@ public interface IMyBatisDao {
 	public int count(DataBaseQueryBuilder builder);
 	
 	public List<Map<String, Object>> listBySql(String sql);
+	
+	
+	public Map<String, Object> call(Map<String, Object> parameters);
 
 
 }

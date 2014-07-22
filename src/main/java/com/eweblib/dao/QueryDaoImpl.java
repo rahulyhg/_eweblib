@@ -1,5 +1,6 @@
 package com.eweblib.dao;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -308,6 +309,19 @@ public class QueryDaoImpl implements IQueryDao {
 
 	public <T extends BaseEntity> List<T> distinctQuery(DataBaseQueryBuilder builder, Class<T> classzz) {
 		return listByQuery(builder, classzz);
+	}
+	
+	
+	public Map<String, Object> call(){
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put("IN_PARAMETERID", "90007854");
+		
+		parameters.put("P_CURSOR", new HashMap<String, Object>());
+		
+		Map<String, Object> result =  this.dao.call(parameters);
+		
+		System.out.println(parameters);
+		return result;
 	}
 
 	public void createUpdateLog(String userId, BaseEntity entity, BaseEntity old) {

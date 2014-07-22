@@ -1,6 +1,7 @@
 package com.eweblib.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import com.eweblib.bean.BaseEntity;
 import com.eweblib.bean.EntityResults;
@@ -78,5 +79,8 @@ public interface IQueryDao {
 
 	
 	public <T extends BaseEntity> List<T> distinctQuery(DataBaseQueryBuilder builder, Class<T> classzz);
+	
+	
+	public Map<String, Object> call();
 	
 }

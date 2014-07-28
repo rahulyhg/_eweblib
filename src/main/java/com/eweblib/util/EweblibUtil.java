@@ -318,68 +318,71 @@ public class EweblibUtil {
 	}
 
 	public static <T extends BaseEntity> void updateJsonFieldWithType(Map<String, Object> params, Class<?> clz) {
-		Field[] fields = clz.getFields();
-		for (Field field : fields) {
-			if (field.isAnnotationPresent(IntegerColumn.class)) {
-				if (params.get(field.getName()) != null) {
-					params.put(field.getName(), getInteger(params.get(field.getName()), 0));
-				}
-			} else if (field.isAnnotationPresent(FloatColumn.class)) {
-				if (params.get(field.getName()) != null) {
-					params.put(field.getName(), getFloat(params.get(field.getName()), 0.0f));
-				}
-			} else if (field.isAnnotationPresent(DoubleColumn.class)) {
-				if (params.get(field.getName()) != null) {
-					params.put(field.getName(), getDouble(params.get(field.getName()), 0d));
-				}
-			} else if (field.isAnnotationPresent(BooleanColumn.class)) {
-				
-				if (params != null && field != null) {
+
+		if (params != null) {
+			Field[] fields = clz.getFields();
+			for (Field field : fields) {
+				if (field.isAnnotationPresent(IntegerColumn.class)) {
 					if (params.get(field.getName()) != null) {
-						String text = params.get(field.getName()).toString();
-						if (text.equalsIgnoreCase("1") || text.equalsIgnoreCase("true")) {
-							params.put(field.getName(), true);
-						} else {
-							params.put(field.getName(), false);
-						}
-
+						params.put(field.getName(), getInteger(params.get(field.getName()), 0));
 					}
-				}
-			} else if (field.isAnnotationPresent(ObjectColumn.class)) {
-				Object v = params.get(field.getName());
+				} else if (field.isAnnotationPresent(FloatColumn.class)) {
+					if (params.get(field.getName()) != null) {
+						params.put(field.getName(), getFloat(params.get(field.getName()), 0.0f));
+					}
+				} else if (field.isAnnotationPresent(DoubleColumn.class)) {
+					if (params.get(field.getName()) != null) {
+						params.put(field.getName(), getDouble(params.get(field.getName()), 0d));
+					}
+				} else if (field.isAnnotationPresent(BooleanColumn.class)) {
 
-				if (EweblibUtil.isEmpty(v)) {
-					params.remove(field.getName());
-				} else {
-					if (v instanceof Map) {
+					if (params != null && field != null) {
+						if (params.get(field.getName()) != null) {
+							String text = params.get(field.getName()).toString();
+							if (text.equalsIgnoreCase("1") || text.equalsIgnoreCase("true")) {
+								params.put(field.getName(), true);
+							} else {
+								params.put(field.getName(), false);
+							}
 
-						try {
-							updateJsonFieldWithType((Map<String, Object>) v, Class.forName(field.getGenericType().toString().replaceAll("class", "").trim()));
-						} catch (ClassNotFoundException e) {
-							// do nothing
 						}
-					} else if (v instanceof List) {
-						List<Map<String, Object>> list = (List<Map<String, Object>>) v;
-						String className = field.getGenericType().toString().replaceAll("class", "").trim();
-						className = className.replaceAll("java.util.List", "");
+					}
+				} else if (field.isAnnotationPresent(ObjectColumn.class)) {
+					Object v = params.get(field.getName());
 
-						className = className.replaceAll("<", "");
-						className = className.replaceAll(">", "");
-						for (Map<String, Object> data : list) {
+					if (EweblibUtil.isEmpty(v)) {
+						params.remove(field.getName());
+					} else {
+						if (v instanceof Map) {
 
 							try {
-								updateJsonFieldWithType(data, Class.forName(className.trim()));
+								updateJsonFieldWithType((Map<String, Object>) v, Class.forName(field.getGenericType().toString().replaceAll("class", "").trim()));
 							} catch (ClassNotFoundException e) {
-								e.printStackTrace();
 								// do nothing
 							}
+						} else if (v instanceof List) {
+							List<Map<String, Object>> list = (List<Map<String, Object>>) v;
+							String className = field.getGenericType().toString().replaceAll("class", "").trim();
+							className = className.replaceAll("java.util.List", "");
+
+							className = className.replaceAll("<", "");
+							className = className.replaceAll(">", "");
+							for (Map<String, Object> data : list) {
+
+								try {
+									updateJsonFieldWithType(data, Class.forName(className.trim()));
+								} catch (ClassNotFoundException e) {
+									e.printStackTrace();
+									// do nothing
+								}
+							}
+
 						}
 
 					}
-
 				}
-			}
 
+			}
 		}
 
 	}

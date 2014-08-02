@@ -174,7 +174,7 @@ public class DataBaseQueryBuilder {
 	}
 
 	public DataBaseQueryBuilder leftJoin(String leftTable, String rightTable, String leftKey, String rightKey) {
-
+    
 		if (this.queryStr != null) {
 			throw new RuntimeException("Must set join table first before set query operation");
 		}

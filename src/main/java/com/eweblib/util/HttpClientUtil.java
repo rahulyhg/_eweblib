@@ -18,6 +18,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -78,9 +79,8 @@ public class HttpClientUtil {
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpResponse response = null;
 		HttpPost method = new HttpPost(url);
-
+		
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-
 		Set<String> keys = parameters.keySet();
 		for (String key : keys) {
 
@@ -113,8 +113,34 @@ public class HttpClientUtil {
 
 
 	
-	
-	
+	public static String doBodyPost(String url, String data) {
+		HttpClient httpClient = new DefaultHttpClient();
+		HttpResponse response = null;
+		HttpPost method = new HttpPost(url);
+
+		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+
+		if (data == null) {
+			data = "";
+		}
+
+		try {
+			StringEntity stringEntity = new StringEntity(data, "UTF-8");
+
+			method.setEntity(stringEntity);
+			response = httpClient.execute(method);
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+				return EntityUtils.toString(entity, "UTF-8");
+			}
+
+		} catch (ClientProtocolException e) {
+			logger.error("ClientProtocolException when try to post data to ".concat(url), e);
+		} catch (IOException e) {
+			logger.error("IOException when try to post data to ".concat(url), e);
+		}
+		return null;
+	}	
 	
 
 }

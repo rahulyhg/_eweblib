@@ -12,7 +12,7 @@ public class DateUtil {
 	private static Logger logger = LogManager.getLogger(DateUtil.class);
 	public static final String format = "yyyy-MM-dd HH:mm:ss";
 
-	private static final String formatSimple = "yyyy-MM-dd";
+	public static final String formatSimple = "yyyy-MM-dd";
 
 	public static String getDateStringTime(Date date) {
 		SimpleDateFormat sdf = new SimpleDateFormat(format);

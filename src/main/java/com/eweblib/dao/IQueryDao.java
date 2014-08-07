@@ -76,11 +76,11 @@ public interface IQueryDao {
 	public boolean exists(DataBaseQueryBuilder builder);
 	
 	public boolean exists(String key, String value, String table);
-
 	
 	public <T extends BaseEntity> List<T> distinctQuery(DataBaseQueryBuilder builder, Class<T> classzz);
-	
-	
-	public Map<String, Object> call();
+
+	public <T extends BaseEntity> List<T> callListProcedure(BaseEntity queryEntity, Class<T> classzz, String procedure);
+
+	public <T extends BaseEntity> BaseEntity callEntityProcedure(BaseEntity queryEntity, Class<T> classzz, String procedure);
 	
 }

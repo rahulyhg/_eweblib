@@ -33,7 +33,9 @@ public interface IMyBatisDao {
 	public List<Map<String, Object>> listBySql(String sql);
 	
 	
-	public Map<String, Object> call(Map<String, Object> parameters);
+	public void callListProcedure(Map<String, Object> parameters);
+
+	public void callEntityProcedure(Map<String, Object> parameters);
 
 
 }

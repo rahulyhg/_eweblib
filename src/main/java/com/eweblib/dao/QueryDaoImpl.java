@@ -312,18 +312,48 @@ public class QueryDaoImpl implements IQueryDao {
 	}
 	
 	
-	public Map<String, Object> call(){
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("IN_PARAMETERID", "90007854");
-		
-		parameters.put("P_CURSOR", new HashMap<String, Object>());
-		
-		Map<String, Object> result =  this.dao.call(parameters);
-		
-		System.out.println(parameters);
-		return result;
+	public <T extends BaseEntity> List<T> callListProcedure(BaseEntity queryEntity, Class<T> classzz, String procedure) {
+
+		if (queryEntity == null) {
+			return new ArrayList<T>();
+		} else {
+
+			Map<String, Object> parameters = queryEntity.toMap();
+
+			parameters.put("procedure", procedure);
+
+			Map<String, Object> data = new HashMap<String, Object>();
+
+			parameters.put("P_CURSOR", data);
+
+			this.dao.callListProcedure(parameters);
+
+			System.out.println(parameters);
+
+			return EweblibUtil.toJsonList(parameters, classzz, "P_CURSOR");
+		}
+
 	}
 
+	public <T extends BaseEntity> BaseEntity callEntityProcedure(BaseEntity queryEntity, Class<T> classzz, String procedure) {
+
+		if (queryEntity == null) {
+			return null;
+		} else {
+
+			Map<String, Object> parameters = queryEntity.toMap();
+
+			parameters.put("procedure", procedure);
+
+			this.dao.callEntityProcedure(parameters);
+			return EweblibUtil.toEntity(parameters, classzz);
+		}
+
+	}
+	
+	
+	
+	
 	public void createUpdateLog(String userId, BaseEntity entity, BaseEntity old) {
 
 		if (EWeblibThreadLocal.get(ControllerFilter.URL_PATH) != null && !(entity instanceof Log) && !(entity instanceof LogItem)) {

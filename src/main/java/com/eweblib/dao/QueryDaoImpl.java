@@ -312,43 +312,49 @@ public class QueryDaoImpl implements IQueryDao {
 	}
 	
 	
-	public <T extends BaseEntity> List<T> callListProcedure(BaseEntity queryEntity, Class<T> classzz, String procedure) {
+	public <T extends BaseEntity, T1 extends BaseEntity> List<T> callListProcedure(BaseEntity queryEntity, Class<T> targetClasszz, Class<T1> tempClasszz, String procedure) {
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		if (queryEntity != null) {
+			parameters = queryEntity.toMap();
 
-		if (queryEntity == null) {
-			return new ArrayList<T>();
-		} else {
-
-			Map<String, Object> parameters = queryEntity.toMap();
-
-			parameters.put("procedure", procedure);
-
-			Map<String, Object> data = new HashMap<String, Object>();
-
-			parameters.put("P_CURSOR", data);
-
-			this.dao.callListProcedure(parameters);
-
-			System.out.println(parameters);
-
-			return EweblibUtil.toJsonList(parameters, classzz, "P_CURSOR");
 		}
+
+		parameters.put("procedure", procedure);
+
+		Map<String, Object> data = new HashMap<String, Object>();
+
+		parameters.put("P_CURSOR", data);
+
+		System.out.println("procedure query start");
+		long start = new Date().getTime();
+
+		this.dao.callListProcedure(parameters);
+
+		System.out.println(new Date().getTime() - start);
+
+		if (tempClasszz != null) {
+			EweblibUtil.toJsonList(parameters, tempClasszz, "P_CURSOR");
+		}
+		System.out.println(parameters);
+
+		return EweblibUtil.toJsonList(parameters, targetClasszz, "P_CURSOR");
 
 	}
 
-	public <T extends BaseEntity> BaseEntity callEntityProcedure(BaseEntity queryEntity, Class<T> classzz, String procedure) {
-
-		if (queryEntity == null) {
-			return null;
+	public <T extends BaseEntity, T1 extends BaseEntity> BaseEntity callEntityProcedure(BaseEntity queryEntity, Class<T> targetClasszz, Class<T1> tempClasszz, String procedure) {
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		if (queryEntity != null) {
+			parameters = queryEntity.toMap();
 		} else {
-
-			Map<String, Object> parameters = queryEntity.toMap();
-
-			parameters.put("procedure", procedure);
-
-			this.dao.callEntityProcedure(parameters);
-			return EweblibUtil.toEntity(parameters, classzz);
+			parameters = queryEntity.toMap();
 		}
 
+		parameters.put("procedure", procedure);
+
+		this.dao.callEntityProcedure(parameters);
+		EweblibUtil.toEntity(parameters, tempClasszz);
+
+		return EweblibUtil.toEntity(parameters, targetClasszz);
 	}
 	
 	

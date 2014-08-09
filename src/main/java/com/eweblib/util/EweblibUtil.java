@@ -14,6 +14,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import com.eweblib.annotation.column.BooleanColumn;
+import com.eweblib.annotation.column.CopyColum;
 import com.eweblib.annotation.column.DoubleColumn;
 import com.eweblib.annotation.column.FloatColumn;
 import com.eweblib.annotation.column.IntegerColumn;
@@ -326,15 +327,21 @@ public class EweblibUtil {
 					if (params.get(field.getName()) != null) {
 						params.put(field.getName(), getInteger(params.get(field.getName()), 0));
 					}
-				} else if (field.isAnnotationPresent(FloatColumn.class)) {
+				}
+
+				if (field.isAnnotationPresent(FloatColumn.class)) {
 					if (params.get(field.getName()) != null) {
 						params.put(field.getName(), getFloat(params.get(field.getName()), 0.0f));
 					}
-				} else if (field.isAnnotationPresent(DoubleColumn.class)) {
+				}
+
+				if (field.isAnnotationPresent(DoubleColumn.class)) {
 					if (params.get(field.getName()) != null) {
 						params.put(field.getName(), getDouble(params.get(field.getName()), 0d));
 					}
-				} else if (field.isAnnotationPresent(BooleanColumn.class)) {
+				}
+
+				if (field.isAnnotationPresent(BooleanColumn.class)) {
 
 					if (params != null && field != null) {
 						if (params.get(field.getName()) != null) {
@@ -347,7 +354,9 @@ public class EweblibUtil {
 
 						}
 					}
-				} else if (field.isAnnotationPresent(ObjectColumn.class)) {
+				}
+
+				if (field.isAnnotationPresent(ObjectColumn.class)) {
 					Object v = params.get(field.getName());
 
 					if (EweblibUtil.isEmpty(v)) {
@@ -381,6 +390,15 @@ public class EweblibUtil {
 
 					}
 				}
+				
+				if (field.isAnnotationPresent(CopyColum.class)) {
+					if (params.get(field.getName()) != null) {
+						CopyColum cc = field.getAnnotation(CopyColum.class);
+						params.put(cc.name(), params.get(field.getName()));
+					}
+				}
+				
+				
 
 			}
 		}

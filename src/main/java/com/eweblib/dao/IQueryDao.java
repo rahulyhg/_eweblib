@@ -79,8 +79,8 @@ public interface IQueryDao {
 	
 	public <T extends BaseEntity> List<T> distinctQuery(DataBaseQueryBuilder builder, Class<T> classzz);
 
-	public <T extends BaseEntity> List<T> callListProcedure(BaseEntity queryEntity, Class<T> classzz, String procedure);
+	public <T extends BaseEntity, T1 extends BaseEntity> List<T> callListProcedure(BaseEntity queryEntity, Class<T> targetClasszz, Class<T1> tempClasszz, String procedure);
 
-	public <T extends BaseEntity> BaseEntity callEntityProcedure(BaseEntity queryEntity, Class<T> classzz, String procedure);
-	
+	public <T extends BaseEntity, T1 extends BaseEntity> BaseEntity callEntityProcedure(BaseEntity queryEntity, Class<T> targetClasszz,  Class<T1> tempClasszz, String procedure);
+
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,18 +30,9 @@ public class HttpClientUtil {
 
 	private static Logger logger = LogManager.getLogger(HttpClientUtil.class);
 
+	public static String doGet(String url, Map<String, Object> parameters, String urlEncoding)  {
 
-	/**
-	 * 
-	 * Request a get request with data paramter
-	 * 
-	 * @param url
-	 * @param parameters
-	 * @return
-	 * @throws UnsupportedEncodingException
-	 */
-	public static String doGet(String url, Map<String, Object> parameters)  {
-		// url = URLEncoder.encode(url, "UTF-8");
+		// 
 		try {
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpResponse response = null;
@@ -55,14 +47,17 @@ public class HttpClientUtil {
 				}
 			}
 			URI uri = builder.build();
-
+			
+			if(EweblibUtil.isValid(urlEncoding)){
+				url = URLEncoder.encode(url, urlEncoding);
+			}
 			// builder.
 			HttpGet httpget = new HttpGet(uri);
 
 			response = httpClient.execute(httpget);
 			HttpEntity entity = response.getEntity();
 			if (entity != null) {
-				return EntityUtils.toString(entity,  "UTF-8");
+				return EntityUtils.toString(entity, "UTF-8");
 			}
 
 		} catch (ClientProtocolException e) {
@@ -73,9 +68,26 @@ public class HttpClientUtil {
 			logger.error("URISyntaxException when try to get data from ".concat(url), e);
 		}
 		return null;
+	
+		
 	}
 
-	public static String doPost(String url, Map<String, Object> parameters) {
+	/**
+	 * 
+	 * Request a get request with data paramter
+	 * 
+	 * @param url
+	 * @param parameters
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
+	public static String doGet(String url, Map<String, Object> parameters) {
+		return doGet(url, parameters, null);
+
+	}
+	
+	
+	public static String doPost(String url, Map<String, Object> parameters, String urlEncoding) {
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpResponse response = null;
 		HttpPost method = new HttpPost(url);
@@ -91,7 +103,7 @@ public class HttpClientUtil {
 		}
 		UrlEncodedFormEntity rentity = null;
 		try {
-			rentity = new UrlEncodedFormEntity(nameValuePairs, "UTF-8");
+			rentity = new UrlEncodedFormEntity(nameValuePairs, urlEncoding);
 		} catch (UnsupportedEncodingException e) {
 			logger.error("UnsupportedEncodingException when try to encode data for ".concat(url), e);
 		}
@@ -109,6 +121,10 @@ public class HttpClientUtil {
 			logger.error("IOException when try to post data to ".concat(url), e);
 		}
 		return null;
+	}
+
+	public static String doPost(String url, Map<String, Object> parameters) {
+		return doPost(url, parameters, "UTF-8");
 	}
 
 

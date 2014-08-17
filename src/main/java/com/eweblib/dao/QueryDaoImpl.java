@@ -161,7 +161,7 @@ public class QueryDaoImpl implements IQueryDao {
 					// do nothing
 				}
 
-				if (result.get(key)!=null && result.get(key) instanceof byte[]) {
+				if (result!=null && result.get(key)!=null && result.get(key) instanceof byte[]) {
 					byte[] b = (byte[]) result.get(key);
 					try {
 						result.put(key, new String(b, "UTF-8"));

@@ -1,6 +1,6 @@
 package com.eweblib.dao;
 
-import java.sql.ResultSet;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,7 +26,6 @@ import com.eweblib.constants.EWebLibConstants;
 import com.eweblib.controller.interceptor.ControllerFilter;
 import com.eweblib.dbhelper.DataBaseQueryBuilder;
 import com.eweblib.exception.ResponseException;
-import com.eweblib.log.LogJDBCAppender;
 import com.eweblib.util.EWeblibThreadLocal;
 import com.eweblib.util.EweblibUtil;
 
@@ -152,7 +151,7 @@ public class QueryDaoImpl implements IQueryDao {
 				try {
 					String className = classzz.getField(key).getType().getName();
 					if (className.equalsIgnoreCase("java.lang.String") || className.equalsIgnoreCase("java.util.Date")) {
-						if (result!=null && result.get(key) == null) {
+						if (result != null && result.get(key) == null) {
 							result.put(key, "");
 						}
 					}
@@ -160,6 +159,15 @@ public class QueryDaoImpl implements IQueryDao {
 					// do nothing
 				} catch (SecurityException e) {
 					// do nothing
+				}
+
+				if (result.get(key)!=null && result.get(key) instanceof byte[]) {
+					byte[] b = (byte[]) result.get(key);
+					try {
+						result.put(key, new String(b, "UTF-8"));
+					} catch (UnsupportedEncodingException e) {
+						throw new RuntimeException("Blob Encoding Error!");
+					}
 				}
 
 			}
@@ -224,8 +232,14 @@ public class QueryDaoImpl implements IQueryDao {
 	}
 
 	@Override
-	public void updateByQuery(DataBaseQueryBuilder builder) {
-		// TODO Auto-generated method stub
+	//TODO: support it
+	public void updateByQuery(BaseEntity entity, DataBaseQueryBuilder builder) {
+		
+		
+		if(EweblibUtil.isValid(builder.getQueryStr())){
+			
+			dao.updateByQuery(builder);
+		}
 
 	}
 

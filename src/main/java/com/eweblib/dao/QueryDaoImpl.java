@@ -145,6 +145,14 @@ public class QueryDaoImpl implements IQueryDao {
 	}
 
 	public <T extends BaseEntity> void mergeEntityValue(Class<T> classzz, Set<String> keys, Map<String, Object> result) {
+
+		if (keys == null || keys.isEmpty()) {
+
+			if (result != null) {
+				keys = result.keySet();
+
+			}
+		}
 		if (keys != null) {
 			for (String key : keys) {
 
@@ -269,24 +277,14 @@ public class QueryDaoImpl implements IQueryDao {
 		DataBaseQueryBuilder builder = new DataBaseQueryBuilder(table);
 		builder.and(EWebLibConstants.ID, id);
 
-		Map<String, Object> result = dao.findOneByQuery(builder);
+		return this.findOneByQuery(builder, classzz);
 
-		if (EweblibUtil.isEmpty(result)) {
-			return null;
-		}
-
-		return EweblibUtil.toEntity(result, classzz);
 	}
 
 	public <T extends BaseEntity> BaseEntity findByKeyValue(String key, String value, String table, Class<T> classzz) {
 		DataBaseQueryBuilder builder = new DataBaseQueryBuilder(table);
 		builder.and(key, value);
-		Map<String, Object> result = dao.findOneByQuery(builder);
-
-		if (EweblibUtil.isEmpty(result)) {
-			return null;
-		}
-		return EweblibUtil.toEntity(result, classzz);
+		return this.findOneByQuery(builder, classzz);
 	}
 
 	public int count(DataBaseQueryBuilder builder) {

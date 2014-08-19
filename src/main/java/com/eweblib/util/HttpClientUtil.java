@@ -1,5 +1,7 @@
 package com.eweblib.util;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -30,9 +32,9 @@ public class HttpClientUtil {
 
 	private static Logger logger = LogManager.getLogger(HttpClientUtil.class);
 
-	public static String doGet(String url, Map<String, Object> parameters, String urlEncoding)  {
+	public static String doGet(String url, Map<String, Object> parameters, String urlEncoding) {
 
-		// 
+		//
 		try {
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpResponse response = null;
@@ -40,15 +42,15 @@ public class HttpClientUtil {
 			if (parameters != null) {
 				Set<String> keys = parameters.keySet();
 				for (String key : keys) {
-					
+
 					if (parameters.get(key) != null) {
 						builder.setParameter(key, parameters.get(key).toString());
 					}
 				}
 			}
 			URI uri = builder.build();
-			
-			if(EweblibUtil.isValid(urlEncoding)){
+
+			if (EweblibUtil.isValid(urlEncoding)) {
 				url = URLEncoder.encode(url, urlEncoding);
 			}
 			// builder.
@@ -68,8 +70,7 @@ public class HttpClientUtil {
 			logger.error("URISyntaxException when try to get data from ".concat(url), e);
 		}
 		return null;
-	
-		
+
 	}
 
 	/**
@@ -85,13 +86,12 @@ public class HttpClientUtil {
 		return doGet(url, parameters, null);
 
 	}
-	
-	
+
 	public static String doPost(String url, Map<String, Object> parameters, String urlEncoding) {
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpResponse response = null;
 		HttpPost method = new HttpPost(url);
-		
+
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		Set<String> keys = parameters.keySet();
 		for (String key : keys) {
@@ -112,7 +112,7 @@ public class HttpClientUtil {
 			response = httpClient.execute(method);
 			HttpEntity entity = response.getEntity();
 			if (entity != null) {
-				return EntityUtils.toString(entity,  "UTF-8");
+				return EntityUtils.toString(entity, "UTF-8");
 			}
 
 		} catch (ClientProtocolException e) {
@@ -127,8 +127,6 @@ public class HttpClientUtil {
 		return doPost(url, parameters, "UTF-8");
 	}
 
-
-	
 	public static String doBodyPost(String url, String data) {
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpResponse response = null;
@@ -156,7 +154,52 @@ public class HttpClientUtil {
 			logger.error("IOException when try to post data to ".concat(url), e);
 		}
 		return null;
-	}	
-	
+	}
+
+	public static void downloadFile(String url, Map<String, Object> parameters, String savePath) {
+
+		downloadFile(url, parameters, savePath, "UTF-8");
+	}
+
+	public static void downloadFile(String url, Map<String, Object> parameters, String savePath, String urlEncoding) {
+
+		//
+		try {
+			HttpClient httpClient = new DefaultHttpClient();
+			HttpResponse response = null;
+			URIBuilder builder = new URIBuilder(url);
+			if (parameters != null) {
+				Set<String> keys = parameters.keySet();
+				for (String key : keys) {
+
+					if (parameters.get(key) != null) {
+						builder.setParameter(key, parameters.get(key).toString());
+					}
+				}
+			}
+			URI uri = builder.build();
+
+			if (EweblibUtil.isValid(urlEncoding)) {
+				url = URLEncoder.encode(url, urlEncoding);
+			}
+			// builder.
+			HttpGet httpget = new HttpGet(uri);
+
+			response = httpClient.execute(httpget);
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+				entity.writeTo(new FileOutputStream(new String(savePath.getBytes(), "gbk")));
+
+			}
+
+		} catch (ClientProtocolException e) {
+			logger.error("ClientProtocolException when try to get data from ".concat(url), e);
+		} catch (IOException e) {
+			logger.error("IOException when try to get data from ".concat(url), e);
+		} catch (URISyntaxException e) {
+			logger.error("URISyntaxException when try to get data from ".concat(url), e);
+		}
+
+	}
 
 }

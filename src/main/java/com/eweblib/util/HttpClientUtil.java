@@ -164,6 +164,7 @@ public class HttpClientUtil {
 	public static void downloadFile(String url, Map<String, Object> parameters, String savePath, String urlEncoding) {
 
 		//
+		new File(savePath).getParentFile().mkdirs();
 		try {
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpResponse response = null;

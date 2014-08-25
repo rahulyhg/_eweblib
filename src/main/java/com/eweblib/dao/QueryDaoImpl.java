@@ -70,8 +70,14 @@ public class QueryDaoImpl implements IQueryDao {
 		if (EweblibUtil.isEmpty(entity.getId())) {
 			entity.setId(UUID.randomUUID().toString());
 		}
-		entity.setCreatedOn(new Date());
-		entity.setUpdatedOn(new Date());
+
+		if (EweblibUtil.isEmpty(entity.getCreatedOn())) {
+			entity.setCreatedOn(new Date());
+		}
+
+		if (EweblibUtil.isEmpty(entity.getUpdatedOn())) {
+			entity.setUpdatedOn(new Date());
+		}
 		entity.setCreatorId(EWeblibThreadLocal.getCurrentUserId());
 	}
 

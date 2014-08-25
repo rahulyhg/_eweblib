@@ -474,6 +474,20 @@ public class EweblibUtil {
 
 		return "http://".concat(ConfigManager.getProperty("WEI_XIN_HOST").toString()).concat("/").concat(path);
 	}
+	
+	
+	public static int generateRandom(int a, int b) {
+		int temp = 0;
+
+		if (a > b) {
+			temp = new Random().nextInt(a - b);
+			return temp + b;
+		} else {
+			temp = new Random().nextInt(b - a);
+			return temp + a;
+		}
+
+	}
 
 	/**
 	 * @param args

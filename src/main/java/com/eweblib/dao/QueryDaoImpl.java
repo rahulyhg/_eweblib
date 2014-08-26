@@ -26,6 +26,7 @@ import com.eweblib.constants.EWebLibConstants;
 import com.eweblib.controller.interceptor.ControllerFilter;
 import com.eweblib.dbhelper.DataBaseQueryBuilder;
 import com.eweblib.exception.ResponseException;
+import com.eweblib.util.DateUtil;
 import com.eweblib.util.EWeblibThreadLocal;
 import com.eweblib.util.EweblibUtil;
 
@@ -336,7 +337,10 @@ public class QueryDaoImpl implements IQueryDao {
 			parameters = queryEntity.toMap();
 
 		}
-
+		
+		
+		parameters.put("P_STARTDATE", DateUtil.getDateTime("2014-08-12"));
+		parameters.put("P_ENDDATE", DateUtil.getDateTime("2014-08-13"));
 		parameters.put("procedure", procedure);
 
 		Map<String, Object> data = new HashMap<String, Object>();

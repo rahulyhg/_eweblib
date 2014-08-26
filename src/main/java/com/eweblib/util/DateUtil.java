@@ -13,6 +13,8 @@ public class DateUtil {
 	public static final String format = "yyyy-MM-dd HH:mm:ss";
 
 	public static final String formatSimple = "yyyy-MM-dd";
+	
+	public static final String FORMATE_2 = "yyyyMMdd";
 
 	public static String getDateStringTime(Date date) {
 		SimpleDateFormat sdf = new SimpleDateFormat(format);
@@ -76,6 +78,12 @@ public class DateUtil {
 		SimpleDateFormat sdf = new SimpleDateFormat(formatSimple);
 		return sdf.format(date);
 	}
+	
+	public static String getDateString(Date date, String formate) {
+		SimpleDateFormat sdf = new SimpleDateFormat(formate);
+		return sdf.format(date);
+	}
+
 
 	public static Date getDate(String date, String format) {
 		SimpleDateFormat sdf = new SimpleDateFormat(format);

@@ -7,6 +7,18 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 public class ImgUtil {
+	
+	public static String getRandomNumber(int wordLength) {// 生成随机数
+
+		StringBuffer buffer = new StringBuffer("0123456789");
+		StringBuffer sb = new StringBuffer();
+		Random r = new Random();
+		int range = buffer.length();
+		for (int i = 0; i < wordLength; i++) {
+			sb.append(buffer.charAt(r.nextInt(range)));
+		}
+		return sb.toString();
+	}
 
 	public static String getRandomWord(int wordLength) {// 生成随机数
 

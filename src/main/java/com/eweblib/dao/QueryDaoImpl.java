@@ -339,8 +339,10 @@ public class QueryDaoImpl implements IQueryDao {
 		}
 		
 		
-		parameters.put("P_STARTDATE", DateUtil.getDateTime("2014-08-12"));
-		parameters.put("P_ENDDATE", DateUtil.getDateTime("2014-08-13"));
+		EweblibUtil.updateJsonFieldWithType(parameters, queryEntity.getClass());
+		
+//		parameters.put("P_STARTDATE", DateUtil.getDateTime("2014-08-12"));
+//		parameters.put("P_ENDDATE", DateUtil.getDateTime("2014-08-13"));
 		parameters.put("procedure", procedure);
 
 		Map<String, Object> data = new HashMap<String, Object>();
@@ -353,11 +355,11 @@ public class QueryDaoImpl implements IQueryDao {
 		this.dao.callListProcedure(parameters);
 
 		System.out.println(new Date().getTime() - start);
+		System.out.println(parameters);
 
 		if (tempClasszz != null) {
 			EweblibUtil.toJsonList(parameters, tempClasszz, "P_CURSOR");
 		}
-		System.out.println(parameters);
 
 		return EweblibUtil.toJsonList(parameters, targetClasszz, "P_CURSOR");
 

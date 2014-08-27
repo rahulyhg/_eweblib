@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 
 import com.eweblib.annotation.column.BooleanColumn;
 import com.eweblib.annotation.column.CopyColum;
+import com.eweblib.annotation.column.DateColumn;
 import com.eweblib.annotation.column.DoubleColumn;
 import com.eweblib.annotation.column.FloatColumn;
 import com.eweblib.annotation.column.IntegerColumn;
@@ -326,6 +327,12 @@ public class EweblibUtil {
 				if (field.isAnnotationPresent(IntegerColumn.class)) {
 					if (params.get(field.getName()) != null) {
 						params.put(field.getName(), getInteger(params.get(field.getName()), 0));
+					}
+				}
+				
+				if (field.isAnnotationPresent(DateColumn.class)) {
+					if (params.get(field.getName()) != null) {
+						params.put(field.getName(), DateUtil.getDateTime(params.get(field.getName()).toString()));
 					}
 				}
 

@@ -1,14 +1,16 @@
 package com.eweblib.dao;
 
 import java.util.List;
-import java.util.Map;
 
 import com.eweblib.bean.BaseEntity;
 import com.eweblib.bean.EntityResults;
 import com.eweblib.dbhelper.DataBaseQueryBuilder;
 
 public interface IQueryDao {
-
+	
+	public IMyBatisDao getDao();
+	
+	public void setDao(IMyBatisDao dao);
 	/**
 	 * 
 	 * 传人entity对象，table自动获取

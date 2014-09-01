@@ -26,7 +26,6 @@ import com.eweblib.constants.EWebLibConstants;
 import com.eweblib.controller.interceptor.ControllerFilter;
 import com.eweblib.dbhelper.DataBaseQueryBuilder;
 import com.eweblib.exception.ResponseException;
-import com.eweblib.util.DateUtil;
 import com.eweblib.util.EWeblibThreadLocal;
 import com.eweblib.util.EweblibUtil;
 
@@ -176,7 +175,7 @@ public class QueryDaoImpl implements IQueryDao {
 					// do nothing
 				}
 
-				if (result!=null && result.get(key)!=null && result.get(key) instanceof byte[]) {
+				if (result != null && result.get(key) != null && result.get(key) instanceof byte[]) {
 					byte[] b = (byte[]) result.get(key);
 					try {
 						result.put(key, new String(b, "UTF-8"));
@@ -247,12 +246,11 @@ public class QueryDaoImpl implements IQueryDao {
 	}
 
 	@Override
-	//TODO: support it
+	// TODO: support it
 	public void updateByQuery(BaseEntity entity, DataBaseQueryBuilder builder) {
-		
-		
-		if(EweblibUtil.isValid(builder.getQueryStr())){
-			
+
+		if (EweblibUtil.isValid(builder.getQueryStr())) {
+
 			dao.updateByQuery(builder);
 		}
 
@@ -274,9 +272,9 @@ public class QueryDaoImpl implements IQueryDao {
 	@Override
 	public <T extends BaseEntity> BaseEntity findOneByQuery(DataBaseQueryBuilder builder, Class<T> classzz) {
 		Map<String, Object> result = dao.findOneByQuery(builder);
-		
+
 		mergeEntityValue(classzz, builder.getLimitColumnNames(), result);
-		
+
 		return EweblibUtil.toEntity(result, classzz);
 	}
 
@@ -329,20 +327,18 @@ public class QueryDaoImpl implements IQueryDao {
 	public <T extends BaseEntity> List<T> distinctQuery(DataBaseQueryBuilder builder, Class<T> classzz) {
 		return listByQuery(builder, classzz);
 	}
-	
-	
+
 	public <T extends BaseEntity, T1 extends BaseEntity> List<T> callListProcedure(BaseEntity queryEntity, Class<T> targetClasszz, Class<T1> tempClasszz, String procedure) {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		if (queryEntity != null) {
 			parameters = queryEntity.toMap();
 
 		}
-		
-		
+
 		EweblibUtil.updateJsonFieldWithType(parameters, queryEntity.getClass());
-		
-//		parameters.put("P_STARTDATE", DateUtil.getDateTime("2014-08-12"));
-//		parameters.put("P_ENDDATE", DateUtil.getDateTime("2014-08-13"));
+
+		// parameters.put("P_STARTDATE", DateUtil.getDateTime("2014-08-12"));
+		// parameters.put("P_ENDDATE", DateUtil.getDateTime("2014-08-13"));
 		parameters.put("procedure", procedure);
 
 		Map<String, Object> data = new HashMap<String, Object>();
@@ -355,7 +351,7 @@ public class QueryDaoImpl implements IQueryDao {
 		this.dao.callListProcedure(parameters);
 
 		System.out.println(new Date().getTime() - start);
-		System.out.println(parameters);
+//		System.out.println(parameters);
 
 		if (tempClasszz != null) {
 			EweblibUtil.toJsonList(parameters, tempClasszz, "P_CURSOR");
@@ -380,10 +376,7 @@ public class QueryDaoImpl implements IQueryDao {
 
 		return EweblibUtil.toEntity(parameters, targetClasszz);
 	}
-	
-	
-	
-	
+
 	public void createUpdateLog(String userId, BaseEntity entity, BaseEntity old) {
 
 		if (EWeblibThreadLocal.get(ControllerFilter.URL_PATH) != null && !(entity instanceof Log) && !(entity instanceof LogItem)) {

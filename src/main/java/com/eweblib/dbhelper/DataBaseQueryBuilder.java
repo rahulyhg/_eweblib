@@ -125,6 +125,11 @@ public class DataBaseQueryBuilder {
 		if (this.onQuery != null && !key.contains(".")) {
 			key = this.table + "." + key;
 		}
+		
+		if (this.onQuery == null && !key.contains(".")) {
+			key = this.table + "." + key;
+		}
+		
 		DataBaseQuery query = new DataBaseQuery(op, key, value);
 		if (this.queryStr == null) {
 			queryStr = "";

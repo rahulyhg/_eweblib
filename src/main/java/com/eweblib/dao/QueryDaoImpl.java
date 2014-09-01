@@ -345,12 +345,12 @@ public class QueryDaoImpl implements IQueryDao {
 
 		parameters.put("P_CURSOR", data);
 
-		System.out.println("procedure query start");
+//		System.out.println("procedure query start");
 		long start = new Date().getTime();
 
 		this.dao.callListProcedure(parameters);
 
-		System.out.println(new Date().getTime() - start);
+		System.out.println("call procedue " + procedure + " cost: "  + (new Date().getTime() - start));
 //		System.out.println(parameters);
 
 		if (tempClasszz != null) {

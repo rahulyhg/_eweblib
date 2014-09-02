@@ -356,7 +356,7 @@ public class DataBaseQueryBuilder {
 			column = splitColumns[0] + " as " + splitColumns[1] + " ";
 		}
 
-		if (!column.contains("count(*)")) {
+		if (!column.contains("count(*)") && !column.contains("sum(")) {
 			if (this.limitColumns == null) {
 				this.limitColumns = this.table + "." + column;
 			} else {
@@ -371,7 +371,6 @@ public class DataBaseQueryBuilder {
 
 			}
 		}
-		
 
 	}
 

@@ -332,10 +332,9 @@ public class QueryDaoImpl implements IQueryDao {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		if (queryEntity != null) {
 			parameters = queryEntity.toMap();
-
+			EweblibUtil.updateJsonFieldWithType(parameters, queryEntity.getClass());
 		}
 
-		EweblibUtil.updateJsonFieldWithType(parameters, queryEntity.getClass());
 
 		// parameters.put("P_STARTDATE", DateUtil.getDateTime("2014-08-12"));
 		// parameters.put("P_ENDDATE", DateUtil.getDateTime("2014-08-13"));

@@ -355,12 +355,24 @@ public class DataBaseQueryBuilder {
 		if (splitColumns.length > 1) {
 			column = splitColumns[0] + " as " + splitColumns[1] + " ";
 		}
-		if (this.limitColumns == null) {
-			this.limitColumns = this.table + "." + column;
-		} else {
-			this.limitColumns = this.limitColumns + "," + this.table + "." + column;
 
+		if (!column.contains("count(*)")) {
+			if (this.limitColumns == null) {
+				this.limitColumns = this.table + "." + column;
+			} else {
+				this.limitColumns = this.limitColumns + "," + this.table + "." + column;
+
+			}
+		} else {
+			if (this.limitColumns == null) {
+				this.limitColumns = column;
+			} else {
+				this.limitColumns = this.limitColumns + "," + column;
+
+			}
 		}
+		
+
 	}
 
 	public DataBaseQueryBuilder orderBy(String column, boolean asc) {

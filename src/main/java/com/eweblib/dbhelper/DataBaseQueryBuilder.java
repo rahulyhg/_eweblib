@@ -190,6 +190,20 @@ public class DataBaseQueryBuilder {
 		}
 		return this;
 	}
+	
+	
+	public DataBaseQueryBuilder innerJoin(String leftTable, String rightTable, String leftKey, String rightKey) {
+	    
+		if (this.queryStr != null) {
+			throw new RuntimeException("Must set join table first before set query operation");
+		}
+		if (this.onQuery == null) {
+			this.onQuery = " inner join " + rightTable + " as " + rightTable + " on " + leftTable + "." + leftKey + "=" + rightTable + "." + rightKey;
+		} else {
+			this.onQuery = this.onQuery + " inner join " + rightTable + " as " + rightTable + " on " + leftTable + "." + leftKey + "=" + rightTable + "." + rightKey;
+		}
+		return this;
+	}
 
 
 	public DataBaseQueryBuilder on(String leftTable, String rightTable, String leftKey, String rightKey) {

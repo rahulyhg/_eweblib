@@ -14,6 +14,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
+import com.eweblib.annotation.column.BigDecimalColum;
 import com.eweblib.exception.BeanStructureException;
 import com.eweblib.util.EweblibUtil;
 import com.google.gson.annotations.Expose;
@@ -75,6 +76,7 @@ public class BaseEntity {
 		this.creatorId = ownerId;
 	}
 
+	
 	public String getId() {
 
 		return id;

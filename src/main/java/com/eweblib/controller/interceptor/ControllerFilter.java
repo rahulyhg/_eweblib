@@ -57,8 +57,8 @@ public class ControllerFilter extends AbstractController implements Filter {
 //		} else {
 
 			try {
-				//loginCheck((HttpServletRequest) request);
-				//roleCheck((HttpServletRequest) request);
+				
+				InitialService.roleCheck((HttpServletRequest) request);
 				filterChain.doFilter(request, response);
 			} catch (Exception e) {
 
@@ -115,42 +115,6 @@ public class ControllerFilter extends AbstractController implements Filter {
 //				}
 //			}
 //		}
-	}
-
-	private void roleCheck(HttpServletRequest request) {
-
-		if (InitialService.rolesValidationMap.get(request.getServletPath()) != null) {
-			boolean find = false;
-
-			if (EWeblibThreadLocal.getCurrentUserId() != null) {
-
-//				DataBaseQueryBuilder builder = new DataBaseQueryBuilder(User.TABLE_NAME);
-//				builder.and(User.ID, EWeblibThreadLocal.getCurrentUserId());
-//
-//				User user = (User) queryDao.findOneByQuery(builder, User.class);
-//
-//				if (user != null) {
-//
-//				}
-
-			}
-
-			if (!find) {
-				throw new ResponseException("无权限操作");
-			}
-
-		}
-
-	}
-
-	private void loginCheck(HttpServletRequest request) {
-
-		if (InitialService.loginPath.contains(request.getServletPath())) {
-			if (request.getSession().getAttribute(BaseEntity.ID) == null) {
-				logger.debug("Login requried for path : " + request.getPathInfo());
-				throw new LoginException();
-			}
-		}
 	}
 
 	@Override

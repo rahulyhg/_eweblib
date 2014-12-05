@@ -7,6 +7,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import com.eweblib.dao.IQueryDao;
+import com.eweblib.exception.ConfigException;
 import com.eweblib.util.EweblibUtil;
 
 public class ConfigManager {
@@ -19,18 +20,17 @@ public class ConfigManager {
 	public static void setConfiguraion(String configFiles, IQueryDao dao) {
 		ConfigManager.dao = dao;
 
-			String files[] = configFiles.split(",");
+		String files[] = configFiles.split(",");
 
-			for (String file : files) {
-				try {
-					// load resource from class root path
-					properties.load(ConfigManager.class.getResourceAsStream("/".concat(file)));
-				} catch (IOException e) {
-					logger.fatal("Load property file failed: ".concat(file), e);
-				}
-
+		for (String file : files) {
+			try {
+				// load resource from class root path
+				properties.load(ConfigManager.class.getResourceAsStream("/".concat(file)));
+			} catch (IOException e) {
+				logger.fatal("Load property file failed: ".concat(file), e);
 			}
-	
+
+		}
 
 	}
 
@@ -55,6 +55,18 @@ public class ConfigManager {
 
 	public static void remove(String key) {
 		properties.remove(key);
+	}
+
+	public static String getLuceneIndexDir() {
+
+		String dir = ConfigManager.getProperty("lucene_index_dir");
+
+		if (EweblibUtil.isEmpty(dir)) {
+			throw new ConfigException("lucene_index_dir must be set into config.properties");
+		}
+
+		return dir;
+
 	}
 
 	public static boolean isProductEnviroment() {

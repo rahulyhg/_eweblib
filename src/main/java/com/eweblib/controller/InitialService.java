@@ -1,4 +1,4 @@
-package com.eweblib.annotation.column;
+package com.eweblib.controller;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -18,6 +18,8 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.eweblib.annotation.column.LoginRequired;
+import com.eweblib.annotation.column.Permission;
 import com.eweblib.bean.BaseEntity;
 import com.eweblib.dao.IMyBatisDao;
 import com.eweblib.exception.LoginException;

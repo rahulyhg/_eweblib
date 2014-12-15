@@ -364,8 +364,6 @@ public class QueryDaoImpl implements IQueryDao {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		if (queryEntity != null) {
 			parameters = queryEntity.toMap();
-		} else {
-			parameters = queryEntity.toMap();
 		}
 
 		parameters.put("procedure", procedure);

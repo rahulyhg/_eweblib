@@ -20,10 +20,10 @@ import org.springframework.web.util.NestedServletException;
 
 import com.eweblib.bean.BaseEntity;
 import com.eweblib.controller.AbstractController;
-import com.eweblib.controller.InitialService;
 import com.eweblib.dao.IQueryDao;
 import com.eweblib.exception.LoginException;
 import com.eweblib.exception.ResponseException;
+import com.eweblib.service.InitialService;
 import com.eweblib.util.EWeblibThreadLocal;
 
 public class ControllerFilter extends AbstractController implements Filter {
@@ -51,7 +51,7 @@ public class ControllerFilter extends AbstractController implements Filter {
 
 		try {
 
-			InitialService.roleCheck((HttpServletRequest) request);
+			roleCheck((HttpServletRequest) request);
 			filterChain.doFilter(request, response);
 		} catch (Exception e) {
 
@@ -115,6 +115,47 @@ public class ControllerFilter extends AbstractController implements Filter {
 	@Override
 	public void setLoginSessionInfo(HttpServletRequest request, HttpServletResponse response, BaseEntity user) {
 
+	}
+	
+	
+
+	public static void roleCheck(HttpServletRequest request) {
+		loginCheck(request);
+
+		if (InitialService.rolesPathValidationMap.get(request.getServletPath()) != null) {
+			boolean find = false;
+
+			if (EWeblibThreadLocal.getCurrentUserId() != null) {
+
+				// DataBaseQueryBuilder builder = new
+				// DataBaseQueryBuilder(User.TABLE_NAME);
+				// builder.and(User.ID, EWeblibThreadLocal.getCurrentUserId());
+				//
+				// User user = (User) queryDao.findOneByQuery(builder,
+				// User.class);
+				//
+				// if (user != null) {
+				//
+				// }
+
+			}
+
+			if (!find) {
+				throw new ResponseException("无权限操作");
+			}
+
+		}
+
+	}
+
+	public static void loginCheck(HttpServletRequest request) {
+
+		if (InitialService.loginPath.contains(request.getServletPath())) {
+			if (request.getSession().getAttribute(BaseEntity.ID) == null) {
+				logger.debug("Login requried for path : " + request.getPathInfo());
+				throw new LoginException();
+			}
+		}
 	}
 
 }

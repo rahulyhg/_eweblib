@@ -8,6 +8,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +28,10 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+
+import com.eweblib.bean.vo.LBS;
+import com.eweblib.cfg.ConfigManager;
+import com.eweblib.exception.ResponseException;
 
 public class HttpClientUtil {
 
@@ -93,7 +98,7 @@ public class HttpClientUtil {
 		HttpPost method = new HttpPost(url);
 
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-		
+
 		if (parameters != null) {
 			Set<String> keys = parameters.keySet();
 			for (String key : keys) {
@@ -135,7 +140,6 @@ public class HttpClientUtil {
 		HttpResponse response = null;
 		HttpPost method = new HttpPost(url);
 
-		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 
 		if (data == null) {
 			data = "";
@@ -204,6 +208,144 @@ public class HttpClientUtil {
 			logger.error("URISyntaxException when try to get data from ".concat(url), e);
 		}
 
+	}
+
+	public static LBS getLngAndLat(String address) {
+
+		return getLngAndLat(address, ConfigManager.getProperty("baidu_map_key"));
+
+	}
+
+	public static LBS getLngAndLat(String address, String key) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("address", address);
+		params.put("output", "json");
+		if (key == null) {
+			params.put("ak", ConfigManager.getProperty("baidu_map_key"));
+		} else {
+			params.put("ak", key);
+		}
+		Map<String, Object> location = new HashMap<String, Object>();
+		Map<String, Object> result = null;
+		try {
+			String res = HttpClientUtil.doPost("http://api.map.baidu.com/geocoder/v2/", params);
+			result = EweblibUtil.toMap(res);
+
+			if (result != null && !EweblibUtil.isEmpty(result.get("result"))) {
+				Map<String, Object> locationResult = (Map<String, Object>) result.get("result");
+				if (!EweblibUtil.isEmpty(locationResult.get("location"))) {
+					location = (Map<String, Object>) locationResult.get("location");
+
+				}
+
+			}
+		} catch (Exception e) {
+			logger.error(e);
+			throw new ResponseException(e.getMessage());
+		}
+
+		if (result != null) {
+			Object status = result.get("status");
+			if (status == null || !(status.toString().equalsIgnoreCase("0.0") || status.toString().equalsIgnoreCase("0"))) {
+				throw new ResponseException("百度地图异常，返回状态码: " + status + " , 请查阅http://developer.baidu.com/map/webservice-geocoding.htm, 8.返回码状态表");
+			}
+		}
+
+		LBS lbs = new LBS();
+		lbs.setAddress(address);
+
+		if (!EweblibUtil.isEmpty(location)) {
+			lbs.setLng(EweblibUtil.getDouble(location.get("lng"), null));
+			lbs.setLat(EweblibUtil.getDouble(location.get("lat"), null));
+		}
+
+		return lbs;
+	}
+
+	public static Map<String, Object> convertLngAndLatToBaidu(Double lng, Double lat, String key, String from) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("from", from);
+		params.put("output", "json");
+		if (key == null) {
+			params.put("ak", ConfigManager.getProperty("baidu_map_key"));
+		} else {
+			params.put("ak", key);
+		}
+
+		params.put("coords", lng + "," + lat);
+
+		Map<String, Object> location = new HashMap<String, Object>();
+		Map<String, Object> result = null;
+		try {
+			String res = HttpClientUtil.doPost("http://api.map.baidu.com/geoconv/v1/", params);
+			result = EweblibUtil.toMap(res);
+
+			if (result != null && !EweblibUtil.isEmpty(result.get("result"))) {
+				List<Map<String, Object>> locationResult = (List<Map<String, Object>>) result.get("result");
+				if (!EweblibUtil.isEmpty(locationResult)) {
+					location = (Map<String, Object>) locationResult.get(0);
+
+				}
+
+			}
+		} catch (Exception e) {
+			logger.error(e);
+			throw new ResponseException(e.getMessage());
+		}
+
+		if (result != null) {
+			Object status = result.get("status");
+			if (status == null || !(status.toString().equalsIgnoreCase("0.0") || status.toString().equalsIgnoreCase("0"))) {
+				throw new ResponseException("百度地图异常，返回状态码: " + status + " , 请查阅http://developer.baidu.com/map/webservice-geocoding.htm, 8.返回码状态表");
+			}
+		}
+		return location;
+	}
+
+	public static Map<String, Object> getAddressByLngAndLat(String lng, String lat, String key) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("location", lng + "," + lat);
+		params.put("output", "json");
+		params.put("coord_type", "bd09ll");
+		if (key == null) {
+			params.put("ak", ConfigManager.getProperty("baidu_map_key"));
+		} else {
+			params.put("ak", key);
+		}
+		String res = null;
+		try {
+			res = HttpClientUtil.doGet("http://api.map.baidu.com/telematics/v3/reverseGeocoding", params);
+		} catch (Exception e) {
+			logger.error(e);
+		}
+
+		Map<String, Object> result = EweblibUtil.toMap(res);
+
+		return result;
+	}
+
+	public static Map<String, Object> getAddressByLngAndLatV2(String lng, String lat, String key) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("location", lat + "," + lng);
+		params.put("output", "json");
+		params.put("coord_type", "bd09ll");
+		params.put("pois", "0");
+		if (key == null) {
+			params.put("ak", ConfigManager.getProperty("baidu_map_key"));
+		} else {
+			params.put("ak", key);
+		}
+		String res = null;
+		try {
+			res = HttpClientUtil.doGet("http://api.map.baidu.com/geocoder/v2/", params);
+		} catch (Exception e) {
+			logger.error(e);
+		}
+
+		Map<String, Object> result = EweblibUtil.toMap(res);
+		System.out.println(result.get("result"));
+
+		return result;
 	}
 
 }

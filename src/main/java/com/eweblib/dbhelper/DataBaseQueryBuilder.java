@@ -17,8 +17,6 @@ public class DataBaseQueryBuilder {
 
 	private String limitColumns = null;
 
-	private String joinColumns = null;
-
 	private Integer limitStart = null;
 
 	private Integer limitRows = null;
@@ -510,13 +508,6 @@ public class DataBaseQueryBuilder {
 		this.lastOpType = lastOpType;
 	}
 
-	public String getJoinColumns() {
-		return joinColumns;
-	}
-
-	public void setJoinColumns(String joinColumns) {
-		this.joinColumns = joinColumns;
-	}
 
 	public String getOnQuery() {
 		return onQuery;

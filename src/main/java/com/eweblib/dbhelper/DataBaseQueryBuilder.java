@@ -175,32 +175,60 @@ public class DataBaseQueryBuilder {
 
 		return this;
 	}
+	
+	public DataBaseQueryBuilder leftJoin(String leftTable, String leftAlias, String rightTable, String rightAlias, String leftKey, String rightKey) {
 
-	public DataBaseQueryBuilder leftJoin(String leftTable, String rightTable, String leftKey, String rightKey) {
-    
+		if (EweblibUtil.isEmpty(leftAlias)) {
+			leftAlias = leftTable;
+		}
+
+		if (EweblibUtil.isEmpty(leftAlias)) {
+			rightAlias = rightTable;
+		}
+
 		if (this.queryStr != null) {
 			throw new RuntimeException("Must set join table first before set query operation");
 		}
 		if (this.onQuery == null) {
-			this.onQuery = " left join " + rightTable + " as " + rightTable + " on " + leftTable + "." + leftKey + "=" + rightTable + "." + rightKey;
+			this.onQuery = " left join " + rightTable + " as " + rightAlias + " on " + leftAlias + "." + leftKey + "=" + rightAlias + "." + rightKey;
 		} else {
-			this.onQuery = this.onQuery + " left join " + rightTable + " as " + rightTable + " on " + leftTable + "." + leftKey + "=" + rightTable + "." + rightKey;
+			this.onQuery = this.onQuery + " left join " + rightTable + " as " + rightAlias + " on " + leftAlias + "." + leftKey + "=" + rightAlias + "." + rightKey;
 		}
 		return this;
 	}
-	
-	
-	public DataBaseQueryBuilder innerJoin(String leftTable, String rightTable, String leftKey, String rightKey) {
-	    
+
+	public DataBaseQueryBuilder innerJoin(String leftTable, String leftAlias, String rightTable, String rightAlias, String leftKey, String rightKey) {
+		if (EweblibUtil.isEmpty(leftAlias)) {
+			leftAlias = leftTable;
+		}
+
+		if (EweblibUtil.isEmpty(leftAlias)) {
+			rightAlias = rightTable;
+		}
+
+		
 		if (this.queryStr != null) {
 			throw new RuntimeException("Must set join table first before set query operation");
 		}
 		if (this.onQuery == null) {
-			this.onQuery = " inner join " + rightTable + " as " + rightTable + " on " + leftTable + "." + leftKey + "=" + rightTable + "." + rightKey;
+			this.onQuery = " inner join " + rightTable + " as " + rightAlias + " on " + leftAlias + "." + leftKey + "=" + rightAlias + "." + rightKey;
 		} else {
-			this.onQuery = this.onQuery + " inner join " + rightTable + " as " + rightTable + " on " + leftTable + "." + leftKey + "=" + rightTable + "." + rightKey;
+			this.onQuery = this.onQuery + " inner join " + rightTable + " as " + rightAlias + " on " + leftAlias + "." + leftKey + "=" + rightAlias + "." + rightKey;
 		}
 		return this;
+	}
+
+	
+	
+	
+
+	public DataBaseQueryBuilder leftJoin(String leftTable, String rightTable, String leftKey, String rightKey) {
+    
+		return this.leftJoin(leftTable, null, rightTable, null, leftKey, rightKey);
+	}
+	
+	public DataBaseQueryBuilder innerJoin(String leftTable, String rightTable, String leftKey, String rightKey) {
+		return this.innerJoin(leftTable, null, rightTable, null, leftKey, rightKey);
 	}
 
 

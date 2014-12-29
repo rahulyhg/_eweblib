@@ -17,33 +17,9 @@ public class RoleGroup extends BaseEntity {
 	@Expose
 	public String groupName;
 
-	@Column(name = PERMISSIONS)
-	@Expose
-	public String permissions;
-
 	@Column(name = "description")
 	@Expose
 	public String description;
-	
-	
-	public String[] permissionitems;
-	
-
-	public String[] getPermissionitems() {
-		return permissionitems;
-	}
-
-	public void setPermissionitems(String[] permissionitems) {
-		this.permissionitems = permissionitems;
-	}
-
-	public String getPermissions() {
-		return permissions;
-	}
-
-	public void setPermissions(String permissions) {
-		this.permissions = permissions;
-	}
 
 	public String getDescription() {
 		return description;

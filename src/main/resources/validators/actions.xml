@@ -4,21 +4,21 @@
 <form-validation>
 	<global>
 		<validator name="int"
-			classname="com.ecomlib.validators.CommonValidator" method="validateInt"
+			classname="com.eweblib.validators.CommonValidator" method="validateInt"
 			methodParams="java.lang.Object,org.apache.commons.validator.Field"
 			msg="errors.int" />
 		<validator name="required"
-			classname="com.ecomlib.validators.CommonValidator" method="validateRequired"
+			classname="com.eweblib.validators.CommonValidator" method="validateRequired"
 			methodParams="java.lang.Object,org.apache.commons.validator.Field"
 			msg="errors.required" />
 
 		<validator name="email"
-			classname="com.ecomlib.validators.CommonValidator" method="validateEmail"
+			classname="com.eweblib.validators.CommonValidator" method="validateEmail"
 			methodParams="java.lang.Object,org.apache.commons.validator.Field"
 			msg="errors.email" />
 		
 		<validator name="in"
-			classname="com.ecomlib.validators.CommonValidator" method="validateInValue"
+			classname="com.eweblib.validators.CommonValidator" method="validateInValue"
 			methodParams="java.lang.Object,org.apache.commons.validator.Field"
 			msg="errors.in" />
 

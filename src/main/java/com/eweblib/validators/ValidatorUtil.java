@@ -1,5 +1,7 @@
 package com.eweblib.validators;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -27,7 +29,6 @@ import com.eweblib.bean.BaseEntity;
 import com.eweblib.exception.ResponseException;
 import com.eweblib.service.AbstractService;
 import com.eweblib.util.EweblibUtil;
-import com.google.gson.Gson;
 
 public class ValidatorUtil {
 
@@ -37,10 +38,10 @@ public class ValidatorUtil {
 
 	private static Map<String, ValidatorResources> vresources = null;
 
-	public static void init(Class<?> classzz, String[] validatorsFiles) {
+	public static void init(Class<?> classzz) {
 		intiBundle(classzz);
 		getValidateActions();
-		initValidatorResources(classzz, validatorsFiles);
+		initValidatorResources(classzz);
 	}
 
 	public static ResourceBundle intiBundle(Class<?> classzz) {
@@ -75,47 +76,60 @@ public class ValidatorUtil {
 		return actionResources;
 	}
 
-	public static Map<String, ValidatorResources> initValidatorResources(Class<?> classzz, String[] validatorsFiles) {
+	public static Map<String, ValidatorResources> initValidatorResources(Class<?> classzz) {
 
 		if (vresources == null) {
 			vresources = new HashMap<String, ValidatorResources>();
-			for (String validator : validatorsFiles) {
-				InputStream in = null;
-				ValidatorResources resources = null;
 
-				try {
-					String validatorPath = "/validators/".concat(validator).concat(".xml");
-					in = classzz.getResourceAsStream(validatorPath);
-					resources = new ValidatorResources(in);
-				} catch (Exception e) {
-					e.printStackTrace();
-				} finally {
-					// Make sure we close the input stream.
-					if (in != null) {
-						try {
-							in.close();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+			String classFolder = ValidatorUtil.class.getResource("/").getFile() + "validators";
+
+			File validatorFolder = new File(classFolder);
+
+			for (String validator : validatorFolder.list()) {
+
+				if (validator.endsWith(".xml")) {
+					InputStream in = null;
+					ValidatorResources resources = null;
+
+					try {
+						String validatorPath = classFolder + File.separator + validator;
+						System.out.println(validatorPath);
+
+						File tmp = new File(validatorPath);
+						System.out.println(tmp.canRead());
+						
+						in = new FileInputStream(validatorPath);
+						resources = new ValidatorResources(in);
+					} catch (Exception e) {
+						e.printStackTrace();
+					} finally {
+						// Make sure we close the input stream.
+						if (in != null) {
+							try {
+								in.close();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
 					}
-				}
-				Set<String> set = actionResources.getValidatorActions().keySet();
-				for (String key : set) {
-					resources.addValidatorAction(actionResources.getValidatorAction(key));
-				}
+					Set<String> set = actionResources.getValidatorActions().keySet();
+					for (String key : set) {
+						resources.addValidatorAction(actionResources.getValidatorAction(key));
+					}
 
-				vresources.put(validator, resources);
+					vresources.put(validator.replaceAll(".xml", ""), resources);
+				}
 			}
 		}
 
 		return vresources;
 	}
 
-	public static void validate(BaseEntity entity, String fileName, String validatorForm, String[] validatorsFiles) {
-		ValidatorUtil.init(AbstractService.class, validatorsFiles);
+	public static void validate(BaseEntity entity, String fileName, String validatorForm) {
+		ValidatorUtil.init(AbstractService.class);
 
-		ValidatorResources resources = ValidatorUtil.initValidatorResources(AbstractService.class, validatorsFiles).get(fileName);
+		ValidatorResources resources = ValidatorUtil.initValidatorResources(AbstractService.class).get(fileName);
 
 		// Create a validator with the ValidateBean actions for the bean
 		// we're interested in.
@@ -181,8 +195,8 @@ public class ValidatorUtil {
 				msgs.add(msg);
 			}
 		}
-		
-		if(!msgs.isEmpty()){			
+
+		if (!msgs.isEmpty()) {
 			throw new ResponseException(EweblibUtil.toJson(msgs));
 		}
 

@@ -7,6 +7,8 @@ import com.google.gson.annotations.Expose;
 
 @Table(name = RoleGroup.TABLE_NAME)
 public class RoleGroup extends BaseEntity {
+	public static final String MENU_IDS = "menuIds";
+
 	public static final String GROUP_NAME = "groupName";
 
 	public static final String PERMISSIONS = "permissions";
@@ -20,6 +22,19 @@ public class RoleGroup extends BaseEntity {
 	@Column(name = "description")
 	@Expose
 	public String description;
+	
+	@Column(name = MENU_IDS)
+	public String menuIds;
+	
+	
+	public String getMenuIds() {
+		return menuIds;
+	}
+
+	public void setMenuIds(String menuIds) {
+		this.menuIds = menuIds;
+	}
+	
 
 	public String getDescription() {
 		return description;

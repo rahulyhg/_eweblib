@@ -182,7 +182,7 @@ public class DataBaseQueryBuilder {
 			leftAlias = leftTable;
 		}
 
-		if (EweblibUtil.isEmpty(leftAlias)) {
+		if (EweblibUtil.isEmpty(rightAlias)) {
 			rightAlias = rightTable;
 		}
 
@@ -224,7 +224,7 @@ public class DataBaseQueryBuilder {
 
 	public DataBaseQueryBuilder leftJoin(String leftTable, String rightTable, String leftKey, String rightKey) {
     
-		return this.leftJoin(leftTable, null, rightTable, null, leftKey, rightKey);
+		return this.leftJoin(leftTable, leftTable, rightTable, rightTable, leftKey, rightKey);
 	}
 	
 	public DataBaseQueryBuilder innerJoin(String leftTable, String rightTable, String leftKey, String rightKey) {

@@ -6,6 +6,7 @@ import javax.persistence.Table;
 @Table(name = MenuItem.TABLE_NAME)
 public class MenuItem extends BaseEntity {
 
+	public static final String CSS_NAME = "cssName";
 	public static final String MENU_ID = "menuId";
 	public static final String TITLE = "title";
 	public static final String HREF = "href";
@@ -20,9 +21,20 @@ public class MenuItem extends BaseEntity {
 
 	@Column(name = DISPLAY_ORDER)
 	public Integer displayOrder;
-	
+
 	@Column(name = MENU_ID)
 	public String menuId;
+
+	@Column(name = CSS_NAME)
+	public String cssName;
+
+	public String getCssName() {
+		return cssName;
+	}
+
+	public void setCssName(String cssName) {
+		this.cssName = cssName;
+	}
 
 	public String getTitle() {
 		return title;
@@ -55,7 +67,5 @@ public class MenuItem extends BaseEntity {
 	public void setMenuId(String menuId) {
 		this.menuId = menuId;
 	}
-	
-	
 
 }

@@ -13,7 +13,7 @@ public class Menu extends BaseEntity {
 
 	public static final String STYLE = "style";
 
-	public static final String DATA_OPTIONS = "dataOptions";
+	public static final String CSS_NAME = "cssName";
 
 	public static final String STYLE_NAME = "styleName";
 
@@ -35,16 +35,14 @@ public class Menu extends BaseEntity {
 	@Column(name = STYLE)
 	public String style;
 
-	@Column(name = DATA_OPTIONS)
-	public String dataOptions;
+	@Column(name = CSS_NAME)
+	public String cssName;
 
 	
 	@Column(name = MENU_GROUP_ID)
 	public String menuGroupId;
 	
-	
-	
-	
+
 	
 	public String getMenuGroupId() {
 		return menuGroupId;
@@ -84,12 +82,12 @@ public class Menu extends BaseEntity {
 		this.style = style;
 	}
 
-	public String getDataOptions() {
-		return dataOptions;
+	public String getCssName() {
+		return cssName;
 	}
 
-	public void setDataOptions(String dataOptions) {
-		this.dataOptions = dataOptions;
+	public void setCssName(String dataOptions) {
+		this.cssName = dataOptions;
 	}
 
 	public Integer getDisplayOrder() {

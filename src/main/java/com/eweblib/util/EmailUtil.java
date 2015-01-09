@@ -42,9 +42,9 @@ public class EmailUtil {
 		
         try {
             // 如果要求身份验证，设置用户名、密码，分别为发件人在邮件服务器上注册的用户名和密码
-            email.setAuthentication(ConfigManager.getProperty("email"), ConfigManager.getProperty("password"));
-            email.setHostName(ConfigManager.getProperty("smtp"));// 设置发送主机的服务器地址
-            email.setFrom(ConfigManager.getProperty("email"), "工程管理系统");// 发件人邮箱
+            email.setAuthentication(ConfigManager.getProperty("email_account"), ConfigManager.getProperty("email_password"));
+            email.setHostName(ConfigManager.getProperty("email_smtp"));// 设置发送主机的服务器地址
+            email.setFrom(ConfigManager.getProperty("email_password"), ConfigManager.getProperty("email_customer_service_name"));// 发件人邮箱
             
             List<InternetAddress> address = new ArrayList<InternetAddress>();
             for (Object mail : toList) {

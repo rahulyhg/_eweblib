@@ -18,88 +18,110 @@ import org.springframework.ui.velocity.VelocityEngineUtils;
 import com.eweblib.cfg.ConfigManager;
 
 public class EmailUtil {
-	
-    public static void sendMail(String subject, List<Object> toList, String content) {
-    	sendMail(subject, toList, content, null);
-    }
 
-    public static void sendMail(String subject, String to, String content, String file) {
-    	List<Object> toList = new ArrayList<Object>();
-    	toList.add(to);
-    	sendMail(subject, toList, content, file);
-    }
-    
-    public static void sendMail(String subject, List<Object> toList, Map<String,Object> model, String template, String file) {
-    	String content  = getContent(model, template);
-    	sendMail(subject, toList, content, file);
-    }
-    
-  
-    
-    /**发送主方法**/
-	public static void sendMail(String subject, List<Object> toList, String content, String file) {
+	public static void sendMail(String subject, List<Object> toList,
+			String content) {
+		sendMail(subject, toList, content, null);
+	}
+
+	public static void sendMail(String subject, String to, String content,
+			String file) {
+		List<Object> toList = new ArrayList<Object>();
+		toList.add(to);
+		sendMail(subject, toList, content, file);
+	}
+
+	public static void sendMail(String subject, String to,
+			Map<String, Object> model, String template, String file) {
+		String content = getContent(model, template);
+		List<Object> toList = new ArrayList<Object>();
+		toList.add(to);
+		sendMail(subject, toList, content, file);
+	}
+
+	public static void sendMail(String subject, List<Object> toList,
+			Map<String, Object> model, String template, String file) {
+		String content = getContent(model, template);
+		sendMail(subject, toList, content, file);
+	}
+
+	/** 发送主方法 **/
+	public static void sendMail(String subject, List<Object> toList,
+			String content, String file) {
 		HtmlEmail email = new HtmlEmail();
-		
-        try {
-            // 如果要求身份验证，设置用户名、密码，分别为发件人在邮件服务器上注册的用户名和密码
-            email.setAuthentication(ConfigManager.getProperty("email_account"), ConfigManager.getProperty("email_password"));
-            email.setHostName(ConfigManager.getProperty("email_smtp"));// 设置发送主机的服务器地址
-            email.setFrom(ConfigManager.getProperty("email_password"), ConfigManager.getProperty("email_customer_service_name"));// 发件人邮箱
-            
-            List<InternetAddress> address = new ArrayList<InternetAddress>();
-            for (Object mail : toList) {
-                if (!EweblibUtil.isEmpty(mail)) {
-                    String[] emailList = mail.toString().split(",");
-                    for (String em : emailList) {
-                        address.add(new InternetAddress(em));
-                    }
-                }
-            }
-            
-            if (!address.isEmpty()) {
-                email.setTo(address);// 设置收件人邮箱
-                email.setSubject(subject);// 设置邮件的主题
 
-                email.setHtmlMsg(content);
-                email.setTextMsg("您的邮箱不支持HTML消息格式");
-                email.setCharset("UTF-8");
+		try {
+			// 如果要求身份验证，设置用户名、密码，分别为发件人在邮件服务器上注册的用户名和密码
+			email.setAuthentication(ConfigManager.getProperty("email_account"),
+					ConfigManager.getProperty("email_password"));
+			email.setHostName(ConfigManager.getProperty("email_smtp"));// 设置发送主机的服务器地址
+			email.setSmtpPort(Integer.parseInt(ConfigManager
+					.getProperty("email_smtp_port")));
+			email.setFrom(ConfigManager.getProperty("email_account"),
+					ConfigManager.getProperty("email_customer_service_name"));// 发件人邮箱
 
-                if (!EweblibUtil.isEmpty(file) && new File(file).exists()) {
-                    EmailAttachment attachment = new EmailAttachment();
-                    attachment.setPath(file);
-                    attachment.setDisposition(EmailAttachment.ATTACHMENT);
-                    attachment.setName(new File(file).getName());
-                    email.attach(attachment);
-                }
+			List<InternetAddress> address = new ArrayList<InternetAddress>();
+			for (Object mail : toList) {
+				if (!EweblibUtil.isEmpty(mail)) {
+					String[] emailList = mail.toString().split(",");
+					for (String em : emailList) {
+						address.add(new InternetAddress(em));
+					}
+				}
+			}
 
-                email.send();
-            }
-            
-        } catch (EmailException e) {
-            e.printStackTrace();
-        } catch (AddressException e){
-            e.printStackTrace();
-        }
-    }
-    
-    /**
-     * @return 邮件主体
-     * @param model 向模版中传递的对象变量
-     * @param tempate  模版名
-     * */
-    public static String getContent(Map<String,Object> model, String template) {
-        VelocityEngine ve = new VelocityEngine(); //配置模板引擎
-        ve.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, "******************");//模板文件所在的路径
-        ve.setProperty(Velocity.INPUT_ENCODING,"UTF-8");//处理中文问题
-        ve.setProperty(Velocity.OUTPUT_ENCODING,"UTF-8");//处理中文问题
-        String result = "";
-        try {
-            ve.init();//初始化模板
-            result = VelocityEngineUtils.mergeTemplateIntoString(ve, template, "UTF-8",model);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-        return result;
-    }
-    
+			if (!address.isEmpty()) {
+				email.setTo(address);// 设置收件人邮箱
+				email.setSubject(subject);// 设置邮件的主题
+
+				email.setHtmlMsg(content);
+				email.setTextMsg("您的邮箱不支持HTML消息格式");
+				email.setCharset("UTF-8");
+
+				if (!EweblibUtil.isEmpty(file) && new File(file).exists()) {
+					EmailAttachment attachment = new EmailAttachment();
+					attachment.setPath(file);
+					attachment.setDisposition(EmailAttachment.ATTACHMENT);
+					attachment.setName(new File(file).getName());
+					email.attach(attachment);
+				}
+
+				email.send();
+			}
+
+		} catch (EmailException e) {
+			e.printStackTrace();
+		} catch (AddressException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @return 邮件主体
+	 * @param model
+	 *            向模版中传递的对象变量
+	 * @param tempate
+	 *            模版名
+	 * */
+	public static String getContent(Map<String, Object> model, String template) {
+
+		if (!template.endsWith(".vm")) {
+			template = template.concat(".vm");
+		}
+		VelocityEngine ve = new VelocityEngine(); // 配置模板引擎
+		ve.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH,
+				ConfigManager.getPropertyObject("email_template_path"));// 模板文件所在的路径
+		ve.setProperty(Velocity.INPUT_ENCODING, "UTF-8");// 处理中文问题
+		ve.setProperty(Velocity.OUTPUT_ENCODING, "UTF-8");// 处理中文问题
+		String result = "";
+		try {
+			ve.init();// 初始化模板
+			result = VelocityEngineUtils.mergeTemplateIntoString(ve, template,
+					"UTF-8", model);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
 }

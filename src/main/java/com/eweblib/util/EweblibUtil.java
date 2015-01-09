@@ -351,7 +351,7 @@ public class EweblibUtil {
 				if (field.isAnnotationPresent(BooleanColumn.class)) {
 
 					if (params != null && field != null) {
-						if (params.get(field.getName()) != null) {
+						if (EweblibUtil.isValid(params.get(field.getName()))) {
 							String text = params.get(field.getName()).toString();
 							if (text.equalsIgnoreCase("1") || text.equalsIgnoreCase("true")) {
 								params.put(field.getName(), true);

@@ -353,12 +353,18 @@ public class EweblibUtil {
 					if (params != null && field != null) {
 						if (EweblibUtil.isValid(params.get(field.getName()))) {
 							String text = params.get(field.getName()).toString();
-							if (text.equalsIgnoreCase("1") || text.equalsIgnoreCase("true")) {
-								params.put(field.getName(), true);
-							} else {
-								params.put(field.getName(), false);
+							if (text.length() > 0) {
+								if (text.equalsIgnoreCase("1") || text.equalsIgnoreCase("true")) {
+									params.put(field.getName(), true);
+								} else {
+									params.put(field.getName(), false);
+								}
+							}else{
+								params.put(field.getName(), null);
 							}
 
+						}else{
+							params.put(field.getName(), null);
 						}
 					}
 				}

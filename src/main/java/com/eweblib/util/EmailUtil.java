@@ -51,14 +51,13 @@ public class EmailUtil {
 		HtmlEmail email = new HtmlEmail();
 
 		try {
+			email.setSSL(true);
 			// 如果要求身份验证，设置用户名、密码，分别为发件人在邮件服务器上注册的用户名和密码
-			email.setAuthentication(ConfigManager.getProperty("email_account"),
-					ConfigManager.getProperty("email_password"));
+			email.setAuthentication(ConfigManager.getProperty("email_account"), ConfigManager.getProperty("email_password"));
 			email.setHostName(ConfigManager.getProperty("email_smtp"));// 设置发送主机的服务器地址
-			email.setSmtpPort(Integer.parseInt(ConfigManager
-					.getProperty("email_smtp_port")));
-			email.setFrom(ConfigManager.getProperty("email_account"),
-					ConfigManager.getProperty("email_customer_service_name"));// 发件人邮箱
+			email.setSmtpPort(Integer.parseInt(ConfigManager.getProperty("email_smtp_port")));
+			email.setFrom(ConfigManager.getProperty("email_account"), ConfigManager.getProperty("email_customer_service_name"));// 发件人邮箱
+			email.setSslSmtpPort(ConfigManager.getProperty("email_smtp_port"));
 
 			List<InternetAddress> address = new ArrayList<InternetAddress>();
 			for (Object mail : toList) {

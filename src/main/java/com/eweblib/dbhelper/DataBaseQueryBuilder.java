@@ -232,20 +232,7 @@ public class DataBaseQueryBuilder {
 	}
 
 
-	public DataBaseQueryBuilder on(String leftTable, String rightTable, String leftKey, String rightKey) {
 
-		if (this.queryStr != null) {
-			throw new RuntimeException("Must set join table first before set query");
-		}
-
-		if (this.onQuery == null) {
-			throw new RuntimeException("Must set join table first before set on query ");
-		}
-
-		this.onQuery = this.onQuery + " and " + leftTable + "." + leftKey + "=" + rightTable + "." + rightKey;
-
-		return this;
-	}
 
 	public DataBaseQueryBuilder joinColumns(String tableAlias, String[] joinColumns) {
 
@@ -275,6 +262,22 @@ public class DataBaseQueryBuilder {
 		}
 		return this;
 
+	}
+	
+	
+	public DataBaseQueryBuilder sum(String tableAlias, String fieldName, String asFieldName) {
+
+		if (EweblibUtil.isEmpty(asFieldName)) {
+			asFieldName = fieldName;
+		}
+		String column = tableAlias + "." + fieldName + " as " + asFieldName + " ";
+
+		if (this.limitColumns == null) {
+			this.limitColumns = tableAlias + "." + column;
+		} else {
+			this.limitColumns = this.limitColumns + "," + tableAlias + "." + column;
+		}
+		return this;
 	}
 
 	private void setColumnNames(String column) {
@@ -419,6 +422,7 @@ public class DataBaseQueryBuilder {
 		if (this.onQuery != null) {
 			column = this.table + "." + column;
 		}
+		
 		if (asc) {
 			if (this.orderBy == null) {
 				this.orderBy = "  " + column + " ASC ";

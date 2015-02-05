@@ -130,6 +130,14 @@ public class QueryDaoImpl implements IQueryDao {
 	}
 
 	public <T extends BaseEntity> List<T> listBySql(String sql, Class<T> classzz) {
+		
+		if (EWeblibThreadLocal.get(EWebLibConstants.PAGENATION) != null) {
+			Pagination page = (Pagination) EWeblibThreadLocal.get(EWebLibConstants.PAGENATION);
+			
+			
+		}
+		
+		
 		List<Map<String, Object>> results = dao.listBySql(sql);
 
 		List<T> entityList = mergeListValue(classzz, results, null);

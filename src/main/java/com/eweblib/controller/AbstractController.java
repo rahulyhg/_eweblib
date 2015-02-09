@@ -24,6 +24,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.digest.Md5Crypt;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,6 +36,7 @@ import com.eweblib.bean.OrderBy;
 import com.eweblib.bean.Pagination;
 import com.eweblib.constants.EWebLibConstants;
 import com.eweblib.exception.ResponseException;
+import com.eweblib.util.DataEncrypt;
 import com.eweblib.util.EWeblibThreadLocal;
 import com.eweblib.util.EweblibUtil;
 
@@ -367,9 +369,19 @@ public abstract class AbstractController {
 		response.addCookie(account);
 		response.addCookie(ssid);
 	}
+	
+	protected String uploadFile(HttpServletRequest request, String parameterName, int size, String[] suffixes) {
+		String uidMd5 = DataEncrypt.generatePassword(EWeblibThreadLocal.getCurrentUserId());
 
-	protected String uploadFile(HttpServletRequest request, String relativeFilePath, String parameterName, int size, String[] suffixes) {
+		String relativeFilePath = genRandomRelativePath(uidMd5);
 
+		return uploadFile(request, relativeFilePath, parameterName, size, suffixes);
+
+	}
+
+	private String uploadFile(HttpServletRequest request, String relativeFilePath, String parameterName, int size, String[] suffixes) {
+
+		
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 		MultipartFile uploadFile = multipartRequest.getFile(parameterName);
 

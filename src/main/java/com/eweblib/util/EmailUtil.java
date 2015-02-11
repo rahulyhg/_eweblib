@@ -11,9 +11,6 @@ import javax.mail.internet.InternetAddress;
 import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
-import org.apache.velocity.app.Velocity;
-import org.apache.velocity.app.VelocityEngine;
-import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.eweblib.cfg.ConfigManager;
 
@@ -104,23 +101,7 @@ public class EmailUtil {
 	 * */
 	public static String getContent(Map<String, Object> model, String template) {
 
-		if (!template.endsWith(".vm")) {
-			template = template.concat(".vm");
-		}
-		VelocityEngine ve = new VelocityEngine(); // 配置模板引擎
-		ve.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH,
-				ConfigManager.getPropertyObject("email_template_path"));// 模板文件所在的路径
-		ve.setProperty(Velocity.INPUT_ENCODING, "UTF-8");// 处理中文问题
-		ve.setProperty(Velocity.OUTPUT_ENCODING, "UTF-8");// 处理中文问题
-		String result = "";
-		try {
-			ve.init();// 初始化模板
-			result = VelocityEngineUtils.mergeTemplateIntoString(ve, template,
-					"UTF-8", model);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return result;
+		return EweblibUtil.getContent(model, template, ConfigManager.getProperty("email_template_path"));
 	}
 
 }

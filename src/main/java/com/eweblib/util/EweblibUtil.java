@@ -12,6 +12,9 @@ import java.util.Set;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.apache.velocity.app.Velocity;
+import org.apache.velocity.app.VelocityEngine;
+import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.eweblib.annotation.column.BooleanColumn;
 import com.eweblib.annotation.column.CopyColum;
@@ -501,6 +504,35 @@ public class EweblibUtil {
 		}
 
 	}
+	
+	
+	/**
+	 * @return 邮件主体
+	 * @param model
+	 *            向模版中传递的对象变量
+	 * @param tempate
+	 *            模版名
+	 * */
+	public static String getContent(Map<String, Object> model, String template, String resourcePath) {
+
+		if (!template.endsWith(".vm")) {
+			template = template.concat(".vm");
+		}
+		VelocityEngine ve = new VelocityEngine(); // 配置模板引擎
+		ve.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, resourcePath);// 模板文件所在的路径
+		ve.setProperty(Velocity.INPUT_ENCODING, "UTF-8");// 处理中文问题
+		ve.setProperty(Velocity.OUTPUT_ENCODING, "UTF-8");// 处理中文问题
+		String result = "";
+		try {
+			ve.init();// 初始化模板
+			result = VelocityEngineUtils.mergeTemplateIntoString(ve, template,
+					"UTF-8", model);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
 
 	/**
 	 * @param args

@@ -515,7 +515,7 @@ public class EweblibUtil {
 	 * */
 	public static String getContent(Map<String, Object> model, String template, String resourcePath) {
 
-		if (!template.endsWith(".vm")) {
+		if (!template.endsWith(".vm") && !template.contains(".")) {
 			template = template.concat(".vm");
 		}
 		VelocityEngine ve = new VelocityEngine(); // 配置模板引擎

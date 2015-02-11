@@ -313,6 +313,18 @@ public abstract class AbstractController {
 		}
 
 	}
+	
+	
+	protected void responseWithHtml(HttpServletRequest request, HttpServletResponse response, String txt) {
+		try {
+			response.setContentType("text/html;charset=UTF-8");
+			response.addHeader("Accept-Encoding", "gzip, deflate");
+			response.getWriter().write(txt);
+		} catch (IOException e) {
+			logger.fatal("Write response data to client failed!", e);
+		}
+
+	}
 
 	protected void responseServerError(Throwable throwable, HttpServletRequest request, HttpServletResponse response) {
 		Map<String, Object> temp = new HashMap<String, Object>();

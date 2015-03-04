@@ -52,6 +52,13 @@ public abstract class AbstractController {
 
 	}
 
+	protected String getRemortIP(HttpServletRequest request) {
+		if (request.getHeader("x-forwarded-for") == null) {
+			return request.getRemoteAddr();
+		}
+		return request.getHeader("x-forwarded-for");
+	}
+
 	protected <T extends BaseEntity> List<T> parserListJsonParameters(HttpServletRequest request, boolean emptyParameter, Class<T> claszz) {
 		Map<String, Object> params = this.parserJsonParameters(request, false);
 		List<T> list = EweblibUtil.toJsonList(params, claszz);
@@ -63,9 +70,9 @@ public abstract class AbstractController {
 		HashMap<String, Object> parametersMap = new HashMap<String, Object>();
 
 		int filterLength = 0;
-		
+
 		Enumeration<?> headerNames = request.getHeaderNames();
-		
+
 		while (headerNames.hasMoreElements()) {
 
 			String pName = headerNames.nextElement().toString();
@@ -201,16 +208,18 @@ public abstract class AbstractController {
 		return buffer.toString();
 	}
 
-//	protected <T extends BaseEntity> void responseWithDataPagnationForApp(EntityResults<T> listBean, HttpServletRequest request, HttpServletResponse response) {
-//		if (listBean != null) {
-//			Map<String, Object> list = new HashMap<String, Object>();
-//			list.put("total", listBean.getPagnation().getTotal());
-//			list.put("data", listBean.getEntityList());
-//			responseMsg(list, ResponseStatus.SUCCESS, request, response, null);
-//		} else {
-//			responseMsg(null, ResponseStatus.SUCCESS, request, response, null);
-//		}
-//	}
+	// protected <T extends BaseEntity> void
+	// responseWithDataPagnationForApp(EntityResults<T> listBean,
+	// HttpServletRequest request, HttpServletResponse response) {
+	// if (listBean != null) {
+	// Map<String, Object> list = new HashMap<String, Object>();
+	// list.put("total", listBean.getPagnation().getTotal());
+	// list.put("data", listBean.getEntityList());
+	// responseMsg(list, ResponseStatus.SUCCESS, request, response, null);
+	// } else {
+	// responseMsg(null, ResponseStatus.SUCCESS, request, response, null);
+	// }
+	// }
 
 	protected <T extends BaseEntity> void responseWithDataPagnation(EntityResults<T> listBean, Map<String, Object> results, HttpServletRequest request, HttpServletResponse response) {
 		if (results == null) {
@@ -235,15 +244,16 @@ public abstract class AbstractController {
 		}
 	}
 
-//	protected <T extends BaseEntity> void responseWithListDataForApp(List<T> listBean, HttpServletRequest request, HttpServletResponse response) {
-//		if (listBean != null) {
-//			Map<String, Object> list = new HashMap<String, Object>();
-//			list.put("data", listBean);
-//			responseMsg(list, ResponseStatus.SUCCESS, request, response, null);
-//		} else {
-//			responseMsg(null, ResponseStatus.SUCCESS, request, response, null);
-//		}
-//	}
+	// protected <T extends BaseEntity> void responseWithListDataForApp(List<T>
+	// listBean, HttpServletRequest request, HttpServletResponse response) {
+	// if (listBean != null) {
+	// Map<String, Object> list = new HashMap<String, Object>();
+	// list.put("data", listBean);
+	// responseMsg(list, ResponseStatus.SUCCESS, request, response, null);
+	// } else {
+	// responseMsg(null, ResponseStatus.SUCCESS, request, response, null);
+	// }
+	// }
 
 	protected void responseWithKeyValue(String key, Object value, HttpServletRequest request, HttpServletResponse response) {
 		if (key == null) {
@@ -313,8 +323,7 @@ public abstract class AbstractController {
 		}
 
 	}
-	
-	
+
 	protected void responseWithHtml(HttpServletRequest request, HttpServletResponse response, String txt) {
 		try {
 			response.setContentType("text/html;charset=UTF-8");
@@ -381,7 +390,7 @@ public abstract class AbstractController {
 		response.addCookie(account);
 		response.addCookie(ssid);
 	}
-	
+
 	protected String uploadFile(HttpServletRequest request, String parameterName, int size, String[] suffixes) {
 		String uidMd5 = DataEncrypt.generatePassword(EWeblibThreadLocal.getCurrentUserId());
 
@@ -393,7 +402,6 @@ public abstract class AbstractController {
 
 	private String uploadFile(HttpServletRequest request, String relativeFilePath, String parameterName, int size, String[] suffixes) {
 
-		
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 		MultipartFile uploadFile = multipartRequest.getFile(parameterName);
 
@@ -431,7 +439,6 @@ public abstract class AbstractController {
 			}
 			String fileName = uploadFile.getOriginalFilename().trim().replaceAll(" ", "");
 
-
 			InputStream inputStream = null;
 			try {
 				inputStream = uploadFile.getInputStream();
@@ -439,7 +446,7 @@ public abstract class AbstractController {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			return uploadFileByInputStream(request, relativeFilePath, fileName, inputStream);
 
 		}
@@ -449,15 +456,15 @@ public abstract class AbstractController {
 	}
 
 	public String uploadFileByInputStream(HttpServletRequest request, String relativeFilePath, String fileName, InputStream inputStream) {
-	    String webPath = request.getSession().getServletContext().getRealPath("/");
+		String webPath = request.getSession().getServletContext().getRealPath("/");
 
-	    Map<String, Object> map = new HashMap<String, Object>();
-	    map.put("inputStream", inputStream);
-	    map.put("webPath", webPath);
-	    map.put("fileName", fileName);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("inputStream", inputStream);
+		map.put("webPath", webPath);
+		map.put("fileName", fileName);
 
-	    return createFile(map, relativeFilePath + fileName);
-    }
+		return createFile(map, relativeFilePath + fileName);
+	}
 
 	public String createFile(Map<String, Object> params, String relativeFilePath) {
 		InputStream is = (InputStream) params.get("inputStream");
@@ -502,17 +509,15 @@ public abstract class AbstractController {
 		sb.append("upload/").append(userId).append("/");
 		return sb.toString();
 	}
-	
+
 	protected String genDownloadRandomRelativePath(String userId) {
 		StringBuffer sb = new StringBuffer("/");
 		sb.append("download/").append(userId).append("/");
 		return sb.toString();
 	}
 
-	
-
 	public void exportFile(HttpServletResponse response, String path) throws FileNotFoundException, IOException {
-	    // path是指欲下载的文件的路径。
+		// path是指欲下载的文件的路径。
 		File file = new File(path);
 		// 取得文件名。
 		String filename = file.getName();
@@ -529,8 +534,8 @@ public abstract class AbstractController {
 		toClient.write(buffer);
 		toClient.flush();
 		toClient.close();
-    }
-	
+	}
+
 	protected void addCookie(String key, String value, HttpServletResponse response, int age) {
 
 		if (value != null) {
@@ -548,8 +553,7 @@ public abstract class AbstractController {
 		}
 
 	}
-	
-	
+
 	protected String getCookie(String key, HttpServletRequest request) {
 		Cookie[] cookies = request.getCookies();// 这样便可以获取一个cookie数组
 
@@ -563,7 +567,7 @@ public abstract class AbstractController {
 		}
 		return null;
 	}
-	
+
 	public enum ResponseStatus {
 
 		SUCCESS {

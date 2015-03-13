@@ -1,7 +1,8 @@
-package com.eweblib.bean;
+package com.eweblib.bean.vo;
 
 import java.util.List;
 
+import com.eweblib.bean.BaseEntity;
 import com.google.gson.annotations.Expose;
 
 public class IDS extends BaseEntity {

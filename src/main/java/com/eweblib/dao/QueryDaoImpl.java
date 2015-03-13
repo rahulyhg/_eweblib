@@ -17,11 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.eweblib.bean.BaseEntity;
-import com.eweblib.bean.EntityResults;
 import com.eweblib.bean.Log;
 import com.eweblib.bean.LogItem;
-import com.eweblib.bean.OrderBy;
-import com.eweblib.bean.Pagination;
+import com.eweblib.bean.vo.EntityResults;
+import com.eweblib.bean.vo.OrderBy;
+import com.eweblib.bean.vo.Pagination;
 import com.eweblib.constants.EWebLibConstants;
 import com.eweblib.controller.interceptor.ControllerFilter;
 import com.eweblib.dbhelper.DataBaseQueryBuilder;

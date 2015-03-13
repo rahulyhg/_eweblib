@@ -31,9 +31,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.eweblib.bean.BaseEntity;
-import com.eweblib.bean.EntityResults;
-import com.eweblib.bean.OrderBy;
-import com.eweblib.bean.Pagination;
+import com.eweblib.bean.vo.EntityResults;
+import com.eweblib.bean.vo.OrderBy;
+import com.eweblib.bean.vo.Pagination;
 import com.eweblib.constants.EWebLibConstants;
 import com.eweblib.exception.ResponseException;
 import com.eweblib.util.DataEncrypt;

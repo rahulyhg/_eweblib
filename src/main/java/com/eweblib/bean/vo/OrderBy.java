@@ -1,4 +1,4 @@
-package com.eweblib.bean;
+package com.eweblib.bean.vo;
 
 public class OrderBy {
 

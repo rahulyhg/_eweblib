@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.eweblib.bean.Pagination;
+import com.eweblib.bean.vo.Pagination;
 import com.eweblib.util.EweblibUtil;
 
 public class DataBaseQueryBuilder {

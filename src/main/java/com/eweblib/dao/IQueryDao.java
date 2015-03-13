@@ -3,7 +3,7 @@ package com.eweblib.dao;
 import java.util.List;
 
 import com.eweblib.bean.BaseEntity;
-import com.eweblib.bean.EntityResults;
+import com.eweblib.bean.vo.EntityResults;
 import com.eweblib.dbhelper.DataBaseQueryBuilder;
 
 public interface IQueryDao {

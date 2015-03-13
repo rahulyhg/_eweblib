@@ -1,4 +1,4 @@
-package com.eweblib.annotation.column;
+package com.eweblib.annotation.controller;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,7 +7,8 @@ import java.lang.annotation.Target;
 
 @Target({ ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface LoginRequired {
+public @interface Permission {
 
-	boolean required() default true;
+	String groupName() default "";
+
 }

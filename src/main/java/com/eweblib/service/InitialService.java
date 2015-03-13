@@ -14,9 +14,9 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.eweblib.annotation.column.LoginRequired;
-import com.eweblib.annotation.column.Permission;
-import com.eweblib.annotation.column.RoleDescription;
+import com.eweblib.annotation.controller.LoginRequired;
+import com.eweblib.annotation.controller.Permission;
+import com.eweblib.annotation.controller.RoleDescription;
 import com.eweblib.bean.RolePath;
 import com.eweblib.dao.IQueryDao;
 import com.eweblib.dbhelper.DataBaseQueryBuilder;

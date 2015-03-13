@@ -5,8 +5,6 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Table;
 
-import com.google.gson.annotations.Expose;
-
 @Table(name = Menu.TABLE_NAME)
 public class Menu extends BaseEntity {
 	public static final String MENU_GROUP_ID = "menuGroupId";
@@ -41,8 +39,6 @@ public class Menu extends BaseEntity {
 	
 	@Column(name = MENU_GROUP_ID)
 	public String menuGroupId;
-	
-
 	
 	public String getMenuGroupId() {
 		return menuGroupId;

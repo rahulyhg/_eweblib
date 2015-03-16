@@ -248,11 +248,7 @@
 			<artifactId>lucene-analyzers-smartcn</artifactId>
 			<version>4.10.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-demo</artifactId>
-			<version>4.10.0</version>
-		</dependency>
+
 
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
@@ -287,12 +283,18 @@
 			<version>0.9</version>
 		</dependency>
 
+<!-- 
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-demo</artifactId>
 			<version>4.10.0</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-demo</artifactId>
+			<version>4.10.0</version>
+		</dependency>
+ -->
 	</dependencies>
 
 	<build>

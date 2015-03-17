@@ -202,7 +202,7 @@ public class DataBaseQueryBuilder {
 			leftAlias = leftTable;
 		}
 
-		if (EweblibUtil.isEmpty(leftAlias)) {
+		if (EweblibUtil.isEmpty(rightAlias)) {
 			rightAlias = rightTable;
 		}
 

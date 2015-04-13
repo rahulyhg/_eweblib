@@ -110,7 +110,10 @@ public class LuceneIndexHelper {
 				}
 
 			}
-			doc.add(new TextField(TABLE_NAME, entity.getTable(), Field.Store.YES));
+			
+			if (entity.getTable() != null) {
+				doc.add(new TextField(TABLE_NAME, entity.getTable(), Field.Store.YES));
+			}
 			doc.add(new TextField("contents", content, Field.Store.YES));
 
 			if (params.get(BaseEntity.ID) != null) {

@@ -13,9 +13,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -25,6 +27,8 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -37,12 +41,45 @@ public class HttpClientUtil {
 
 	private static Logger logger = LogManager.getLogger(HttpClientUtil.class);
 
-	public static String doGet(String url, Map<String, Object> parameters, String urlEncoding) {
+	public static String doGet(String url, Map<String, Object> parameters, String urlEncoding, boolean redirect) {
 
+		//
+
+		HttpResponse response = doGetResponse(url, parameters, urlEncoding, redirect);
+
+		String contentType = response.getFirstHeader("Content-Type").getValue();
+		if (response != null) {
+
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+				try {
+
+					if (EweblibUtil.isValid(contentType) && contentType.toLowerCase().contains("utf")) {
+						return EntityUtils.toString(entity, "UTF-8");
+					}
+					return EntityUtils.toString(entity, "gb2312");
+				} catch (ParseException | IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		}
+
+		return null;
+
+	}
+	
+	public static HttpResponse doGetResponse(String url, Map<String, Object> parameters, String urlEncoding, boolean redirect) {
+
+		HttpResponse response = null;
 		//
 		try {
 			HttpClient httpClient = new DefaultHttpClient();
-			HttpResponse response = null;
+
+			if (EweblibUtil.isValid(urlEncoding)) {
+				url = URLEncoder.encode(url, urlEncoding);
+			}
 			URIBuilder builder = new URIBuilder(url);
 			if (parameters != null) {
 				Set<String> keys = parameters.keySet();
@@ -55,17 +92,13 @@ public class HttpClientUtil {
 			}
 			URI uri = builder.build();
 
-			if (EweblibUtil.isValid(urlEncoding)) {
-				url = URLEncoder.encode(url, urlEncoding);
-			}
 			// builder.
 			HttpGet httpget = new HttpGet(uri);
-
+		
+			HttpParams params = new BasicHttpParams();
+			params.setParameter("http.protocol.handle-redirects", redirect);
+			httpget.setParams(params);
 			response = httpClient.execute(httpget);
-			HttpEntity entity = response.getEntity();
-			if (entity != null) {
-				return EntityUtils.toString(entity, "UTF-8");
-			}
 
 		} catch (ClientProtocolException e) {
 			logger.error("ClientProtocolException when try to get data from ".concat(url), e);
@@ -74,8 +107,7 @@ public class HttpClientUtil {
 		} catch (URISyntaxException e) {
 			logger.error("URISyntaxException when try to get data from ".concat(url), e);
 		}
-		return null;
-
+		return response;
 	}
 
 	/**
@@ -88,7 +120,22 @@ public class HttpClientUtil {
 	 * @throws UnsupportedEncodingException
 	 */
 	public static String doGet(String url, Map<String, Object> parameters) {
-		return doGet(url, parameters, null);
+		return doGet(url, parameters, null, true);
+
+	}
+	
+	
+	/**
+	 * 
+	 * Request a get request with data paramter
+	 * 
+	 * @param url
+	 * @param parameters
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
+	public static String doGet(String url, Map<String, Object> parameters, boolean redirect) {
+		return doGet(url, parameters, null, redirect);
 
 	}
 

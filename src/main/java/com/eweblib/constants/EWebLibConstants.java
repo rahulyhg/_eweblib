@@ -18,12 +18,11 @@ public class EWebLibConstants {
     public static final String QUERY_KEYS = "queryKeys";
 
     // pagenation
-    public static final String TOTAL = "total";
     public static final String PAGENATION = "pagination";
     public static final String PAGE_SIZE = "rows";
     public static final String CURRENT_PAGE = "page";
+    public static final String TOTAL = "total";
 
-    public static final String USER_ID = "userId";
     
     
     public static final String PARAMETER_REQUIRED = "PARAMETER_REQUIRED";

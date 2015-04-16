@@ -208,18 +208,6 @@ public abstract class AbstractController {
 		return buffer.toString();
 	}
 
-	// protected <T extends BaseEntity> void
-	// responseWithDataPagnationForApp(EntityResults<T> listBean,
-	// HttpServletRequest request, HttpServletResponse response) {
-	// if (listBean != null) {
-	// Map<String, Object> list = new HashMap<String, Object>();
-	// list.put("total", listBean.getPagnation().getTotal());
-	// list.put("data", listBean.getEntityList());
-	// responseMsg(list, ResponseStatus.SUCCESS, request, response, null);
-	// } else {
-	// responseMsg(null, ResponseStatus.SUCCESS, request, response, null);
-	// }
-	// }
 
 	protected <T extends BaseEntity> void responseWithDataPagnation(EntityResults<T> listBean, Map<String, Object> results, HttpServletRequest request, HttpServletResponse response) {
 		if (results == null) {
@@ -244,16 +232,7 @@ public abstract class AbstractController {
 		}
 	}
 
-	// protected <T extends BaseEntity> void responseWithListDataForApp(List<T>
-	// listBean, HttpServletRequest request, HttpServletResponse response) {
-	// if (listBean != null) {
-	// Map<String, Object> list = new HashMap<String, Object>();
-	// list.put("data", listBean);
-	// responseMsg(list, ResponseStatus.SUCCESS, request, response, null);
-	// } else {
-	// responseMsg(null, ResponseStatus.SUCCESS, request, response, null);
-	// }
-	// }
+
 
 	protected void responseWithKeyValue(String key, Object value, HttpServletRequest request, HttpServletResponse response) {
 		if (key == null) {
@@ -315,7 +294,18 @@ public abstract class AbstractController {
 
 	protected void responseWithTxt(HttpServletRequest request, HttpServletResponse response, String txt) {
 		try {
-			response.setContentType("text/plain;charset=UTF-8");
+			response.setContentType("text/plain;charset=utf-8");
+			response.addHeader("Accept-Encoding", "gzip, deflate");
+			response.getWriter().write(txt);
+		} catch (IOException e) {
+			logger.fatal("Write response data to client failed!", e);
+		}
+
+	}
+	
+	protected void responseWithJs(HttpServletRequest request, HttpServletResponse response, String txt) {
+		try {
+			response.setContentType("text/javascript; charset=utf-8");
 			response.addHeader("Accept-Encoding", "gzip, deflate");
 			response.getWriter().write(txt);
 		} catch (IOException e) {

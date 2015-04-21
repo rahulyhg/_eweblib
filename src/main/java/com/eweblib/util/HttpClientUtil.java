@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -41,6 +40,11 @@ public class HttpClientUtil {
 
 	private static Logger logger = LogManager.getLogger(HttpClientUtil.class);
 
+	public static String[] userAgents = new String[] { "Mozilla/5.0 (Windows NT 5.2) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.122 Safari/534.30",
+	        "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.2; Trident/4.0; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET4.0E; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; .NET4.0C)",
+	        "Opera/9.80 (Windows NT 5.1; U; zh-cn) Presto/2.9.168 Version/11.50", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:37.0) Gecko/20100101 Firefox/37.0",
+	        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36" };
+
 	public static String doGet(String url, Map<String, Object> parameters, String urlEncoding, boolean redirect) {
 
 		//
@@ -54,10 +58,9 @@ public class HttpClientUtil {
 			if (entity != null) {
 				try {
 
-					if (EweblibUtil.isValid(contentType) && contentType.toLowerCase().contains("utf")) {
-						return EntityUtils.toString(entity, "UTF-8");
-					}
-					return EntityUtils.toString(entity, "gb2312");
+					String encoding = parserContentEncoding(contentType);
+
+					return EntityUtils.toString(entity, encoding);
 				} catch (ParseException | IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -69,7 +72,34 @@ public class HttpClientUtil {
 		return null;
 
 	}
-	
+
+	public static String getResponseContentType(String url) {
+		HttpResponse response = doGetResponse(url, null, null, false);
+
+		String contentType = response.getFirstHeader("Content-Type").getValue();
+
+		return parserContentEncoding(contentType);
+	}
+
+	public static String parserContentEncoding(String contentType) {
+		String encoding = "UTF-8";
+
+		if (EweblibUtil.isValid(contentType)) {
+
+			if (contentType.contains("=")) {
+				String resEncoding = contentType.split("=")[1];
+
+				if (EweblibUtil.isValid(resEncoding)) {
+					encoding = resEncoding;
+				}
+
+			}
+		}
+		System.out.println(encoding);
+
+		return encoding;
+	}
+
 	public static HttpResponse doGetResponse(String url, Map<String, Object> parameters, String urlEncoding, boolean redirect) {
 
 		HttpResponse response = null;
@@ -77,9 +107,18 @@ public class HttpClientUtil {
 		try {
 			HttpClient httpClient = new DefaultHttpClient();
 
-			if (EweblibUtil.isValid(urlEncoding)) {
-				url = URLEncoder.encode(url, urlEncoding);
+			if (url.contains("?")) {
+				String[] urls = url.split("\\?");
+
+				if (EweblibUtil.isValid(urls[1])) {
+					if (EweblibUtil.isValid(urlEncoding)) {
+						url = urls[0] + "?" + URLEncoder.encode(urls[1], urlEncoding);
+					} else {
+						url = urls[0] + "?" + URLEncoder.encode(urls[1]);
+					}
+				}
 			}
+			
 			URIBuilder builder = new URIBuilder(url);
 			if (parameters != null) {
 				Set<String> keys = parameters.keySet();
@@ -94,18 +133,24 @@ public class HttpClientUtil {
 
 			// builder.
 			HttpGet httpget = new HttpGet(uri);
-		
+			int index = EweblibUtil.generateRandom(0, userAgents.length);
+
 			HttpParams params = new BasicHttpParams();
 			params.setParameter("http.protocol.handle-redirects", redirect);
 			httpget.setParams(params);
+			// httpget.setHeader("Accept-Encoding", "gzip, deflate");
+			httpget.setHeader("User-Agent", userAgents[index]);
+			httpget.setHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+			httpget.setHeader("Referer", "https://www.baidu.com/");
+
 			response = httpClient.execute(httpget);
 
 		} catch (ClientProtocolException e) {
-			logger.error("ClientProtocolException when try to get data from ".concat(url), e);
+			logger.error("ClientProtocolException when try to get data from ".concat(url) + e.getMessage());
 		} catch (IOException e) {
-			logger.error("IOException when try to get data from ".concat(url), e);
+			logger.error("IOException when try to get data from ".concat(url) + e.getMessage());
 		} catch (URISyntaxException e) {
-			logger.error("URISyntaxException when try to get data from ".concat(url), e);
+			logger.error("URISyntaxException when try to get data from ".concat(url) + e.getMessage());
 		}
 		return response;
 	}
@@ -123,8 +168,7 @@ public class HttpClientUtil {
 		return doGet(url, parameters, null, true);
 
 	}
-	
-	
+
 	/**
 	 * 
 	 * Request a get request with data paramter
@@ -186,7 +230,6 @@ public class HttpClientUtil {
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpResponse response = null;
 		HttpPost method = new HttpPost(url);
-
 
 		if (data == null) {
 			data = "";

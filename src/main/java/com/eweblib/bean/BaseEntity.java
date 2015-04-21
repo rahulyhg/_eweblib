@@ -18,6 +18,11 @@ import com.eweblib.exception.BeanStructureException;
 import com.eweblib.util.EweblibUtil;
 import com.google.gson.annotations.Expose;
 
+/**
+ * 
+ * @author ymzhou
+ *
+ */
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class BaseEntity {
@@ -75,7 +80,6 @@ public class BaseEntity {
 		this.creatorId = ownerId;
 	}
 
-	
 	public String getId() {
 
 		return id;
@@ -226,7 +230,7 @@ public class BaseEntity {
 		return columnMap.get(this.getClass());
 
 	}
-	
+
 	public boolean containsDbColumn(String field) {
 
 		return this.getColumnList().contains(field);
@@ -283,7 +287,7 @@ public class BaseEntity {
 				sb.append(',');
 			sb.append(column);
 		}
-		
+
 		return sb.toString();
 	}
 
@@ -307,11 +311,10 @@ public class BaseEntity {
 				sb.append("#{").append(column).append('}');
 			}
 		}
-		
+
 		return sb.toString();
 	}
-	
-	
+
 	/**
 	 * 用于获取Insert的字段映射累加
 	 * 
@@ -333,10 +336,9 @@ public class BaseEntity {
 				sb.append("#{item.").append(column).append('}');
 			}
 		}
-		
+
 		return sb.toString();
 	}
-
 
 	/**
 	 * 用于获取Update Set的字段累加

@@ -36,6 +36,7 @@ import com.eweblib.annotation.column.IntegerColumn;
 import com.eweblib.bean.BaseEntity;
 import com.eweblib.bean.lucene.DocumentResult;
 import com.eweblib.cfg.ConfigManager;
+import com.eweblib.util.EweblibUtil;
 
 public class LuceneIndexHelper {
 
@@ -46,14 +47,10 @@ public class LuceneIndexHelper {
 		addIndex(entity, clz, null);
 	}
 
-	public static <T extends BaseEntity> void addIndex(BaseEntity entity, Class<?> clz, Set<String> independenceKeys) {
+	public static <T extends BaseEntity> void addIndex(BaseEntity entity, Class<?> clz, Set<String> independenceKeys) throws IOException {
 
 		if (independenceKeys == null) {
 			independenceKeys = new HashSet<String>();
-		}
-
-		if (independenceKeys.isEmpty()) {
-			independenceKeys.add(BaseEntity.ID);
 		}
 
 		if (!independenceKeys.contains(BaseEntity.ID)) {
@@ -61,23 +58,8 @@ public class LuceneIndexHelper {
 		}
 
 		Map<String, Object> params = entity.toMap();
-		File file = new File(ConfigManager.getLuceneIndexDir());
-		file.mkdirs();
-		// doc.add(new TextField("summary",
-		// "IKAnalyzer是一个开源的，基于java语言开发的轻量级的中文分词工具包。从2006年12月推出1.0版本开始，IKAnalyzer已经推出了3个大版本。",
-		// Field.Store.YES));
-		// Analyzer analyzer = new IKAnalyzer(true);
-		Analyzer analyzer = new IKAnalyzer(true);
-		IndexWriterConfig config = new IndexWriterConfig(Version.LATEST, analyzer);
 
-		config.setOpenMode(OpenMode.CREATE_OR_APPEND);
-		IndexWriter writer = null;
-		try {
-			writer = new IndexWriter(FSDirectory.open(file), config);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			closeWriter(writer);
-		}
+		IndexWriter writer = getIndexWriter();
 		Document doc = new Document();
 
 		String content = "";
@@ -100,8 +82,7 @@ public class LuceneIndexHelper {
 					} else {
 
 						if (independenceKeys.contains(field.getName())) {
-							
-							System.out.println(field.getName());
+
 							doc.add(new TextField(field.getName(), params.get(field.getName()).toString(), Field.Store.YES));
 						}
 						content = content + params.get(field.getName()).toString();
@@ -110,10 +91,11 @@ public class LuceneIndexHelper {
 				}
 
 			}
-			
+
 			if (entity.getTable() != null) {
 				doc.add(new TextField(TABLE_NAME, entity.getTable(), Field.Store.YES));
 			}
+			System.out.println(content);
 			doc.add(new TextField("contents", content, Field.Store.YES));
 
 			if (params.get(BaseEntity.ID) != null) {
@@ -130,6 +112,38 @@ public class LuceneIndexHelper {
 
 	}
 
+	public static IndexWriter getIndexWriter() throws IOException {
+		Analyzer analyzer = new IKAnalyzer(true);
+
+		File file = new File(ConfigManager.getLuceneIndexDir());
+		file.mkdirs();
+		IndexWriterConfig config = new IndexWriterConfig(Version.LATEST, analyzer);
+
+		config.setOpenMode(OpenMode.CREATE_OR_APPEND);
+		IndexWriter writer = new IndexWriter(FSDirectory.open(file), config);
+
+		return writer;
+	}
+
+	public static void deleteDocument(String id) {
+		try {
+			IndexWriter writer = getIndexWriter();
+			writer.deleteDocuments((new Term(BaseEntity.ID, id)));
+			closeWriter(writer);
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public static void deleteDocument(String[] ids) {
+
+		for (String id : ids) {
+			deleteDocument(id);
+		}
+	}
+
 	public static void closeWriter(IndexWriter writer) {
 
 		if (writer != null) {
@@ -141,7 +155,7 @@ public class LuceneIndexHelper {
 				e.printStackTrace();
 			}
 		}
-		
+
 	}
 
 	public static List<DocumentResult> seacher(String queryString, String queryField) {
@@ -187,19 +201,32 @@ public class LuceneIndexHelper {
 		return results;
 	}
 
-	public static void printDocumentResult(DocumentResult dr, String keyField) {
-		Document doc = dr.getDocument();
-		ScoreDoc sd = dr.getScoreDoc();
+	public static Set<String> seacherIds(String queryString, String queryField) {
+		List<DocumentResult> results = seacher(queryString, queryField);
+		Set<String> ids = new HashSet<String>();
 
-		System.out.println("doc=" + sd.doc + " score=" + sd.score + " id=" + doc.get("id") + " " + keyField + "=" + doc.get(keyField));
+		for (DocumentResult dr : results) {
 
+			String id = dr.getDocument().get("id");
+			if (EweblibUtil.isValid(id)) {
+				ids.add(id);
+			}
+		}
+
+		return ids;
 	}
 
-	public static void printDocumentResult(List<DocumentResult> drresults, String keyField) {
+	public static void printDocumentResult(DocumentResult dr) {
+		Document doc = dr.getDocument();
+		ScoreDoc sd = dr.getScoreDoc();
+		System.out.println("doc=" + sd.doc + " score=" + sd.score + " id=" + doc.get("id"));
+	}
+
+	public static void printDocumentResult(List<DocumentResult> drresults) {
 
 		for (DocumentResult dr : drresults) {
 
-			printDocumentResult(dr, keyField);
+			printDocumentResult(dr);
 
 		}
 

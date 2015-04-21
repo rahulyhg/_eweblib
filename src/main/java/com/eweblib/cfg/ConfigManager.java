@@ -1,6 +1,7 @@
 package com.eweblib.cfg;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.log4j.LogManager;
@@ -24,8 +25,14 @@ public class ConfigManager {
 
 		for (String file : files) {
 			try {
+
 				// load resource from class root path
-				properties.load(ConfigManager.class.getResourceAsStream("/".concat(file)));
+				InputStream resourceAsStream = ConfigManager.class.getResourceAsStream("/".concat(file));
+				if (resourceAsStream != null) {
+					logger.info("Load config from file :::: " + file);
+					properties.load(resourceAsStream);
+				}
+
 			} catch (IOException e) {
 				logger.fatal("Load property file failed: ".concat(file), e);
 			}

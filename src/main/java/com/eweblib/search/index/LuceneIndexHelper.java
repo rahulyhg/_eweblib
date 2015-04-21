@@ -40,6 +40,7 @@ import com.eweblib.util.EweblibUtil;
 
 public class LuceneIndexHelper {
 
+	public static final String CONTENT = "content";
 	public static final String TABLE_NAME = "tableName";
 
 	public static <T extends BaseEntity> void addIndex(BaseEntity entity, Class<?> clz) throws IOException {
@@ -85,7 +86,7 @@ public class LuceneIndexHelper {
 
 							doc.add(new TextField(field.getName(), params.get(field.getName()).toString(), Field.Store.YES));
 						}
-						content = content + params.get(field.getName()).toString();
+						content = content + " " + params.get(field.getName()).toString();
 					}
 
 				}
@@ -96,7 +97,7 @@ public class LuceneIndexHelper {
 				doc.add(new TextField(TABLE_NAME, entity.getTable(), Field.Store.YES));
 			}
 			System.out.println(content);
-			doc.add(new TextField("contents", content, Field.Store.YES));
+			doc.add(new TextField(CONTENT, content, Field.Store.YES));
 
 			if (params.get(BaseEntity.ID) != null) {
 				try {
@@ -214,6 +215,10 @@ public class LuceneIndexHelper {
 		}
 
 		return ids;
+	}
+
+	public static Set<String> seacherIds(String queryString) {
+		return seacherIds(queryString, CONTENT);
 	}
 
 	public static void printDocumentResult(DocumentResult dr) {

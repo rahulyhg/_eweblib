@@ -50,7 +50,7 @@ public class IKAnalzyerDemo {
 		//获取Lucene的TokenStream对象
 	    TokenStream ts = null;
 		try {
-			String s = URLDecoder.decode("http://58.217.200.16/rest/2.0/pcs/file?method=locatedownload&path=%2FFuther%20Study%2F%E8%8B%B1%E8%AF%AD%2F%E8%80%83%E7%A0%94%E8%8B%B1%E8%AF%AD%E3%80%90E%E8%B5%84%E6%BA%90%E5%88%86%E4%BA%AB%E5%9F%BA%E5%9C%B0%E3%80%91%2F%E8%80%83%E7%A0%94%E8%AF%8D%E6%B1%87%20%E7%9D%A1%E5%89%8D%E5%BF%85%E5%90%AC%E7%9A%84%20%E9%9F%B3%E9%A2%91%2F%E8%80%83%E7%A0%94%E7%9D%A1%E5%89%8D%E5%BF%85%E5%90%AC%E7%9A%84%E5%8D%95%E8%AF%8D%E9%9F%B3%E9%A2%91%2FS.mp3&ver=2.0&dtype=0&app_id=250528&devuid=310812520637268&check_blue=1&devuid=310812520637268&clienttype=1&channel=android_4.1.2_Lenovo+A388t_bd-netdisk_1001551c&version=7.8.1&logid=MTQyOTA2OTY2Mzc4OCxmZTgwOjo1MjNjOmM0ZmY6ZmUwNzpmMDhkJXdsYW4wLDYzMTY2Ng&cuid=BEB28A175FAB8395BD39CCD49E639FDA%257C310812520637268&bdstoken=c1b805b3ed015cb5c14071a42bb2be2e");
+			String s = URLDecoder.decode("android 愤怒的小鸟");
 			ts = analyzer.tokenStream("myfield", new StringReader(s));
 //			ts = analyzer.tokenStream("myfield", new StringReader("这是一个中文分词的例子，你可以直接运行它！IKAnalyer can analysis english text too"));
 			//获取词元位置属性

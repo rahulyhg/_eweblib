@@ -176,9 +176,10 @@ public class LuceneIndexHelper {
 
 	public static List<DocumentResult> seacher(String queryString, String queryField) {
 		List<DocumentResult> results = new ArrayList<DocumentResult>();
+		IndexReader reader = null;
 		try {
 			File file = new File(ConfigManager.getLuceneIndexDir());
-			IndexReader reader = DirectoryReader.open(FSDirectory.open(file));
+			reader = DirectoryReader.open(FSDirectory.open(file));
 			IndexSearcher searcher = new IndexSearcher(reader);
 			// :Post-Release-Update-Version.LUCENE_XY:
 
@@ -211,8 +212,19 @@ public class LuceneIndexHelper {
 
 			}
 
+			reader.close();
+
 		} catch (Exception e) {
-			System.out.print(e);
+
+			if (reader != null) {
+
+				try {
+					reader.close();
+				} catch (IOException e1) {
+					//do nothing
+				}
+			}
+			log.error(e);
 		}
 		return results;
 	}

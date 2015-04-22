@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -39,6 +41,7 @@ import com.eweblib.cfg.ConfigManager;
 import com.eweblib.util.EweblibUtil;
 
 public class LuceneIndexHelper {
+	public static Logger log = LogManager.getLogger(LuceneIndexHelper.class);
 
 	public static final String CONTENT = "content";
 	public static final String TABLE_NAME = "tableName";
@@ -48,7 +51,7 @@ public class LuceneIndexHelper {
 		addIndex(entity, clz, null);
 	}
 
-	public static <T extends BaseEntity> void addIndex(BaseEntity entity, Class<?> clz, Set<String> independenceKeys) throws IOException {
+	public static <T extends BaseEntity> void addIndex(BaseEntity entity, Class<?> clz, Set<String> independenceKeys) {
 
 		if (independenceKeys == null) {
 			independenceKeys = new HashSet<String>();
@@ -60,60 +63,70 @@ public class LuceneIndexHelper {
 
 		Map<String, Object> params = entity.toMap();
 
-		IndexWriter writer = getIndexWriter();
-		Document doc = new Document();
-
-		String content = "";
-
-		Set<String> ignoreKeys = new HashSet<String>();
-		ignoreKeys.add(BaseEntity.CREATED_ON);
-		ignoreKeys.add(BaseEntity.UPDATED_ON);
-		ignoreKeys.add(BaseEntity.CREATOR_ID);
-
-		if (params != null) {
-
-			java.lang.reflect.Field[] fields = clz.getFields();
-			for (java.lang.reflect.Field field : fields) {
-
-				if (params.get(field.getName()) != null) {
-					if (field.isAnnotationPresent(IntegerColumn.class) || field.isAnnotationPresent(DateColumn.class) || field.isAnnotationPresent(FloatColumn.class)
-					        || field.isAnnotationPresent(DoubleColumn.class) || field.isAnnotationPresent(BooleanColumn.class) || ignoreKeys.contains(field.getName())) {
-
-						// do nothing, ignore those fields
-					} else {
-
-						if (independenceKeys.contains(field.getName())) {
-
-							doc.add(new TextField(field.getName(), params.get(field.getName()).toString(), Field.Store.YES));
-						}
-						content = content + " " + params.get(field.getName()).toString();
-					}
-
-				}
-
-			}
-
-			if (entity.getTable() != null) {
-				doc.add(new TextField(TABLE_NAME, entity.getTable(), Field.Store.YES));
-			}
-			System.out.println(content);
-			doc.add(new TextField(CONTENT, content, Field.Store.YES));
-
-			if (params.get(BaseEntity.ID) != null) {
-				try {
-					writer.updateDocument(new Term(BaseEntity.ID, params.get(BaseEntity.ID).toString()), doc);
-				} catch (IOException e) {
-
-					closeWriter(writer);
-				}
-			}
+		IndexWriter writer = null;
+		try {
+			writer = getIndexWriter();
+		} catch (IOException e1) {
+			log.error(e1);
 
 			closeWriter(writer);
 		}
 
+		if (writer != null) {
+			Document doc = new Document();
+
+			String content = "";
+
+			Set<String> ignoreKeys = new HashSet<String>();
+			ignoreKeys.add(BaseEntity.CREATED_ON);
+			ignoreKeys.add(BaseEntity.UPDATED_ON);
+			ignoreKeys.add(BaseEntity.CREATOR_ID);
+
+			if (params != null) {
+
+				java.lang.reflect.Field[] fields = clz.getFields();
+				for (java.lang.reflect.Field field : fields) {
+
+					if (params.get(field.getName()) != null) {
+						if (field.isAnnotationPresent(IntegerColumn.class) || field.isAnnotationPresent(DateColumn.class) || field.isAnnotationPresent(FloatColumn.class)
+						        || field.isAnnotationPresent(DoubleColumn.class) || field.isAnnotationPresent(BooleanColumn.class) || ignoreKeys.contains(field.getName())) {
+
+							// do nothing, ignore those fields
+						} else {
+
+							if (independenceKeys.contains(field.getName())) {
+
+								doc.add(new TextField(field.getName(), params.get(field.getName()).toString(), Field.Store.YES));
+							}
+							content = content + " " + params.get(field.getName()).toString();
+						}
+
+					}
+
+				}
+
+				if (entity.getTable() != null) {
+					doc.add(new TextField(TABLE_NAME, entity.getTable(), Field.Store.YES));
+				}
+				System.out.println(content);
+				doc.add(new TextField(CONTENT, content, Field.Store.YES));
+
+				if (params.get(BaseEntity.ID) != null) {
+					try {
+						writer.updateDocument(new Term(BaseEntity.ID, params.get(BaseEntity.ID).toString()), doc);
+					} catch (IOException e) {
+
+						closeWriter(writer);
+					}
+				}
+
+				closeWriter(writer);
+			}
+		}
+
 	}
 
-	public static IndexWriter getIndexWriter() throws IOException {
+	public static synchronized IndexWriter getIndexWriter() throws IOException {
 		Analyzer analyzer = new IKAnalyzer(true);
 
 		File file = new File(ConfigManager.getLuceneIndexDir());
@@ -121,7 +134,9 @@ public class LuceneIndexHelper {
 		IndexWriterConfig config = new IndexWriterConfig(Version.LATEST, analyzer);
 
 		config.setOpenMode(OpenMode.CREATE_OR_APPEND);
-		IndexWriter writer = new IndexWriter(FSDirectory.open(file), config);
+		FSDirectory directory = FSDirectory.open(file);
+		IndexWriter.unlock(directory);
+		IndexWriter writer = new IndexWriter(directory, config);
 
 		return writer;
 	}

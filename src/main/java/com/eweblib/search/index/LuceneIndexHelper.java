@@ -46,12 +46,12 @@ public class LuceneIndexHelper {
 	public static final String CONTENT = "content";
 	public static final String TABLE_NAME = "tableName";
 
-	public static <T extends BaseEntity> void addIndex(BaseEntity entity, Class<?> clz) throws IOException {
+	public synchronized static <T extends BaseEntity> void addIndex(BaseEntity entity, Class<?> clz) throws IOException {
 
 		addIndex(entity, clz, null);
 	}
 
-	public static <T extends BaseEntity> void addIndex(BaseEntity entity, Class<?> clz, Set<String> independenceKeys) {
+	public synchronized static <T extends BaseEntity> void addIndex(BaseEntity entity, Class<?> clz, Set<String> independenceKeys) {
 
 		if (independenceKeys == null) {
 			independenceKeys = new HashSet<String>();
@@ -126,7 +126,7 @@ public class LuceneIndexHelper {
 
 	}
 
-	public static synchronized IndexWriter getIndexWriter() throws IOException {
+	public static  IndexWriter getIndexWriter() throws IOException {
 		Analyzer analyzer = new IKAnalyzer(true);
 
 		File file = new File(ConfigManager.getLuceneIndexDir());

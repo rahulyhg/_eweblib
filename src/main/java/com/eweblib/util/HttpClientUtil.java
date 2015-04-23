@@ -76,6 +76,10 @@ public class HttpClientUtil {
 	public static String getResponseContentType(String url) {
 		HttpResponse response = doGetResponse(url, null, null, false);
 
+		if(response==null || response.getFirstHeader("Content-Type") == null){
+			
+			return parserContentEncoding(null);
+		}
 		String contentType = response.getFirstHeader("Content-Type").getValue();
 
 		return parserContentEncoding(contentType);
@@ -95,7 +99,6 @@ public class HttpClientUtil {
 
 			}
 		}
-		System.out.println(encoding);
 
 		return encoding;
 	}

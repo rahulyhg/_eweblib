@@ -40,7 +40,7 @@ public class WebCrawUtil {
 				encoding = HttpClientUtil.getResponseContentType(url);
 			}
 			
-			System.out.println(encoding);
+//			System.out.println(encoding);
 
 			// 设置网页的默认编码
 			parser.setProperty("http://cyberneko.org/html/properties/default-encoding", encoding);

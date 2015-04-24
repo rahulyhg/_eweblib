@@ -30,14 +30,23 @@ public class DataBaseQuery {
 	}
 
 	public DataBaseQuery(String column, Object value) {
-		this.operation = DataBaseQueryOpertion.EQUAILS;
-		this.value = value;
-		this.column = column;
+		this(DataBaseQueryOpertion.EQUAILS, column, value);
 	}
 
 	public DataBaseQuery(DataBaseQueryOpertion operation, String column, Object value) {
+
+		if (value != null && value instanceof String) {
+			String v = value.toString();
+			if (v.contains("\"")) {
+				v = v.replaceAll("\"", "\\\\\"");
+			}
+
+			this.value = v;
+		} else {
+			this.value = value;
+
+		}
 		this.operation = operation;
-		this.value = value;
 		this.column = column;
 	}
 

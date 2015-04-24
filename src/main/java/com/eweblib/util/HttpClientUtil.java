@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -76,8 +77,8 @@ public class HttpClientUtil {
 	public static String getResponseContentType(String url) {
 		HttpResponse response = doGetResponse(url, null, null, false);
 
-		if(response==null || response.getFirstHeader("Content-Type") == null){
-			
+		if (response == null || response.getFirstHeader("Content-Type") == null) {
+
 			return parserContentEncoding(null);
 		}
 		String contentType = response.getFirstHeader("Content-Type").getValue();
@@ -86,8 +87,8 @@ public class HttpClientUtil {
 	}
 
 	public static String parserContentEncoding(String contentType) {
+//		String encoding = "GBK";
 		String encoding = "UTF-8";
-
 		if (EweblibUtil.isValid(contentType)) {
 
 			if (contentType.contains("=")) {
@@ -103,7 +104,7 @@ public class HttpClientUtil {
 		return encoding;
 	}
 
-	public static HttpResponse doGetResponse(String url, Map<String, Object> parameters, String urlEncoding, boolean redirect) {
+	public static HttpResponse doGetResponse(String url, Map<String, Object> parameters, String encoding, boolean redirect) {
 
 		HttpResponse response = null;
 		//
@@ -114,8 +115,8 @@ public class HttpClientUtil {
 				String[] urls = url.split("\\?");
 
 				if (EweblibUtil.isValid(urls[1])) {
-					if (EweblibUtil.isValid(urlEncoding)) {
-						url = urls[0] + "?" + URLEncoder.encode(urls[1], urlEncoding);
+					if (EweblibUtil.isValid(encoding)) {
+						url = urls[0] + "?" + URLEncoder.encode(urls[1], encoding);
 					} else {
 						url = urls[0] + "?" + URLEncoder.encode(urls[1]);
 					}
@@ -140,6 +141,11 @@ public class HttpClientUtil {
 
 			HttpParams params = new BasicHttpParams();
 			params.setParameter("http.protocol.handle-redirects", redirect);
+			
+			if (encoding != null) {
+				params.setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, encoding);
+			}
+			
 			httpget.setParams(params);
 			// httpget.setHeader("Accept-Encoding", "gzip, deflate");
 			httpget.setHeader("User-Agent", userAgents[index]);
@@ -151,7 +157,7 @@ public class HttpClientUtil {
 		} catch (ClientProtocolException e) {
 			logger.error("ClientProtocolException when try to get data from ".concat(url) + e.getMessage());
 		} catch (IOException e) {
-			logger.error("IOException when try to get data from ".concat(url) + e.getMessage());
+			logger.error("IOException when try to get data from ".concat(url)  + " " + e.getMessage());
 		} catch (URISyntaxException e) {
 			logger.error("URISyntaxException when try to get data from ".concat(url) + e.getMessage());
 		}

@@ -6,7 +6,13 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 public class UrlUtil {
+
+	public static Logger log = LogManager.getLogger(UrlUtil.class);
+
 	private final static String[] hex = { "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "0A", "0B", "0C", "0D", "0E", "0F", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
 	        "1A", "1B", "1C", "1D", "1E", "1F", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "2A", "2B", "2C", "2D", "2E", "2F", "30", "31", "32", "33", "34", "35", "36", "37", "38",
 	        "39", "3A", "3B", "3C", "3D", "3E", "3F", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "4A", "4B", "4C", "4D", "4E", "4F", "50", "51", "52", "53", "54", "55", "56", "57",
@@ -153,15 +159,16 @@ public class UrlUtil {
 					mapRequest.put(arrSplitEqual[0], URLDecoder.decode(valueStr));
 
 				} catch (Exception e) {
-					// String s1 = "\u7f8e\u5267";
-//					System.out.println(valueStr);
+
 					valueStr = valueStr.replace("%", "\\");
-					mapRequest.put(arrSplitEqual[0], decodeUnicode(valueStr));
-					// // e.printStackTrace();
-//					System.out.println(decodeUnicode(valueStr));
+					try {
+						mapRequest.put(arrSplitEqual[0], decodeUnicode(valueStr));
+					} catch (Exception e1) {
+						log.error("decode str error " + valueStr);
+					}
 				}
 			} else {
-				if (arrSplitEqual[0] != "") {
+				if (arrSplitEqual.length > 0 && arrSplitEqual[0] != "") {
 					// 只有参数没有值，不加入
 					mapRequest.put(arrSplitEqual[0], "");
 				}
@@ -186,6 +193,41 @@ public class UrlUtil {
 			flg = true;
 		}
 		return flg;
+	}
+
+	public static boolean isMessyCode(String strName) {
+		Pattern p = Pattern.compile("\\s*|\t*|\r*|\n*");
+		Matcher m = p.matcher(strName);
+		String after = m.replaceAll("");
+		String temp = after.replaceAll("\\p{P}", "");
+		char[] ch = temp.trim().toCharArray();
+		float chLength = ch.length;
+		float count = 0;
+		for (int i = 0; i < ch.length; i++) {
+			char c = ch[i];
+			if (!Character.isLetterOrDigit(c)) {
+
+				if (!isChinese(c)) {
+					count = count + 1;
+					System.out.print(c);
+				}
+			}
+		}
+		if (count > 0) {
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+	public static boolean isChinese(char c) {
+		Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
+		if (ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A
+		        || ub == Character.UnicodeBlock.GENERAL_PUNCTUATION || ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS) {
+			return true;
+		}
+		return false;
 	}
 
 	private static String decodeUnicode(String theString) {

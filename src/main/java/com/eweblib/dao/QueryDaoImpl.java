@@ -255,7 +255,7 @@ public class QueryDaoImpl implements IQueryDao {
 
 	@Override
 	// TODO: support it
-	public void updateByQuery(BaseEntity entity, DataBaseQueryBuilder builder) {
+	public void updateByQuery(DataBaseQueryBuilder builder) {
 
 		if (EweblibUtil.isValid(builder.getQueryStr())) {
 

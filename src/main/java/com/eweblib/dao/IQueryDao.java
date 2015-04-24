@@ -37,7 +37,7 @@ public interface IQueryDao {
 	 * 
 	 * @param builder
 	 */
-	public void updateByQuery(BaseEntity entity, DataBaseQueryBuilder builder);
+	public void updateByQuery(DataBaseQueryBuilder builder);
 
 	/**
 	 * 传人entity对象，数据操作取entity里面的table和id，其它属性和字段忽略

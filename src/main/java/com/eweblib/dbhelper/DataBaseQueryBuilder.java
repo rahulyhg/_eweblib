@@ -28,12 +28,12 @@ public class DataBaseQueryBuilder {
 	private String distinctColumn = null;
 
 	private String groupBy = null;
-	
-	
+
+	public String updateColumns = null;
+
 	private boolean disableOrder = false;
 
 	private Set<String> limitColumnNames = new HashSet<String>();
-	
 
 	public String getGroupBy() {
 		return groupBy;
@@ -123,11 +123,11 @@ public class DataBaseQueryBuilder {
 		if (this.onQuery != null && !key.contains(".")) {
 			key = this.table + "." + key;
 		}
-		
+
 		if (this.onQuery == null && !key.contains(".")) {
 			key = this.table + "." + key;
 		}
-		
+
 		DataBaseQuery query = new DataBaseQuery(op, key, value);
 		if (this.queryStr == null) {
 			queryStr = "";
@@ -175,7 +175,7 @@ public class DataBaseQueryBuilder {
 
 		return this;
 	}
-	
+
 	public DataBaseQueryBuilder leftJoin(String leftTable, String leftAlias, String rightTable, String rightAlias, String leftKey, String rightKey) {
 
 		if (EweblibUtil.isEmpty(leftAlias)) {
@@ -206,7 +206,6 @@ public class DataBaseQueryBuilder {
 			rightAlias = rightTable;
 		}
 
-		
 		if (this.queryStr != null) {
 			throw new RuntimeException("Must set join table first before set query operation");
 		}
@@ -218,21 +217,14 @@ public class DataBaseQueryBuilder {
 		return this;
 	}
 
-	
-	
-	
-
 	public DataBaseQueryBuilder leftJoin(String leftTable, String rightTable, String leftKey, String rightKey) {
-    
+
 		return this.leftJoin(leftTable, leftTable, rightTable, rightTable, leftKey, rightKey);
 	}
-	
+
 	public DataBaseQueryBuilder innerJoin(String leftTable, String rightTable, String leftKey, String rightKey) {
 		return this.innerJoin(leftTable, null, rightTable, null, leftKey, rightKey);
 	}
-
-
-
 
 	public DataBaseQueryBuilder joinColumns(String tableAlias, String[] joinColumns) {
 
@@ -263,8 +255,7 @@ public class DataBaseQueryBuilder {
 		return this;
 
 	}
-	
-	
+
 	public DataBaseQueryBuilder sum(String tableAlias, String fieldName, String asFieldName) {
 
 		if (EweblibUtil.isEmpty(asFieldName)) {
@@ -422,7 +413,7 @@ public class DataBaseQueryBuilder {
 		if (this.onQuery != null) {
 			column = this.table + "." + column;
 		}
-		
+
 		if (asc) {
 			if (this.orderBy == null) {
 				this.orderBy = "  " + column + " ASC ";
@@ -461,12 +452,11 @@ public class DataBaseQueryBuilder {
 		}
 		return this;
 	}
-	
-	
+
 	public DataBaseQueryBuilder disableOrderBy() {
-		
+
 		this.disableOrder = true;
-		
+
 		return this;
 	}
 
@@ -510,6 +500,28 @@ public class DataBaseQueryBuilder {
 		return this;
 	}
 
+	public DataBaseQueryBuilder update(String column, Object value) {
+
+		if (value == null) {
+			value = "null";
+		}
+
+		String updateStr = "";
+		if (value instanceof String) {
+			updateStr = column + "=\"" + value + "\"";
+		} else {
+			updateStr = column + "=" + value;
+		}
+
+		if (this.updateColumns == null) {
+			this.updateColumns = updateStr;
+		} else {
+			this.updateColumns = this.updateColumns + ", " + updateStr;
+		}
+
+		return this;
+	}
+
 	public String getQueryStr() {
 
 		if (this.queryStr != null) {
@@ -540,7 +552,6 @@ public class DataBaseQueryBuilder {
 		this.lastOpType = lastOpType;
 	}
 
-
 	public String getOnQuery() {
 		return onQuery;
 	}
@@ -555,6 +566,14 @@ public class DataBaseQueryBuilder {
 
 	public void setDistinctColumn(String distinctColumn) {
 		this.distinctColumn = distinctColumn;
+	}
+
+	public String getUpdateColumns() {
+		return updateColumns;
+	}
+
+	public void setUpdateColumns(String updateColumns) {
+		this.updateColumns = updateColumns;
 	}
 
 }

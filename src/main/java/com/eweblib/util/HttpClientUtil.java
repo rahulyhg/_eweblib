@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -145,6 +146,10 @@ public class HttpClientUtil {
 			if (encoding != null) {
 				params.setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, encoding);
 			}
+			
+			DefaultHttpMethodRetryHandler retryHandler = new DefaultHttpMethodRetryHandler(0, false);  
+			params.setParameter(HttpMethodParams.RETRY_HANDLER,retryHandler);   
+			
 			
 			httpget.setParams(params);
 			// httpget.setHeader("Accept-Encoding", "gzip, deflate");

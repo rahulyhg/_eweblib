@@ -155,16 +155,30 @@ public class UrlUtil {
 			if (arrSplitEqual.length > 1) {
 				// 正确解析
 				String valueStr = arrSplitEqual[1];
+				Map<String, Object> jsonMap = null;
 				try {
-					mapRequest.put(arrSplitEqual[0], URLDecoder.decode(valueStr));
 
+					jsonMap = EweblibUtil.toMap(valueStr);
 				} catch (Exception e) {
 
-					valueStr = valueStr.replace("%", "\\");
+				}
+				if (jsonMap != null && jsonMap.size() > 0) {
+					for (String key : jsonMap.keySet()) {
+						mapRequest.put(key, jsonMap.get(key).toString());
+					}
+				} else {
+
 					try {
-						mapRequest.put(arrSplitEqual[0], decodeUnicode(valueStr));
-					} catch (Exception e1) {
-						log.error("decode str error " + valueStr);
+						mapRequest.put(arrSplitEqual[0], URLDecoder.decode(valueStr));
+
+					} catch (Exception e) {
+
+						valueStr = valueStr.replace("%", "\\");
+						try {
+							mapRequest.put(arrSplitEqual[0], decodeUnicode(valueStr));
+						} catch (Exception e1) {
+							log.error("decode str error " + valueStr);
+						}
 					}
 				}
 			} else {

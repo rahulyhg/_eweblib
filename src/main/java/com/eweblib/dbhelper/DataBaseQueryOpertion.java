@@ -26,7 +26,7 @@ public enum DataBaseQueryOpertion {
 		}
 
 	},
-	GREATER_THAN_EQUALS {
+	LARGER_THAN_EQUALS {
 
 		@Override
 		public String toString() {

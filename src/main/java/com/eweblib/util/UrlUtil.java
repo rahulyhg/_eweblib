@@ -163,8 +163,12 @@ public class UrlUtil {
 
 				}
 				if (jsonMap != null && jsonMap.size() > 0) {
-					for (String key : jsonMap.keySet()) {
-						mapRequest.put(key, jsonMap.get(key).toString());
+					try {
+						for (String key : jsonMap.keySet()) {
+							mapRequest.put(key, jsonMap.get(key).toString());
+						}
+					} catch (Exception e) {
+
 					}
 				} else {
 

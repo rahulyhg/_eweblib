@@ -79,8 +79,7 @@ public class WebCrawUtil {
 
 		} catch (TransformerException e) {
 			log.error("Parser " + url + " error: " + e.getMessage());
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception e) {			
 			log.error("Parser " + url + " error: " + e.getMessage());
 		}
 		return null;

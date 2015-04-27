@@ -93,7 +93,7 @@ public class HttpClientUtil {
 	}
 
 	public static String parserContentEncoding(String contentType) {
-//		String encoding = "GBK";
+		// String encoding = "GBK";
 		String encoding = "UTF-8";
 		if (EweblibUtil.isValid(contentType)) {
 
@@ -128,7 +128,7 @@ public class HttpClientUtil {
 					}
 				}
 			}
-			
+
 			URIBuilder builder = new URIBuilder(url);
 			if (parameters != null) {
 				Set<String> keys = parameters.keySet();
@@ -147,15 +147,14 @@ public class HttpClientUtil {
 
 			HttpParams params = new BasicHttpParams();
 			params.setParameter("http.protocol.handle-redirects", redirect);
-			
+
 			if (encoding != null) {
 				params.setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, encoding);
 			}
-			
-			DefaultHttpMethodRetryHandler retryHandler = new DefaultHttpMethodRetryHandler(0, false);  
-			params.setParameter(HttpMethodParams.RETRY_HANDLER,retryHandler);   
-			
-			
+
+			DefaultHttpMethodRetryHandler retryHandler = new DefaultHttpMethodRetryHandler(0, false);
+			params.setParameter(HttpMethodParams.RETRY_HANDLER, retryHandler);
+
 			httpget.setParams(params);
 			// httpget.setHeader("Accept-Encoding", "gzip, deflate");
 			httpget.setHeader("User-Agent", userAgents[index]);
@@ -167,7 +166,7 @@ public class HttpClientUtil {
 		} catch (ClientProtocolException e) {
 			logger.error("ClientProtocolException when try to get data from ".concat(url) + e.getMessage());
 		} catch (IOException e) {
-			logger.error("IOException when try to get data from ".concat(url)  + " " + e.getMessage());
+			logger.error("IOException when try to get data from ".concat(url) + " " + e.getMessage());
 		} catch (URISyntaxException e) {
 			logger.error("URISyntaxException when try to get data from ".concat(url) + e.getMessage());
 		}

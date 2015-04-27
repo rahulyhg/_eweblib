@@ -223,7 +223,6 @@ public class UrlUtil {
 
 				if (!isChinese(c)) {
 					count = count + 1;
-					System.out.print(c);
 				}
 			}
 		}

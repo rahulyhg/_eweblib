@@ -68,7 +68,7 @@ public class WebCrawUtil {
 
 			}
 			
-			if (response != null) {
+			if (response != null && response.getEntity() != null) {
 				BufferedReader in = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), encoding));
 				parser.parse(new InputSource(in));
 				in.close();

@@ -53,14 +53,19 @@ public class HttpClientUtil {
 
 		HttpResponse response = doGetResponse(url, parameters, urlEncoding, redirect);
 
-		String contentType = response.getFirstHeader("Content-Type").getValue();
 		if (response != null) {
 
 			HttpEntity entity = response.getEntity();
 			if (entity != null) {
 				try {
+					String encoding = null;
+					if (response.getFirstHeader("Content-Type") != null) {
+						String contentType = response.getFirstHeader("Content-Type").getValue();
 
-					String encoding = parserContentEncoding(contentType);
+						encoding = parserContentEncoding(contentType);
+					} else {
+						encoding = parserContentEncoding(null);
+					}
 
 					return EntityUtils.toString(entity, encoding);
 				} catch (ParseException | IOException e) {

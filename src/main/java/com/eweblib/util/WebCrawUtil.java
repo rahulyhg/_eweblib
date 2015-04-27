@@ -69,12 +69,16 @@ public class WebCrawUtil {
 			}
 			
 			if (response != null && response.getEntity() != null) {
-				BufferedReader in = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), encoding));
-				parser.parse(new InputSource(in));
-				in.close();
-
+				InputStreamReader in = new InputStreamReader(response.getEntity().getContent(), encoding);
+				BufferedReader reader = new BufferedReader(in);
+				parser.parse(new InputSource(reader));
 				Document doc = parser.getDocument();
-				return XPathAPI.selectNodeList(doc, xpath);
+
+				NodeList list = XPathAPI.selectNodeList(doc, xpath);
+				reader.close();
+				in.close();
+				response.getEntity().getContent().close();
+				return list;
 			}
 
 		} catch (TransformerException e) {

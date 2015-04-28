@@ -239,17 +239,7 @@ public class DataBaseQueryBuilder {
 		if (joinColumns != null && joinColumns.length > 0) {
 
 			for (String column : joinColumns) {
-				setColumnNames(column);
-				String[] splitColumns = column.split(",");
-				if (splitColumns.length > 1) {
-					column = splitColumns[0] + " as " + splitColumns[1] + " ";
-				}
-				if (this.limitColumns == null) {
-					this.limitColumns = tableAlias + "." + column;
-				} else {
-					this.limitColumns = this.limitColumns + "," + tableAlias + "." + column;
-
-				}
+				appednLimitColumn(tableAlias, column);
 			}
 		}
 		return this;
@@ -297,17 +287,7 @@ public class DataBaseQueryBuilder {
 		if (joinColumns != null && joinColumns.size() > 0) {
 
 			for (String column : joinColumns) {
-				setColumnNames(column);
-				String[] splitColumns = column.split(",");
-				if (splitColumns.length > 1) {
-					column = splitColumns[0] + " as " + splitColumns[1] + " ";
-				}
-				if (this.limitColumns == null) {
-					this.limitColumns = tableAlias + "." + column;
-				} else {
-					this.limitColumns = this.limitColumns + "," + tableAlias + "." + column;
-
-				}
+				appednLimitColumn(tableAlias, column);
 			}
 		}
 		return this;
@@ -381,10 +361,21 @@ public class DataBaseQueryBuilder {
 		}
 		return this;
 	}
+	private DataBaseQueryBuilder appednLimitColumn(String column) {
+		
+		 appednLimitColumn(null, column);
+		 return this;
+	}
 
-	private void appednLimitColumn(String column) {
+	private DataBaseQueryBuilder appednLimitColumn(String tableName, String column) {
 
+		column = column.replaceAll(" as ", ",");
 		setColumnNames(column);
+
+		if (tableName == null) {
+			tableName = this.table;
+		}
+
 		String[] splitColumns = column.split(",");
 		if (splitColumns.length > 1) {
 			column = splitColumns[0] + " as " + splitColumns[1] + " ";
@@ -392,9 +383,9 @@ public class DataBaseQueryBuilder {
 
 		if (!column.contains("count(*)") && !column.contains("sum(")) {
 			if (this.limitColumns == null) {
-				this.limitColumns = this.table + "." + column;
+				this.limitColumns = tableName + "." + column;
 			} else {
-				this.limitColumns = this.limitColumns + "," + this.table + "." + column;
+				this.limitColumns = this.limitColumns + "," + tableName + "." + column;
 
 			}
 		} else {
@@ -405,6 +396,8 @@ public class DataBaseQueryBuilder {
 
 			}
 		}
+
+		return this;
 
 	}
 

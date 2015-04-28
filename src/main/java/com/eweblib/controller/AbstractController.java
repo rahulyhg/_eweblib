@@ -168,7 +168,7 @@ public abstract class AbstractController {
 		responseMsg(map, ResponseStatus.SUCCESS, request, response, null);
 	}
 
-	protected void responseWithData(Map<String, Object> data, HttpServletRequest request, HttpServletResponse response) {
+	protected void responseWithMapData(Map<String, Object> data, HttpServletRequest request, HttpServletResponse response) {
 		responseMsg(data, ResponseStatus.SUCCESS, request, response, null);
 	}
 
@@ -236,11 +236,11 @@ public abstract class AbstractController {
 
 	protected void responseWithKeyValue(String key, Object value, HttpServletRequest request, HttpServletResponse response) {
 		if (key == null) {
-			responseWithData(null, request, response);
+			responseWithMapData(null, request, response);
 		} else {
 			Map<String, Object> temp = new HashMap<String, Object>();
 			temp.put(key, value);
-			responseWithData(temp, request, response);
+			responseWithMapData(temp, request, response);
 		}
 	}
 

@@ -16,7 +16,7 @@ public  class OSCheck {
 			return null;
 		}
 
-		if (userAgent.contains("indows Phone".toLowerCase())) {
+		if (userAgent.contains("windows Phone".toLowerCase())) {
 
 			return OSType.WINDOWS_PHONE;
 		} else if (userAgent.contains("Windows NT".toLowerCase())) {

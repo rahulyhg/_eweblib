@@ -1,18 +1,18 @@
 package com.eweblib.util;
 
-public  class OSCheck {
+public class OSCheck {
 
 	public enum OSType {
 
-		WINDOWS, WINDOWS_PHONE, ANDROID, IOS, IPHONE, IPAD, MAC, SYMBIAN, BLACKBERRY
+		WINDOWS, WINDOWS_PHONE, ANDROID, IPHONE, IPAD, MAC, SYMBIAN, BLACKBERRY
 
 	}
 
 	public static OSType checkOS(String userAgent) {
 		userAgent = userAgent.toLowerCase();
-		
-		if(EweblibUtil.isEmpty(userAgent)){
-			
+
+		if (EweblibUtil.isEmpty(userAgent)) {
+
 			return null;
 		}
 

@@ -15,7 +15,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 public class WebCrawUtil {
-	public static Logger log = LogManager.getLogger(UrlUtil.class);
+	public static Logger logger = LogManager.getLogger(UrlUtil.class);
 
 	public static String extractNodeValue(String url, String xpath, String encoding){
 		
@@ -33,6 +33,7 @@ public class WebCrawUtil {
 
 
 	public static NodeList extractNodeList(String url, String xpath, String encoding) {
+		logger.info("Craw" + url);
 		DOMParser parser = new DOMParser();
 		try {
 
@@ -40,7 +41,6 @@ public class WebCrawUtil {
 				encoding = HttpClientUtil.getResponseContentType(url);
 			}
 			
-//			System.out.println(encoding);
 
 			// 设置网页的默认编码
 			parser.setProperty("http://cyberneko.org/html/properties/default-encoding", encoding);
@@ -82,9 +82,9 @@ public class WebCrawUtil {
 			}
 
 		} catch (TransformerException e) {
-			log.error("Parser " + url + " error: " + e.getMessage());
+			logger.error("Parser " + url + " error: " + e.getMessage());
 		} catch (Exception e) {			
-			log.error("Parser " + url + " error: " + e.getMessage());
+			logger.error("Parser " + url + " error: " + e.getMessage());
 		}
 		return null;
 	}

@@ -130,14 +130,12 @@ public class QueryDaoImpl implements IQueryDao {
 	}
 
 	public <T extends BaseEntity> List<T> listBySql(String sql, Class<T> classzz) {
-		
+
 		if (EWeblibThreadLocal.get(EWebLibConstants.PAGENATION) != null) {
 			Pagination page = (Pagination) EWeblibThreadLocal.get(EWebLibConstants.PAGENATION);
-			
-			
+
 		}
-		
-		
+
 		List<Map<String, Object>> results = dao.listBySql(sql);
 
 		List<T> entityList = mergeListValue(classzz, results, null);
@@ -253,6 +251,11 @@ public class QueryDaoImpl implements IQueryDao {
 
 	}
 
+	public void updateBySql(String sql) {
+
+		dao.updateBySql(sql);
+	}
+
 	@Override
 	public void updateByQuery(DataBaseQueryBuilder builder) {
 
@@ -342,7 +345,6 @@ public class QueryDaoImpl implements IQueryDao {
 			EweblibUtil.updateJsonFieldWithType(parameters, queryEntity.getClass());
 		}
 
-
 		// parameters.put("P_STARTDATE", DateUtil.getDateTime("2014-08-12"));
 		// parameters.put("P_ENDDATE", DateUtil.getDateTime("2014-08-13"));
 		parameters.put("procedure", procedure);
@@ -351,13 +353,13 @@ public class QueryDaoImpl implements IQueryDao {
 
 		parameters.put("P_CURSOR", data);
 
-//		System.out.println("procedure query start");
+		// System.out.println("procedure query start");
 		long start = new Date().getTime();
 
 		this.dao.callListProcedure(parameters);
 
-		System.out.println("call procedue " + procedure + " cost: "  + (new Date().getTime() - start));
-//		System.out.println(parameters);
+		System.out.println("call procedue " + procedure + " cost: " + (new Date().getTime() - start));
+		// System.out.println(parameters);
 
 		if (tempClasszz != null) {
 			EweblibUtil.toJsonList(parameters, tempClasszz, "P_CURSOR");

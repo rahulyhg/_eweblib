@@ -80,76 +80,80 @@ public class QueryDaoImpl implements IQueryDao {
 		}
 		entity.setCreatorId(EWeblibThreadLocal.getCurrentUserId());
 	}
-	
+
 	public <T extends BaseEntity> void batchInsert(List<T> entityList, String table) {
+		if (entityList.size() > 0) {
+			String insertColumnsExp = null;
+			String insertColumns = null;
+			String batchInsertColumnsDefine = null;
+			for (BaseEntity entity : entityList) {
+				meregeEntityValue(entity);
 
-		String insertColumnsExp = null;
-		String insertColumns = null;
-		String batchInsertColumnsDefine = null;
-		for (BaseEntity entity : entityList) {
-			meregeEntityValue(entity);
+				if (insertColumns == null) {
+					insertColumns = entity.getInsertColumns();
+				}
 
-			if (insertColumns == null) {
-				insertColumns = entity.getInsertColumns();
+				if (insertColumnsExp == null) {
+					insertColumnsExp = entity.getInsertColumnsExp();
+				}
+
+				if (table == null) {
+					table = entity.getTable();
+				}
+
+				if (batchInsertColumnsDefine == null) {
+					batchInsertColumnsDefine = entity.getBatchInsertColumnsExp();
+				}
 			}
 
-			if (insertColumnsExp == null) {
-				insertColumnsExp = entity.getInsertColumnsExp();
-			}
+			Map<String, Object> data = new HashMap<String, Object>();
+			data.put("table", table);
+			data.put("insertColumns", insertColumns);
+			data.put("batchInsertColumnsExp", batchInsertColumnsDefine);
+			data.put("insertColumnsExp", insertColumnsExp);
+			data.put("list", entityList);
 
-			if (table == null) {
-				table = entity.getTable();
-			}
-
-			if (batchInsertColumnsDefine == null) {
-				batchInsertColumnsDefine = entity.getBatchInsertColumnsExp();
-			}
+			dao.batchInsert(data);
 		}
-
-		Map<String, Object> data = new HashMap<String, Object>();
-		data.put("table", table);
-		data.put("insertColumns", insertColumns);
-		data.put("batchInsertColumnsExp", batchInsertColumnsDefine);
-		data.put("insertColumnsExp", insertColumnsExp);
-		data.put("list", entityList);
-
-		dao.batchInsert(data);
 	}
 
 	public <T extends BaseEntity> void batchInsert(List<T> entityList) {
 
-		String insertColumnsExp = null;
-		String insertColumns = null;
-		String table = null;
-		String batchInsertColumnsDefine = null;
-		for (BaseEntity entity : entityList) {
-			meregeEntityValue(entity);
+		if (entityList.size() > 0) {
 
-			if (insertColumns == null) {
-				insertColumns = entity.getInsertColumns();
+			String insertColumnsExp = null;
+			String insertColumns = null;
+			String table = null;
+			String batchInsertColumnsDefine = null;
+			for (BaseEntity entity : entityList) {
+				meregeEntityValue(entity);
+
+				if (insertColumns == null) {
+					insertColumns = entity.getInsertColumns();
+				}
+
+				if (insertColumnsExp == null) {
+					insertColumnsExp = entity.getInsertColumnsExp();
+				}
+
+				if (table == null) {
+					table = entity.getTable();
+				}
+
+				if (batchInsertColumnsDefine == null) {
+					batchInsertColumnsDefine = entity.getBatchInsertColumnsExp();
+				}
 			}
 
-			if (insertColumnsExp == null) {
-				insertColumnsExp = entity.getInsertColumnsExp();
-			}
+			Map<String, Object> data = new HashMap<String, Object>();
+			data.put("table", table);
+			data.put("insertColumns", insertColumns);
+			data.put("batchInsertColumnsExp", batchInsertColumnsDefine);
+			data.put("insertColumnsExp", insertColumnsExp);
+			data.put("list", entityList);
 
-			if (table == null) {
-				table = entity.getTable();
-			}
-
-			if (batchInsertColumnsDefine == null) {
-				batchInsertColumnsDefine = entity.getBatchInsertColumnsExp();
-			}
+			dao.batchInsert(data);
 		}
-
-		Map<String, Object> data = new HashMap<String, Object>();
-		data.put("table", table);
-		data.put("insertColumns", insertColumns);
-		data.put("batchInsertColumnsExp", batchInsertColumnsDefine);
-		data.put("insertColumnsExp", insertColumnsExp);
-		data.put("list", entityList);
-
-		dao.batchInsert(data);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -429,48 +429,52 @@ public class QueryDaoImpl implements IQueryDao {
 				userId = EWeblibThreadLocal.getCurrentUserId();
 			}
 
-			String path = EWeblibThreadLocal.get(ControllerFilter.URL_PATH).toString();
+			if (EweblibUtil.isValid(userId)) {
 
-			Log log = new Log();
-			log.setUserId(userId);
-			log.setUrlPath(path);
-			log.setLogType("update");
-			log.setTableName(entity.getTable());
-			log.setDataId(old.getId());
+				String path = EWeblibThreadLocal.get(ControllerFilter.URL_PATH).toString();
 
-			List<LogItem> list = new ArrayList<LogItem>();
+				Log log = new Log();
+				log.setUserId(userId);
+				log.setUrlPath(path);
+				log.setLogType("update");
+				log.setTableName(entity.getTable());
+				log.setDataId(old.getId());
 
-			Map<String, Object> map = entity.toMap();
-			map.remove("updatedOn");
+				List<LogItem> list = new ArrayList<LogItem>();
 
-			Map<String, Object> oldMap = old.toMap();
+				Map<String, Object> map = entity.toMap();
+				map.remove("updatedOn");
 
-			for (String key : map.keySet()) {
+				Map<String, Object> oldMap = old.toMap();
 
-				if (entity.containsDbColumn(key)) {
+				for (String key : map.keySet()) {
 
-					Object ovalue = oldMap.get(key);
-					if (ovalue == null) {
-						ovalue = "";
+					if (entity.containsDbColumn(key)) {
+
+						Object ovalue = oldMap.get(key);
+						if (ovalue == null) {
+							ovalue = "";
+						}
+						if (ovalue == null || !ovalue.toString().equalsIgnoreCase(map.get(key).toString())) {
+							LogItem item = new LogItem();
+							item.setField(key);
+							item.setOldValue(ovalue.toString());
+							item.setNewValue(map.get(key).toString());
+							item.setTableName(log.getTableName());
+							list.add(item);
+						}
+
 					}
-					if (ovalue == null || !ovalue.toString().equalsIgnoreCase(map.get(key).toString())) {
-						LogItem item = new LogItem();
-						item.setField(key);
-						item.setOldValue(ovalue.toString());
-						item.setNewValue(map.get(key).toString());
-						item.setTableName(log.getTableName());
-						list.add(item);
+				}
+
+				if (list.size() > 0) {
+					insert(log);
+					for (LogItem item : list) {
+						item.setLogId(log.getId());
+						insert(item);
 					}
-
 				}
-			}
 
-			if (list.size() > 0) {
-				insert(log);
-				for (LogItem item : list) {
-					item.setLogId(log.getId());
-					insert(item);
-				}
 			}
 		}
 
@@ -482,27 +486,29 @@ public class QueryDaoImpl implements IQueryDao {
 				userId = EWeblibThreadLocal.getCurrentUserId();
 			}
 
-			Log log = new Log();
-			log.setUserId(userId);
-			log.setUrlPath(EWeblibThreadLocal.get(ControllerFilter.URL_PATH).toString());
-			log.setLogType("add");
-			log.setTableName(entity.getTable());
-			log.setDataId(entity.getId());
-			insert(log);
+			if (EweblibUtil.isValid(userId)) {
+				Log log = new Log();
+				log.setUserId(userId);
+				log.setUrlPath(EWeblibThreadLocal.get(ControllerFilter.URL_PATH).toString());
+				log.setLogType("add");
+				log.setTableName(entity.getTable());
+				log.setDataId(entity.getId());
+				insert(log);
 
-			Map<String, Object> map = entity.toMap();
-			map.remove("updatedOn");
-			map.remove("createdOn");
-			for (String key : map.keySet()) {
+				Map<String, Object> map = entity.toMap();
+				map.remove("updatedOn");
+				map.remove("createdOn");
+				for (String key : map.keySet()) {
 
-				if (entity.containsDbColumn(key)) {
-					LogItem item = new LogItem();
-					item.setLogId(log.getId());
-					item.setField(key);
-					item.setOldValue(null);
-					item.setNewValue(map.get(key).toString());
-					item.setTableName(log.getTableName());
-					insert(item);
+					if (entity.containsDbColumn(key)) {
+						LogItem item = new LogItem();
+						item.setLogId(log.getId());
+						item.setField(key);
+						item.setOldValue(null);
+						item.setNewValue(map.get(key).toString());
+						item.setTableName(log.getTableName());
+						insert(item);
+					}
 				}
 			}
 		}

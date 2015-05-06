@@ -93,4 +93,15 @@ public class ConfigManager {
 	public static boolean isDevEnviroment() {
 		return !isProductEnviroment();
 	}
+
+	public static boolean isPQ() {
+		String db = ConfigManager.getProperty("DB_NAME");
+
+		if (db != null && db.equalsIgnoreCase("pq")) {
+			return true;
+		}
+
+		return false;
+
+	}
 }

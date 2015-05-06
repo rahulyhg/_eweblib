@@ -14,6 +14,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
+import com.eweblib.cfg.ConfigManager;
 import com.eweblib.exception.BeanStructureException;
 import com.eweblib.util.EweblibUtil;
 import com.google.gson.annotations.Expose;
@@ -21,7 +22,7 @@ import com.google.gson.annotations.Expose;
 /**
  * 
  * @author ymzhou
- *
+ * 
  */
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -130,6 +131,9 @@ public class BaseEntity {
 		if (tableName == null)
 			throw new BeanStructureException("undefine POJO @Table or @Entity, need Tablename(@Table(name))");
 
+		if (ConfigManager.isPQ()) {
+			return "\"" + tableName + "\"";
+		}
 		return tableName;
 	}
 
@@ -282,7 +286,9 @@ public class BaseEntity {
 		for (String column : list) {
 			// if (isNull(column))
 			// continue;
-
+			if (ConfigManager.isPQ()) {
+				column = "\"" + column + "\"";
+			}
 			if (i++ != 0)
 				sb.append(',');
 			sb.append(column);

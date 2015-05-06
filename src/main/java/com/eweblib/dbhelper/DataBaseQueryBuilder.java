@@ -4,7 +4,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 import com.eweblib.bean.vo.Pagination;
+import com.eweblib.cfg.ConfigManager;
+import com.eweblib.exception.BeanStructureException;
 import com.eweblib.util.EweblibUtil;
 
 public class DataBaseQueryBuilder {
@@ -530,6 +535,10 @@ public class DataBaseQueryBuilder {
 	}
 
 	public String getTable() {
+		if (ConfigManager.isPQ()) {
+			return "\"" + table + "\"";
+		}
+		
 		return table;
 	}
 
@@ -567,6 +576,16 @@ public class DataBaseQueryBuilder {
 
 	public void setUpdateColumns(String updateColumns) {
 		this.updateColumns = updateColumns;
+	}
+	
+	
+	public String getTableName() {
+
+		if (ConfigManager.isPQ()) {
+			return "\"" + table + "\"";
+		}
+		
+		return table;
 	}
 
 }

@@ -84,14 +84,13 @@ public class DateUtil {
 		return sdf.format(date);
 	}
 
-
 	public static Date getDate(String date, String format) {
 		SimpleDateFormat sdf = new SimpleDateFormat(format);
 		try {
 			return sdf.parse(date);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+			logger.error("Parser date error " + date, e);
 		}
 		return null;
 	}

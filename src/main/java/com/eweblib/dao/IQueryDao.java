@@ -23,6 +23,9 @@ public interface IQueryDao {
 	
 	public  <T extends BaseEntity> void batchInsert(List<T> entityList);
 	
+	public  <T extends BaseEntity> void batchInsert(List<T> entityList, String table);
+
+	
 	public void updateBySql(String sql);
 
 	/**

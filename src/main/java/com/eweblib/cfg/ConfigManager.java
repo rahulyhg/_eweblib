@@ -104,4 +104,16 @@ public class ConfigManager {
 		return false;
 
 	}
+
+	public static boolean enableLog() {
+		String enableLog = ConfigManager.getProperty("ENABLE_LOG");
+
+		if (enableLog != null && enableLog.equalsIgnoreCase("true")) {
+			return true;
+		}
+
+		return false;
+
+	}
+
 }

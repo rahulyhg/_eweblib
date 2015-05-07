@@ -22,6 +22,7 @@ import com.eweblib.bean.LogItem;
 import com.eweblib.bean.vo.EntityResults;
 import com.eweblib.bean.vo.OrderBy;
 import com.eweblib.bean.vo.Pagination;
+import com.eweblib.cfg.ConfigManager;
 import com.eweblib.constants.EWebLibConstants;
 import com.eweblib.controller.interceptor.ControllerFilter;
 import com.eweblib.dbhelper.DataBaseQueryBuilder;
@@ -86,24 +87,22 @@ public class QueryDaoImpl implements IQueryDao {
 			String insertColumnsExp = null;
 			String insertColumns = null;
 			String batchInsertColumnsDefine = null;
-			for (BaseEntity entity : entityList) {
-				meregeEntityValue(entity);
+			BaseEntity entity = entityList.get(0);
 
-				if (insertColumns == null) {
-					insertColumns = entity.getInsertColumns();
-				}
+			if (insertColumns == null) {
+				insertColumns = entity.getInsertColumns();
+			}
 
-				if (insertColumnsExp == null) {
-					insertColumnsExp = entity.getInsertColumnsExp();
-				}
+			if (insertColumnsExp == null) {
+				insertColumnsExp = entity.getInsertColumnsExp();
+			}
 
-				if (table == null) {
-					table = entity.getTable();
-				}
+			if (table == null) {
+				table = entity.getTable();
+			}
 
-				if (batchInsertColumnsDefine == null) {
-					batchInsertColumnsDefine = entity.getBatchInsertColumnsExp();
-				}
+			if (batchInsertColumnsDefine == null) {
+				batchInsertColumnsDefine = entity.getBatchInsertColumnsExp();
 			}
 
 			Map<String, Object> data = new HashMap<String, Object>();
@@ -423,91 +422,95 @@ public class QueryDaoImpl implements IQueryDao {
 	}
 
 	public void createUpdateLog(String userId, BaseEntity entity, BaseEntity old) {
-
-		if (EWeblibThreadLocal.get(ControllerFilter.URL_PATH) != null && !(entity instanceof Log) && !(entity instanceof LogItem)) {
-			if (EweblibUtil.isEmpty(userId)) {
-				userId = EWeblibThreadLocal.getCurrentUserId();
-			}
-
-			if (EweblibUtil.isValid(userId)) {
-
-				String path = EWeblibThreadLocal.get(ControllerFilter.URL_PATH).toString();
-
-				Log log = new Log();
-				log.setUserId(userId);
-				log.setUrlPath(path);
-				log.setLogType("update");
-				log.setTableName(entity.getTable());
-				log.setDataId(old.getId());
-
-				List<LogItem> list = new ArrayList<LogItem>();
-
-				Map<String, Object> map = entity.toMap();
-				map.remove("updatedOn");
-
-				Map<String, Object> oldMap = old.toMap();
-
-				for (String key : map.keySet()) {
-
-					if (entity.containsDbColumn(key)) {
-
-						Object ovalue = oldMap.get(key);
-						if (ovalue == null) {
-							ovalue = "";
-						}
-						if (ovalue == null || !ovalue.toString().equalsIgnoreCase(map.get(key).toString())) {
-							LogItem item = new LogItem();
-							item.setField(key);
-							item.setOldValue(ovalue.toString());
-							item.setNewValue(map.get(key).toString());
-							item.setTableName(log.getTableName());
-							list.add(item);
-						}
-
-					}
+		if (ConfigManager.enableLog()) {
+			if (EWeblibThreadLocal.get(ControllerFilter.URL_PATH) != null && !(entity instanceof Log) && !(entity instanceof LogItem)) {
+				if (EweblibUtil.isEmpty(userId)) {
+					userId = EWeblibThreadLocal.getCurrentUserId();
 				}
 
-				if (list.size() > 0) {
-					insert(log);
-					for (LogItem item : list) {
-						item.setLogId(log.getId());
-						insert(item);
-					}
-				}
+				if (EweblibUtil.isValid(userId)) {
 
+					String path = EWeblibThreadLocal.get(ControllerFilter.URL_PATH).toString();
+
+					Log log = new Log();
+					log.setUserId(userId);
+					log.setUrlPath(path);
+					log.setLogType("update");
+					log.setTableName(entity.getTable());
+					log.setDataId(old.getId());
+
+					List<LogItem> list = new ArrayList<LogItem>();
+
+					Map<String, Object> map = entity.toMap();
+					map.remove("updatedOn");
+
+					Map<String, Object> oldMap = old.toMap();
+
+					for (String key : map.keySet()) {
+
+						if (entity.containsDbColumn(key)) {
+
+							Object ovalue = oldMap.get(key);
+							if (ovalue == null) {
+								ovalue = "";
+							}
+							if (ovalue == null || !ovalue.toString().equalsIgnoreCase(map.get(key).toString())) {
+								LogItem item = new LogItem();
+								item.setField(key);
+								item.setOldValue(ovalue.toString());
+								item.setNewValue(map.get(key).toString());
+								item.setTableName(log.getTableName());
+								list.add(item);
+							}
+
+						}
+					}
+
+					if (list.size() > 0) {
+						insert(log);
+						for (LogItem item : list) {
+							item.setLogId(log.getId());
+							insert(item);
+						}
+					}
+
+				}
 			}
 		}
 
 	}
 
 	public void createAddLog(String userId, BaseEntity entity) {
-		if (EWeblibThreadLocal.get(ControllerFilter.URL_PATH) != null && !(entity instanceof Log) && !(entity instanceof LogItem)) {
-			if (EweblibUtil.isEmpty(userId)) {
-				userId = EWeblibThreadLocal.getCurrentUserId();
-			}
 
-			if (EweblibUtil.isValid(userId)) {
-				Log log = new Log();
-				log.setUserId(userId);
-				log.setUrlPath(EWeblibThreadLocal.get(ControllerFilter.URL_PATH).toString());
-				log.setLogType("add");
-				log.setTableName(entity.getTable());
-				log.setDataId(entity.getId());
-				insert(log);
+		if (ConfigManager.enableLog()) {
+			if (EWeblibThreadLocal.get(ControllerFilter.URL_PATH) != null && !(entity instanceof Log) && !(entity instanceof LogItem)) {
+				if (EweblibUtil.isEmpty(userId)) {
+					userId = EWeblibThreadLocal.getCurrentUserId();
+				}
 
-				Map<String, Object> map = entity.toMap();
-				map.remove("updatedOn");
-				map.remove("createdOn");
-				for (String key : map.keySet()) {
+				if (EweblibUtil.isValid(userId)) {
+					Log log = new Log();
+					log.setUserId(userId);
+					log.setUrlPath(EWeblibThreadLocal.get(ControllerFilter.URL_PATH).toString());
+					log.setLogType("add");
+					log.setTableName(entity.getTable());
+					log.setDataId(entity.getId());
+					insert(log);
 
-					if (entity.containsDbColumn(key)) {
-						LogItem item = new LogItem();
-						item.setLogId(log.getId());
-						item.setField(key);
-						item.setOldValue(null);
-						item.setNewValue(map.get(key).toString());
-						item.setTableName(log.getTableName());
-						insert(item);
+					Map<String, Object> map = entity.toMap();
+					map.remove("updatedOn");
+					map.remove("createdOn");
+					for (String key : map.keySet()) {
+
+						if (entity.containsDbColumn(key)) {
+							LogItem item = new LogItem();
+							item.setLogId(log.getId());
+							item.setField(key);
+							item.setOldValue(null);
+							item.setNewValue(map.get(key).toString());
+							item.setTableName(log.getTableName());
+							insert(item);
+						}
 					}
 				}
 			}

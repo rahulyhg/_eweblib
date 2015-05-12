@@ -26,7 +26,7 @@ public interface IQueryDao {
 	public  <T extends BaseEntity> void batchInsert(List<T> entityList, String table);
 
 	
-	public void updateBySql(String sql);
+	public void executeSql(String sql);
 
 	/**
 	 * 传人entity对象，数据操作取entity里面的table和id，其它属性和字段忽略

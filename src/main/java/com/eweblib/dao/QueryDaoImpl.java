@@ -288,7 +288,7 @@ public class QueryDaoImpl implements IQueryDao {
 
 	}
 
-	public void updateBySql(String sql) {
+	public void executeSql(String sql) {
 
 		dao.updateBySql(sql);
 	}

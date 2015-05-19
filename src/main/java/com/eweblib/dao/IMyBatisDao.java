@@ -18,7 +18,7 @@ public interface IMyBatisDao {
 
 	public void updateById(BaseEntity entity);
 	
-	public void updateBySql(String sql);
+	public void executeSql(String sql);
 
 	
 	public void updateByQuery(DataBaseQueryBuilder builder);

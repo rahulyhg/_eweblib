@@ -290,7 +290,7 @@ public class QueryDaoImpl implements IQueryDao {
 
 	public void executeSql(String sql) {
 
-		dao.updateBySql(sql);
+		dao.executeSql(sql);
 	}
 
 	@Override

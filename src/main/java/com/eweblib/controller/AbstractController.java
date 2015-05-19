@@ -71,14 +71,14 @@ public abstract class AbstractController {
 
 		int filterLength = 0;
 
-		Enumeration<?> headerNames = request.getHeaderNames();
-
-		while (headerNames.hasMoreElements()) {
-
-			String pName = headerNames.nextElement().toString();
-			parametersMap.put(pName, request.getHeader(pName));
-
-		}
+//		Enumeration<?> headerNames = request.getHeaderNames();
+//
+//		while (headerNames.hasMoreElements()) {
+//
+//			String pName = headerNames.nextElement().toString();
+//			parametersMap.put(pName, request.getHeader(pName));
+//
+//		}
 
 		Enumeration<?> parameterNames = request.getParameterNames();
 		while (parameterNames.hasMoreElements()) {

@@ -11,7 +11,20 @@ import com.eweblib.dao.IQueryDao;
 import com.eweblib.exception.ConfigException;
 import com.eweblib.util.EweblibUtil;
 
+/**
+ * 配置管理,
+ * 
+ * 
+ * @author
+ * 
+ */
 public class ConfigManager {
+	public static final String ENVIROMENT_PRODUCT = "product";
+
+	public static final String ENVIROMENT = "enviroment";
+
+	public static final String LUCENE_INDEX_DIR = "lucene_index_dir";
+
 	private static Logger logger = LogManager.getLogger(ConfigManager.class);
 
 	private static Properties properties = new Properties();
@@ -60,13 +73,9 @@ public class ConfigManager {
 
 	}
 
-	public static void remove(String key) {
-		properties.remove(key);
-	}
-
 	public static String getLuceneIndexDir() {
 
-		String dir = ConfigManager.getProperty("lucene_index_dir");
+		String dir = ConfigManager.getProperty(LUCENE_INDEX_DIR);
 
 		if (EweblibUtil.isEmpty(dir)) {
 			throw new ConfigException("lucene_index_dir must be set into config.properties");
@@ -77,13 +86,13 @@ public class ConfigManager {
 	}
 
 	public static boolean isProductEnviroment() {
-		String env = ConfigManager.getProperty("enviroment");
+		String env = ConfigManager.getProperty(ENVIROMENT);
 
 		if (EweblibUtil.isEmpty(env)) {
 			return false;
 		}
 
-		if (ConfigManager.getProperty("enviroment").equalsIgnoreCase("product")) {
+		if (ConfigManager.getProperty(ENVIROMENT).equalsIgnoreCase(ENVIROMENT_PRODUCT)) {
 			return true;
 		}
 
@@ -105,6 +114,11 @@ public class ConfigManager {
 
 	}
 
+	/**
+	 * 是否记录日志
+	 * 
+	 * @return
+	 */
 	public static boolean enableLog() {
 		String enableLog = ConfigManager.getProperty("ENABLE_LOG");
 

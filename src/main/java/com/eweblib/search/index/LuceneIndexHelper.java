@@ -61,7 +61,7 @@ public class LuceneIndexHelper {
 			independenceKeys.add(BaseEntity.ID);
 		}
 
-		Map<String, Object> params = entity.toMap();
+		Map<String, Object> data = entity.toMap();
 
 		IndexWriter writer = null;
 		try {
@@ -82,12 +82,12 @@ public class LuceneIndexHelper {
 			ignoreKeys.add(BaseEntity.UPDATED_ON);
 			ignoreKeys.add(BaseEntity.CREATOR_ID);
 
-			if (params != null) {
+			if (data != null) {
 
 				java.lang.reflect.Field[] fields = clz.getFields();
 				for (java.lang.reflect.Field field : fields) {
 
-					if (params.get(field.getName()) != null) {
+					if (data.get(field.getName()) != null) {
 						if (field.isAnnotationPresent(IntegerColumn.class) || field.isAnnotationPresent(DateColumn.class) || field.isAnnotationPresent(FloatColumn.class)
 						        || field.isAnnotationPresent(DoubleColumn.class) || field.isAnnotationPresent(BooleanColumn.class) || ignoreKeys.contains(field.getName())) {
 
@@ -96,9 +96,9 @@ public class LuceneIndexHelper {
 
 							if (independenceKeys.contains(field.getName())) {
 
-								doc.add(new TextField(field.getName(), params.get(field.getName()).toString(), Field.Store.YES));
+								doc.add(new TextField(field.getName(), data.get(field.getName()).toString(), Field.Store.YES));
 							}
-							content = content + " " + params.get(field.getName()).toString();
+							content = content + " " + data.get(field.getName()).toString();
 						}
 
 					}
@@ -111,22 +111,23 @@ public class LuceneIndexHelper {
 				System.out.println(content);
 				doc.add(new TextField(CONTENT, content, Field.Store.YES));
 
-				if (params.get(BaseEntity.ID) != null) {
+				if (data.get(BaseEntity.ID) != null) {
 					try {
-						writer.updateDocument(new Term(BaseEntity.ID, params.get(BaseEntity.ID).toString()), doc);
+						writer.updateDocument(new Term(BaseEntity.ID, data.get(BaseEntity.ID).toString()), doc);
 					} catch (IOException e) {
 
 						closeWriter(writer);
 					}
 				}
 
-				closeWriter(writer);
 			}
 		}
 
+		closeWriter(writer);
+
 	}
 
-	public static  IndexWriter getIndexWriter() throws IOException {
+	public static IndexWriter getIndexWriter() throws IOException {
 		Analyzer analyzer = new IKAnalyzer(true);
 
 		File file = new File(ConfigManager.getLuceneIndexDir());
@@ -135,20 +136,26 @@ public class LuceneIndexHelper {
 
 		config.setOpenMode(OpenMode.CREATE_OR_APPEND);
 		FSDirectory directory = FSDirectory.open(file);
-		IndexWriter.unlock(directory);
+
+		if (IndexWriter.isLocked(directory)) {
+			IndexWriter.unlock(directory);
+		}
 		IndexWriter writer = new IndexWriter(directory, config);
 
 		return writer;
 	}
 
 	public static void deleteDocument(String id) {
+		IndexWriter writer = null;
 		try {
-			IndexWriter writer = getIndexWriter();
+			writer = getIndexWriter();
 			writer.deleteDocuments((new Term(BaseEntity.ID, id)));
 			closeWriter(writer);
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			if (writer != null) {
+				closeWriter(writer);
+			}
 			e.printStackTrace();
 		}
 	}
@@ -167,8 +174,12 @@ public class LuceneIndexHelper {
 				writer.commit();
 				writer.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				try {
+	                writer.close();
+                } catch (IOException e1) {
+	                // TODO Auto-generated catch block
+	                e1.printStackTrace();
+                }
 			}
 		}
 

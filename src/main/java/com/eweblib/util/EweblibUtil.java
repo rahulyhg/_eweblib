@@ -2,6 +2,7 @@ package com.eweblib.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -531,6 +532,15 @@ public class EweblibUtil {
 			e.printStackTrace();
 		}
 		return result;
+	}
+	
+	public static Float toFixed(float value){
+		
+
+		BigDecimal b = new BigDecimal(value * 100);
+		float f1 = b.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
+		
+		return f1;
 	}
 	
 

@@ -33,7 +33,7 @@ public class WebCrawUtil {
 
 
 	public static NodeList extractNodeList(String url, String xpath, String encoding) {
-		logger.info("Craw" + url);
+		logger.info("Craw: " + url);
 		DOMParser parser = new DOMParser();
 		try {
 
@@ -58,6 +58,7 @@ public class WebCrawUtil {
 			if (response != null && response.getFirstHeader("Location") != null) {
 				url = response.getFirstHeader("Location").getValue();
 
+				encoding = HttpClientUtil.getResponseContentType(url);
 //				encoding = HttpClientUtil.getResponseContentType(url);
 
 				// 设置网页的默认编码

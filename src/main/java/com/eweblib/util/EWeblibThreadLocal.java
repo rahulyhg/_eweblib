@@ -10,7 +10,7 @@ import com.eweblib.constants.EWebLibConstants;
 public class EWeblibThreadLocal {
 
 	// public static final String LOG="log";
-	public static final Map threadMap = Collections.synchronizedMap(new HashMap());
+	public static final Map<Thread, Map<String, Object>> threadMap = Collections.synchronizedMap(new HashMap<Thread, Map<String, Object>>());
 
 	public static Object get(String key) {
 		Thread curThread = Thread.currentThread();
@@ -19,13 +19,12 @@ public class EWeblibThreadLocal {
 	}
 
 	private static Map<String, Object> getMapResult(Thread curThread) {
-		Object o = threadMap.get(curThread);
+		Map<String, Object> o = threadMap.get(curThread);
 		if (o == null && !threadMap.containsKey(curThread)) {
 			o = initialValue();
 			threadMap.put(curThread, o);
 		}
-		Map<String, Object> map = (Map<String, Object>) o;
-		return map;
+		return o;
 	}
 
 	public static void set(String key, Object newValue) {
@@ -43,7 +42,7 @@ public class EWeblibThreadLocal {
 		threadMap.put(currentThread, map);
 	}
 
-	public static Object initialValue() {
+	public static Map<String, Object> initialValue() {
 		return new HashMap<String, Object>();
 	}
 

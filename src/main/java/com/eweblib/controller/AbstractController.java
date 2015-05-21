@@ -136,7 +136,9 @@ public abstract class AbstractController {
 		if (parametersMap.get("sort") != null) {
 
 			OrderBy order = new OrderBy();
-			order.setOrder(parametersMap.get("order").toString());
+			if(parametersMap.get("order")!=null){
+				order.setOrder(parametersMap.get("order").toString());
+			}
 			order.setSort(parametersMap.get("sort").toString());
 
 			EWeblibThreadLocal.set(EWebLibConstants.DB_QUERY_ORDER_BY, order);

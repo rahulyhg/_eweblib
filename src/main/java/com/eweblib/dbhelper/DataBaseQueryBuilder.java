@@ -406,9 +406,10 @@ public class DataBaseQueryBuilder {
 
 	}
 
-	public DataBaseQueryBuilder orderBy(String column, boolean asc) {
+	
+	public DataBaseQueryBuilder orderBy(String column, boolean asc, boolean alias) {
 
-		if (this.onQuery != null) {
+		if (this.onQuery != null && alias) {
 			column = this.table + "." + column;
 		}
 
@@ -427,6 +428,11 @@ public class DataBaseQueryBuilder {
 			}
 		}
 		return this;
+	}
+
+	public DataBaseQueryBuilder orderBy(String column, boolean asc) {
+
+		return orderBy(column, asc, true);
 	}
 
 	public DataBaseQueryBuilder orderBy(String table, String column, boolean asc) {

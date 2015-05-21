@@ -29,6 +29,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.LogManager;
@@ -154,7 +155,10 @@ public class HttpClientUtil {
 
 			DefaultHttpMethodRetryHandler retryHandler = new DefaultHttpMethodRetryHandler(0, false);
 			params.setParameter(HttpMethodParams.RETRY_HANDLER, retryHandler);
-
+			params.setParameter(HttpMethodParams.SO_TIMEOUT, 5000);
+			HttpConnectionParams.setConnectionTimeout(params, 5000);
+		
+		    
 			httpget.setParams(params);
 			// httpget.setHeader("Accept-Encoding", "gzip, deflate");
 			httpget.setHeader("User-Agent", userAgents[index]);

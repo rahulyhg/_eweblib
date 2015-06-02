@@ -122,11 +122,11 @@ public class HttpClientUtil {
 				String[] urls = url.split("\\?");
 
 				if (EweblibUtil.isValid(urls[1])) {
-					if (EweblibUtil.isValid(encoding)) {
-						url = urls[0] + "?" + URLEncoder.encode(urls[1], encoding);
-					} else {
-						url = urls[0] + "?" + URLEncoder.encode(urls[1]);
-					}
+//					if (EweblibUtil.isValid(encoding)) {
+//						url = urls[0] + "?" + URLEncoder.encode(urls[1], encoding);
+//					} else {
+//						url = urls[0] + "?" + URLEncoder.encode(urls[1]);
+//					}
 				}
 			}
 
@@ -163,7 +163,7 @@ public class HttpClientUtil {
 			// httpget.setHeader("Accept-Encoding", "gzip, deflate");
 			httpget.setHeader("User-Agent", userAgents[index]);
 			httpget.setHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-			httpget.setHeader("Referer", "https://www.baidu.com/");
+			//httpget.setHeader("Referer", "https://www.baidu.com/");
 
 			response = httpClient.execute(httpget);
 

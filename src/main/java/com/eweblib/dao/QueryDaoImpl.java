@@ -116,41 +116,8 @@ public class QueryDaoImpl implements IQueryDao {
 	}
 
 	public <T extends BaseEntity> void batchInsert(List<T> entityList) {
-
 		if (entityList.size() > 0) {
-
-			String insertColumnsExp = null;
-			String insertColumns = null;
-			String table = null;
-			String batchInsertColumnsDefine = null;
-			for (BaseEntity entity : entityList) {
-				meregeEntityValue(entity);
-
-				if (insertColumns == null) {
-					insertColumns = entity.getInsertColumns();
-				}
-
-				if (insertColumnsExp == null) {
-					insertColumnsExp = entity.getInsertColumnsExp();
-				}
-
-				if (table == null) {
-					table = entity.getTable();
-				}
-
-				if (batchInsertColumnsDefine == null) {
-					batchInsertColumnsDefine = entity.getBatchInsertColumnsExp();
-				}
-			}
-
-			Map<String, Object> data = new HashMap<String, Object>();
-			data.put("table", table);
-			data.put("insertColumns", insertColumns);
-			data.put("batchInsertColumnsExp", batchInsertColumnsDefine);
-			data.put("insertColumnsExp", insertColumnsExp);
-			data.put("list", entityList);
-
-			dao.batchInsert(data);
+			batchInsert(entityList, entityList.get(0).getTable());
 		}
 	}
 

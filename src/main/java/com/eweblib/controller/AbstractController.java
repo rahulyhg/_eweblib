@@ -296,6 +296,10 @@ public abstract class AbstractController {
 
 	protected void responseWithTxt(HttpServletRequest request, HttpServletResponse response, String txt) {
 		try {
+
+			if (txt == null) {
+				txt = "";
+			}
 			response.setContentType("text/plain;charset=utf-8");
 			response.addHeader("Accept-Encoding", "gzip, deflate");
 			response.getWriter().write(txt);

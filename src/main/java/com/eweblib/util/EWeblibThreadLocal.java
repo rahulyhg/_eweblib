@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.eweblib.constants.EWebLibConstants;
+import com.eweblib.bean.BaseEntity;
 
 public class EWeblibThreadLocal {
 
@@ -52,7 +52,7 @@ public class EWeblibThreadLocal {
 	}
 
 	public static String getCurrentUserId() {
-		Object id = EWeblibThreadLocal.get(EWebLibConstants.ID);
+		Object id = EWeblibThreadLocal.get(BaseEntity.ID);
 		if (id != null) {
 			return id.toString();
 		}

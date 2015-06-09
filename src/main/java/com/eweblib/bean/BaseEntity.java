@@ -20,6 +20,7 @@ import com.eweblib.util.EweblibUtil;
 import com.google.gson.annotations.Expose;
 
 /**
+ * 基础entity对象
  * 
  * @author ymzhou
  * 

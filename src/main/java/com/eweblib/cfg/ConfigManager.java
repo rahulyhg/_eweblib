@@ -23,6 +23,7 @@ public class ConfigManager {
 
 	public static final String ENVIROMENT = "enviroment";
 
+	//索引路径
 	public static final String LUCENE_INDEX_DIR = "lucene_index_dir";
 
 	private static Logger logger = LogManager.getLogger(ConfigManager.class);

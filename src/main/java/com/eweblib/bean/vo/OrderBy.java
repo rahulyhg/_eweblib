@@ -1,5 +1,11 @@
 package com.eweblib.bean.vo;
-
+/**
+ * 
+ * 前端传递过来的排序参数
+ * 
+ * @author 
+ *
+ */
 public class OrderBy {
 
 	public String sort;

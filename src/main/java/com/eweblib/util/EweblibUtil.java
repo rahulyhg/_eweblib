@@ -23,6 +23,7 @@ import com.eweblib.annotation.column.DateColumn;
 import com.eweblib.annotation.column.DoubleColumn;
 import com.eweblib.annotation.column.FloatColumn;
 import com.eweblib.annotation.column.IntegerColumn;
+import com.eweblib.annotation.column.LongColumn;
 import com.eweblib.annotation.column.ObjectColumn;
 import com.eweblib.bean.BaseEntity;
 import com.eweblib.cfg.ConfigManager;
@@ -114,7 +115,28 @@ public class EweblibUtil {
 				result = Float.parseFloat(String.valueOf(value));
 			} catch (NumberFormatException e) {
 
-				logger.error(String.format("Integer parameter illegal [%s]", value), e);
+				logger.error(String.format("Double parameter illegal [%s]", value), e);
+				throw new ResponseException("ILEGAL_PARAMTERS");
+
+			}
+
+		}
+		if (result == null)
+			result = defaultValue;
+		return result;
+	}
+	
+	public static Long getLong(Object value, Long defaultValue) {
+		Long result = null;
+
+		if (isEmpty(value)) {
+			result = defaultValue;
+		} else {
+			try {
+				result = Long.parseLong(String.valueOf(value));
+			} catch (NumberFormatException e) {
+
+				logger.error(String.format("Long parameter illegal [%s]", value), e);
 				throw new ResponseException("ILEGAL_PARAMTERS");
 
 			}
@@ -334,25 +356,31 @@ public class EweblibUtil {
 					}
 				}
 				
-				if (field.isAnnotationPresent(DateColumn.class)) {
+				else if (field.isAnnotationPresent(LongColumn.class)) {
+					if (params.get(field.getName()) != null) {
+						params.put(field.getName(), getLong(params.get(field.getName()), 0l));
+					}
+				}
+				
+				else if (field.isAnnotationPresent(DateColumn.class)) {
 					if (params.get(field.getName()) != null) {
 						params.put(field.getName(), DateUtil.getDateTime(params.get(field.getName()).toString()));
 					}
 				}
 
-				if (field.isAnnotationPresent(FloatColumn.class)) {
+				else if (field.isAnnotationPresent(FloatColumn.class)) {
 					if (params.get(field.getName()) != null) {
 						params.put(field.getName(), getFloat(params.get(field.getName()), 0.0f));
 					}
 				}
 
-				if (field.isAnnotationPresent(DoubleColumn.class)) {
+				else if (field.isAnnotationPresent(DoubleColumn.class)) {
 					if (params.get(field.getName()) != null) {
 						params.put(field.getName(), getDouble(params.get(field.getName()), 0d));
 					}
 				}
 
-				if (field.isAnnotationPresent(BooleanColumn.class)) {
+				else if (field.isAnnotationPresent(BooleanColumn.class)) {
 
 					if (params != null && field != null) {
 						if (EweblibUtil.isValid(params.get(field.getName()))) {
@@ -373,7 +401,7 @@ public class EweblibUtil {
 					}
 				}
 
-				if (field.isAnnotationPresent(ObjectColumn.class)) {
+				else if (field.isAnnotationPresent(ObjectColumn.class)) {
 					Object v = params.get(field.getName());
 
 					if (EweblibUtil.isEmpty(v)) {
@@ -408,7 +436,7 @@ public class EweblibUtil {
 					}
 				}
 				
-				if (field.isAnnotationPresent(CopyColum.class)) {
+				else if (field.isAnnotationPresent(CopyColum.class)) {
 					if (params.get(field.getName()) != null) {
 						CopyColum cc = field.getAnnotation(CopyColum.class);
 						params.put(cc.name(), params.get(field.getName()));

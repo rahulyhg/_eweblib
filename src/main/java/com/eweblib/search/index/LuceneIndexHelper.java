@@ -75,7 +75,7 @@ public class LuceneIndexHelper {
 		if (writer != null) {
 			Document doc = new Document();
 
-			String content = "";
+//			String content = "";
 
 			Set<String> ignoreKeys = new HashSet<String>();
 			ignoreKeys.add(BaseEntity.CREATED_ON);
@@ -98,7 +98,7 @@ public class LuceneIndexHelper {
 
 								doc.add(new TextField(field.getName(), data.get(field.getName()).toString(), Field.Store.YES));
 							}
-							content = content + " " + data.get(field.getName()).toString();
+							//content = content + " " + data.get(field.getName()).toString();
 						}
 
 					}
@@ -108,9 +108,10 @@ public class LuceneIndexHelper {
 				if (entity.getTable() != null) {
 					doc.add(new TextField(TABLE_NAME, entity.getTable(), Field.Store.YES));
 				}
-				System.out.println(content);
-				doc.add(new TextField(CONTENT, content, Field.Store.YES));
+//				System.out.println(content);
+				doc.add(new TextField(CONTENT, data.toString(), Field.Store.YES));
 
+				
 				if (data.get(BaseEntity.ID) != null) {
 					try {
 						writer.updateDocument(new Term(BaseEntity.ID, data.get(BaseEntity.ID).toString()), doc);

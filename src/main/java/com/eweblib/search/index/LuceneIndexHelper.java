@@ -62,6 +62,7 @@ public class LuceneIndexHelper {
 		}
 
 		Map<String, Object> data = entity.toMap();
+		deleteDocument(data.get(BaseEntity.ID).toString());
 
 		IndexWriter writer = null;
 		try {
@@ -108,24 +109,38 @@ public class LuceneIndexHelper {
 				if (entity.getTable() != null) {
 					doc.add(new TextField(TABLE_NAME, entity.getTable(), Field.Store.YES));
 				}
-//				System.out.println(content);
-				doc.add(new TextField(CONTENT, data.toString(), Field.Store.YES));
-
+				String content = "";
+				content = toMapString(data, content);
+				doc.add(new TextField(CONTENT, content, Field.Store.YES));
+				System.out.println(content);
 				
-				if (data.get(BaseEntity.ID) != null) {
+//				if (data.get(BaseEntity.ID) != null) {
+					
 					try {
-						writer.updateDocument(new Term(BaseEntity.ID, data.get(BaseEntity.ID).toString()), doc);
+						writer.addDocument(doc);
 					} catch (IOException e) {
-
+						log.error(e);
 						closeWriter(writer);
 					}
-				}
+//				}
 
 			}
 		}
 
 		closeWriter(writer);
 
+	}
+	
+	public static String toMapString(Map<String, Object> data, String result){
+		
+		for(String key: data.keySet()){
+			if(data.get(key) instanceof Map){
+				toMapString((Map<String, Object>) data.get(key), result);
+			}else{
+				result = result + " " + data.get(key);
+			}
+		}
+		return result;
 	}
 
 	public static IndexWriter getIndexWriter() throws IOException {

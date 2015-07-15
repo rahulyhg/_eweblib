@@ -82,7 +82,7 @@ public class EweblibUtil {
 		return false;
 	}
 
-	public static Integer getInteger(Object value, int defaultValue) {
+	public static Integer getInteger(Object value, Integer defaultValue) {
 		Integer result = null;
 
 		if (isEmpty(value)) {
@@ -352,13 +352,13 @@ public class EweblibUtil {
 			for (Field field : fields) {
 				if (field.isAnnotationPresent(IntegerColumn.class)) {
 					if (params.get(field.getName()) != null) {
-						params.put(field.getName(), getInteger(params.get(field.getName()), 0));
+						params.put(field.getName(), getInteger(params.get(field.getName()), null));
 					}
 				}
 				
 				else if (field.isAnnotationPresent(LongColumn.class)) {
 					if (params.get(field.getName()) != null) {
-						params.put(field.getName(), getLong(params.get(field.getName()), 0l));
+						params.put(field.getName(), getLong(params.get(field.getName()), null));
 					}
 				}
 				
@@ -370,13 +370,13 @@ public class EweblibUtil {
 
 				else if (field.isAnnotationPresent(FloatColumn.class)) {
 					if (params.get(field.getName()) != null) {
-						params.put(field.getName(), getFloat(params.get(field.getName()), 0.0f));
+						params.put(field.getName(), getFloat(params.get(field.getName()), null));
 					}
 				}
 
 				else if (field.isAnnotationPresent(DoubleColumn.class)) {
 					if (params.get(field.getName()) != null) {
-						params.put(field.getName(), getDouble(params.get(field.getName()), 0d));
+						params.put(field.getName(), getDouble(params.get(field.getName()), null));
 					}
 				}
 

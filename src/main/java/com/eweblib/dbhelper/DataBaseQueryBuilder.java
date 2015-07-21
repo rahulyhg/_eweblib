@@ -499,6 +499,10 @@ public class DataBaseQueryBuilder {
 		if (columnName != null && this.limitColumns != null) {
 			throw new RuntimeException("distinctColumn and limitColumns can not exists at same time");
 		}
+		
+		if(this.distinctColumn != null ){
+			this.distinctColumn = this.distinctColumn + ", " + columnName;
+		}
 		this.distinctColumn = columnName;
 
 		return this;

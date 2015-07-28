@@ -565,7 +565,7 @@ public class EweblibUtil {
 	public static Float toFixed(float value){
 		
 
-		BigDecimal b = new BigDecimal(value * 100);
+		BigDecimal b = new BigDecimal(value);
 		float f1 = b.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
 		
 		return f1;

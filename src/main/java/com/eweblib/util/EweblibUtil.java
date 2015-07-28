@@ -562,7 +562,7 @@ public class EweblibUtil {
 		return result;
 	}
 	
-	public static Float toFixed(float value){
+	public static Float floatToFixed(float value){
 		
 
 		BigDecimal b = new BigDecimal(value);

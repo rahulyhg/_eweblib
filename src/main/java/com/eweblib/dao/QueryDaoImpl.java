@@ -216,6 +216,9 @@ public class QueryDaoImpl implements IQueryDao {
 		}
 		if (EWeblibThreadLocal.get(EWebLibConstants.DB_QUERY_ORDER_BY) != null) {
 			OrderBy order = (OrderBy) EWeblibThreadLocal.get(EWebLibConstants.DB_QUERY_ORDER_BY);
+			
+			builder.clearOderBy();
+			
 			if (order.getOrder().equalsIgnoreCase("asc")) {
 				builder.orderBy(order.getSort(), true);
 			} else {

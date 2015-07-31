@@ -70,14 +70,14 @@ public abstract class AbstractController {
 
 		int filterLength = 0;
 
-//		Enumeration<?> headerNames = request.getHeaderNames();
-//
-//		while (headerNames.hasMoreElements()) {
-//
-//			String pName = headerNames.nextElement().toString();
-//			parametersMap.put(pName, request.getHeader(pName));
-//
-//		}
+		// Enumeration<?> headerNames = request.getHeaderNames();
+		//
+		// while (headerNames.hasMoreElements()) {
+		//
+		// String pName = headerNames.nextElement().toString();
+		// parametersMap.put(pName, request.getHeader(pName));
+		//
+		// }
 
 		Enumeration<?> parameterNames = request.getParameterNames();
 		while (parameterNames.hasMoreElements()) {
@@ -135,7 +135,7 @@ public abstract class AbstractController {
 		if (parametersMap.get("sort") != null) {
 
 			OrderBy order = new OrderBy();
-			if(parametersMap.get("order")!=null){
+			if (parametersMap.get("order") != null) {
 				order.setOrder(parametersMap.get("order").toString());
 			}
 			order.setSort(parametersMap.get("sort").toString());
@@ -209,7 +209,6 @@ public abstract class AbstractController {
 		return buffer.toString();
 	}
 
-
 	protected <T extends BaseEntity> void responseWithDataPagnation(EntityResults<T> listBean, Map<String, Object> results, HttpServletRequest request, HttpServletResponse response) {
 		if (results == null) {
 			results = new HashMap<String, Object>();
@@ -232,8 +231,6 @@ public abstract class AbstractController {
 			responseMsg(null, ResponseStatus.SUCCESS, request, response, null);
 		}
 	}
-
-
 
 	protected void responseWithKeyValue(String key, Object value, HttpServletRequest request, HttpServletResponse response) {
 		if (key == null) {
@@ -307,7 +304,7 @@ public abstract class AbstractController {
 		}
 
 	}
-	
+
 	protected void responseWithJs(HttpServletRequest request, HttpServletResponse response, String txt) {
 		try {
 			response.setContentType("text/javascript; charset=utf-8");
@@ -387,11 +384,16 @@ public abstract class AbstractController {
 	}
 
 	protected String uploadFile(HttpServletRequest request, String parameterName, int size, String[] suffixes) {
-		String uidMd5 = DataEncrypt.generatePassword(EWeblibThreadLocal.getCurrentUserId());
 
-		String relativeFilePath = genRandomRelativePath(uidMd5);
+		if (request instanceof MultipartHttpServletRequest) {
+			String uidMd5 = DataEncrypt.generatePassword(EWeblibThreadLocal.getCurrentUserId());
 
-		return uploadFile(request, relativeFilePath, parameterName, size, suffixes);
+			String relativeFilePath = genRandomRelativePath(uidMd5);
+
+			return uploadFile(request, relativeFilePath, parameterName, size, suffixes);
+		} else {
+			return null;
+		}
 
 	}
 

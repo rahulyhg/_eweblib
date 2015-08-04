@@ -46,12 +46,12 @@ public class LuceneIndexHelper {
 	public static final String CONTENT = "content";
 	public static final String TABLE_NAME = "tableName";
 
-	public synchronized static <T extends BaseEntity> void addIndex(BaseEntity entity, Class<?> clz) throws IOException {
+	public synchronized static <T extends BaseEntity> void addIndex(String folder, BaseEntity entity, Class<?> clz) throws IOException {
 
-		addIndex(entity, clz, null);
+		addIndex(folder, entity, clz, null);
 	}
 
-	public synchronized static <T extends BaseEntity> void addIndex(BaseEntity entity, Class<?> clz, Set<String> independenceKeys) {
+	public synchronized static <T extends BaseEntity> void addIndex(String folder, BaseEntity entity, Class<?> clz, Set<String> independenceKeys) {
 
 		if (independenceKeys == null) {
 			independenceKeys = new HashSet<String>();
@@ -62,11 +62,11 @@ public class LuceneIndexHelper {
 		}
 
 		Map<String, Object> data = entity.toMap();
-		deleteDocument(data.get(BaseEntity.ID).toString());
+		deleteDocument(folder, data.get(BaseEntity.ID).toString());
 
 		IndexWriter writer = null;
 		try {
-			writer = getIndexWriter();
+			writer = getIndexWriter(folder);
 		} catch (IOException e1) {
 			log.error(e1);
 
@@ -143,10 +143,12 @@ public class LuceneIndexHelper {
 		return result;
 	}
 
-	public static IndexWriter getIndexWriter() throws IOException {
+	public static IndexWriter getIndexWriter(String folder) throws IOException {
 		Analyzer analyzer = new IKAnalyzer(true);
 
-		File file = new File(ConfigManager.getLuceneIndexDir());
+		folder = ConfigManager.getLuceneIndexDir(folder);
+		
+		File file = new File(folder);
 		file.mkdirs();
 		IndexWriterConfig config = new IndexWriterConfig(Version.LATEST, analyzer);
 
@@ -161,10 +163,10 @@ public class LuceneIndexHelper {
 		return writer;
 	}
 
-	public static void deleteDocument(String id) {
+	public static void deleteDocument(String folder, String id) {
 		IndexWriter writer = null;
 		try {
-			writer = getIndexWriter();
+			writer = getIndexWriter(folder);
 			writer.deleteDocuments((new Term(BaseEntity.ID, id)));
 			closeWriter(writer);
 
@@ -176,10 +178,10 @@ public class LuceneIndexHelper {
 		}
 	}
 
-	public static void deleteDocument(String[] ids) {
+	public static void deleteDocument(String folder, String[] ids) {
 
 		for (String id : ids) {
-			deleteDocument(id);
+			deleteDocument(folder, id);
 		}
 	}
 
@@ -201,11 +203,13 @@ public class LuceneIndexHelper {
 
 	}
 
-	public static List<DocumentResult> seacher(String queryString, String queryField) {
+	public static List<DocumentResult> seacher(String folder, String queryString, String queryField) {
 		List<DocumentResult> results = new ArrayList<DocumentResult>();
 		IndexReader reader = null;
 		try {
-			File file = new File(ConfigManager.getLuceneIndexDir());
+			
+			folder = ConfigManager.getLuceneIndexDir(folder);
+			File file = new File(folder);
 			reader = DirectoryReader.open(FSDirectory.open(file));
 			IndexSearcher searcher = new IndexSearcher(reader);
 			// :Post-Release-Update-Version.LUCENE_XY:
@@ -256,8 +260,8 @@ public class LuceneIndexHelper {
 		return results;
 	}
 
-	public static Set<String> seacherIds(String queryString, String queryField) {
-		List<DocumentResult> results = seacher(queryString, queryField);
+	public static Set<String> seacherIds(String folder, String queryString, String queryField) {
+		List<DocumentResult> results = seacher(folder, queryString, queryField);
 		Set<String> ids = new HashSet<String>();
 
 		for (DocumentResult dr : results) {
@@ -271,8 +275,8 @@ public class LuceneIndexHelper {
 		return ids;
 	}
 
-	public static Set<String> seacherIds(String queryString) {
-		return seacherIds(queryString, CONTENT);
+	public static Set<String> seacherIds(String folder, String queryString) {
+		return seacherIds(folder, queryString, CONTENT);
 	}
 
 	public static void printDocumentResult(DocumentResult dr) {

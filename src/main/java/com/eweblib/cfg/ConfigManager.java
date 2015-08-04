@@ -1,5 +1,6 @@
 package com.eweblib.cfg;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -74,7 +75,7 @@ public class ConfigManager {
 
 	}
 
-	public static String getLuceneIndexDir() {
+	public static String getLuceneIndexDir(String folder) {
 
 		String dir = ConfigManager.getProperty(LUCENE_INDEX_DIR);
 
@@ -82,7 +83,12 @@ public class ConfigManager {
 			throw new ConfigException("lucene_index_dir must be set into config.properties");
 		}
 
-		return dir;
+		if (EweblibUtil.isValid(folder)) {
+
+			return dir + folder + File.separator;
+		}
+
+		return dir + "common" + File.separator;
 
 	}
 

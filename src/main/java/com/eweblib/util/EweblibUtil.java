@@ -281,15 +281,22 @@ public class EweblibUtil {
 	}
 
 	public static <T extends BaseEntity> List<T> toJsonList(Map<String, Object> params, Class<T> clz, String key) {
-		List<T> results = new ArrayList<T>();
 
-		if (!EweblibUtil.isEmpty(params.get(key))) {
+		Object data = params.get(key);
+		return toJsonList(clz, data);
+
+	}
+
+	public static <T extends BaseEntity> List<T> toJsonList(Class<T> clz, Object data) {
+	    List<T> results = new ArrayList<T>();
+
+		if (!EweblibUtil.isEmpty(data)) {
 			List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-			if (params.get(key) instanceof String) {
+			if (data instanceof String) {
 
-				list = (List<Map<String, Object>>) new Gson().fromJson((String) params.get(key), List.class);
-			} else if (params.get(key) instanceof List) {
-				list = (List<Map<String, Object>>) params.get(key);
+				list = (List<Map<String, Object>>) new Gson().fromJson((String) data, List.class);
+			} else if (data instanceof List) {
+				list = (List<Map<String, Object>>) data;
 			}
 
 			for (Map<String, Object> obj : list) {
@@ -299,12 +306,17 @@ public class EweblibUtil {
 
 		}
 		return results;
-
-	}
+    }
 
 	public static <T extends BaseEntity> List<T> toJsonList(Map<String, Object> params, Class<T> clz) {
 
 		return toJsonList(params, clz, "rows");
+
+	}
+	
+	public static <T extends BaseEntity> List<T> toJsonList(String data, Class<T> clz) {
+
+		return toJsonList(clz, data);
 
 	}
 

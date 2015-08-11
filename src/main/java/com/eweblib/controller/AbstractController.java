@@ -1,5 +1,6 @@
 package com.eweblib.controller;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -19,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -406,9 +408,24 @@ public abstract class AbstractController {
 			return null;
 		}
 		String uploadFileName = uploadFile.getOriginalFilename().toLowerCase().trim().replaceAll(" ", "");
-
+		uploadFileName  = uploadFileName.replaceAll("_", "");
+		
 		String ms = Long.toString(new Date().getTime());
-		uploadFileName = ms + uploadFileName;
+
+		if (uploadFileName.endsWith(".png") || uploadFileName.endsWith(".jpg") || uploadFileName.endsWith(".jpeg") || uploadFileName.endsWith(".gif")) {
+
+			try {
+				BufferedImage img = ImageIO.read(uploadFile.getInputStream());
+
+				uploadFileName = ms + "_" + img.getWidth() + "x" + img.getHeight() + "_" + uploadFileName;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		} else {
+			uploadFileName = ms + "_" + uploadFileName;
+		}
 		if (EweblibUtil.isEmpty(uploadFileName)) {
 
 		} else {
@@ -434,7 +451,6 @@ public abstract class AbstractController {
 					throw new ResponseException("请上传支持的文件格式：" + EweblibUtil.concat(",", suffixes));
 				}
 			}
-			String fileName = uploadFile.getOriginalFilename().trim().replaceAll(" ", "");
 
 			InputStream inputStream = null;
 			try {
@@ -444,7 +460,7 @@ public abstract class AbstractController {
 				e.printStackTrace();
 			}
 
-			return uploadFileByInputStream(request, relativeFilePath, fileName, inputStream);
+			return uploadFileByInputStream(request, relativeFilePath, uploadFileName, inputStream);
 
 		}
 

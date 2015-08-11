@@ -135,7 +135,7 @@ public class LuceneIndexHelper {
 		
 		for(String key: data.keySet()){
 			if(data.get(key) instanceof Map){
-				toMapString((Map<String, Object>) data.get(key), result);
+				result = toMapString((Map<String, Object>) data.get(key), result);
 			}else{
 				result = result + " " + data.get(key);
 			}

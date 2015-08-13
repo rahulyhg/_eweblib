@@ -45,8 +45,9 @@ public class LuceneIndexHelper {
 
 	public static final String CONTENT = "content";
 	public static final String TABLE_NAME = "tableName";
+	public static Logger logger = LogManager.getLogger(LuceneIndexHelper.class);
 
-	public synchronized static <T extends BaseEntity> void addIndex(String folder, BaseEntity entity, Class<?> clz) throws IOException {
+	public synchronized static <T extends BaseEntity> void addIndex(String folder, BaseEntity entity, Class<?> clz)  {
 
 		addIndex(folder, entity, clz, null);
 	}
@@ -113,6 +114,8 @@ public class LuceneIndexHelper {
 				content = toMapString(data, content);
 				doc.add(new TextField(CONTENT, content, Field.Store.YES));
 				System.out.println(content);
+				
+				logger.info("Add index to  folder : " + folder + "    with  content ::::::  " + content);
 				
 //				if (data.get(BaseEntity.ID) != null) {
 					

@@ -88,7 +88,7 @@ public class ConfigManager {
 			return dir + folder + File.separator;
 		}
 
-		return dir + "common" + File.separator;
+		return dir + File.separator;
 
 	}
 

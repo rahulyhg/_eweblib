@@ -4,7 +4,7 @@ public class OSCheck {
 
 	public enum OSType {
 
-		WINDOWS, WINDOWS_PHONE, ANDROID, IPHONE, IPAD, MAC, SYMBIAN, BLACKBERRY
+		WINDOWS, WINDOWS_PHONE, ANDROID, IPHONE, IPAD, MAC
 
 	}
 
@@ -22,12 +22,6 @@ public class OSCheck {
 		} else if (userAgent.contains("Windows NT".toLowerCase())) {
 
 			return OSType.WINDOWS;
-		} else if (userAgent.contains("BlackBerry".toLowerCase())) {
-
-			return OSType.BLACKBERRY;
-		} else if (userAgent.contains("Symbian".toLowerCase())) {
-
-			return OSType.SYMBIAN;
 		} else if (userAgent.contains("Android".toLowerCase())) {
 
 			return OSType.ANDROID;

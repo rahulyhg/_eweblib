@@ -210,43 +210,46 @@ public class LuceneIndexHelper {
 		List<DocumentResult> results = new ArrayList<DocumentResult>();
 		IndexReader reader = null;
 		try {
-			
+
 			folder = ConfigManager.getLuceneIndexDir(folder);
-			File file = new File(folder);
-			reader = DirectoryReader.open(FSDirectory.open(file));
-			IndexSearcher searcher = new IndexSearcher(reader);
-			// :Post-Release-Update-Version.LUCENE_XY:
 
-			Analyzer analyzer = new IKAnalyzer(true);
+			if (new File(folder).exists()) {
+				File file = new File(folder);
+				reader = DirectoryReader.open(FSDirectory.open(file));
+				IndexSearcher searcher = new IndexSearcher(reader);
+				// :Post-Release-Update-Version.LUCENE_XY:
 
-			QueryParser parser = new QueryParser(queryField, analyzer);
+				Analyzer analyzer = new IKAnalyzer(true);
 
-			Query query = parser.parse(queryString);
-			System.out.println("Searching for: " + query.toString(queryField));
+				QueryParser parser = new QueryParser(queryField, analyzer);
 
-			Date start = new Date();
-			searcher.search(query, null, 100);
+				Query query = parser.parse(queryString);
+				System.out.println("Searching for: " + query.toString(queryField));
 
-			Date end = new Date();
-			System.out.println("Time: " + (end.getTime() - start.getTime()) + "ms");
+				Date start = new Date();
+				searcher.search(query, null, 100);
 
-			TopDocs docResults = searcher.search(query, 10 * 1);
-			ScoreDoc[] hits = docResults.scoreDocs;
+				Date end = new Date();
+				System.out.println("Time: " + (end.getTime() - start.getTime()) + "ms");
 
-			System.out.println("hits length: " + hits.length);
+				TopDocs docResults = searcher.search(query, 10 * 1);
+				ScoreDoc[] hits = docResults.scoreDocs;
 
-			for (ScoreDoc sd : hits) {
-				DocumentResult dr = new DocumentResult();
+				System.out.println("hits length: " + hits.length);
 
-				Document doc = searcher.doc(sd.doc);
+				for (ScoreDoc sd : hits) {
+					DocumentResult dr = new DocumentResult();
 
-				dr.setDocument(doc);
-				dr.setScoreDoc(sd);
-				results.add(dr);
+					Document doc = searcher.doc(sd.doc);
 
+					dr.setDocument(doc);
+					dr.setScoreDoc(sd);
+					results.add(dr);
+
+				}
+
+				reader.close();
 			}
-
-			reader.close();
 
 		} catch (Exception e) {
 
@@ -255,7 +258,7 @@ public class LuceneIndexHelper {
 				try {
 					reader.close();
 				} catch (IOException e1) {
-					//do nothing
+					// do nothing
 				}
 			}
 			log.error(e);

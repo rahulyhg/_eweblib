@@ -403,10 +403,14 @@ public abstract class AbstractController {
 
 		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
 		MultipartFile uploadFile = multipartRequest.getFile(parameterName);
+		
+		
 
 		if (uploadFile == null || uploadFile.getSize() < 1) {
 			return null;
 		}
+		
+	
 		String uploadFileName = uploadFile.getOriginalFilename().toLowerCase().trim().replaceAll(" ", "");
 		uploadFileName  = uploadFileName.replaceAll("_", "");
 		
@@ -414,6 +418,10 @@ public abstract class AbstractController {
 
 		if (uploadFileName.endsWith(".png") || uploadFileName.endsWith(".jpg") || uploadFileName.endsWith(".jpeg") || uploadFileName.endsWith(".gif")) {
 
+			if (uploadFile.getSize() > 50 * 1024) {
+				throw new ResponseException("图片大小不能超过50K");
+			}
+			
 			try {
 				BufferedImage img = ImageIO.read(uploadFile.getInputStream());
 

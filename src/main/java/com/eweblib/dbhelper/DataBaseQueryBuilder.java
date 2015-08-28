@@ -308,7 +308,7 @@ public class DataBaseQueryBuilder {
 
 			String andQuryStr = builder.getQueryStr() == null ? "" : builder.getQueryStr();
 			if (EweblibUtil.isEmpty(queryStr)) {
-				queryStr = andQuryStr;
+				queryStr = "(" + andQuryStr + ")";
 			} else {
 				if (!EweblibUtil.isEmpty(andQuryStr)) {
 					queryStr = "(" + queryStr + ") and (" + andQuryStr + ")";
@@ -327,7 +327,7 @@ public class DataBaseQueryBuilder {
 			String orQueryStr = builder.getQueryStr() == null ? "" : builder.getQueryStr();
 			if (EweblibUtil.isEmpty(queryStr)) {
 
-				queryStr = orQueryStr;
+				queryStr = "(" + orQueryStr + ")";
 			} else {
 				if (!EweblibUtil.isEmpty(orQueryStr)) {
 					queryStr = "(" + queryStr + ") or (" + orQueryStr + ")";

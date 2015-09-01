@@ -256,12 +256,12 @@ public class DataBaseQueryBuilder {
 		if (EweblibUtil.isEmpty(asFieldName)) {
 			asFieldName = fieldName;
 		}
-		String column = tableAlias + "." + fieldName + " as " + asFieldName + " ";
+		String column = "sum(" + tableAlias + "." + fieldName + ") as " + asFieldName + " ";
 
 		if (this.limitColumns == null) {
-			this.limitColumns = tableAlias + "." + column;
+			this.limitColumns = column;
 		} else {
-			this.limitColumns = this.limitColumns + "," + tableAlias + "." + column;
+			this.limitColumns = this.limitColumns + "," + column;
 		}
 		return this;
 	}

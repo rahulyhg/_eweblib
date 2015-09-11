@@ -583,6 +583,16 @@ public class EweblibUtil {
 		return f1;
 	}
 	
+	public static Float floatToFixed(float value, int scale){
+		
+
+		BigDecimal b = new BigDecimal(value);
+		float f1 = b.setScale(scale, BigDecimal.ROUND_HALF_UP).floatValue();
+		
+		return f1;
+	}
+	
+	
 
 	/**
 	 * @param args

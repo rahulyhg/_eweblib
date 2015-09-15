@@ -1,8 +1,10 @@
 package com.eweblib.bean.menu;
 
 import javax.persistence.Column;
+import javax.persistence.ColumnResult;
 import javax.persistence.Table;
 
+import com.eweblib.annotation.column.IntegerColumn;
 import com.eweblib.bean.BaseEntity;
 
 @Table(name = MenuItem.TABLE_NAME)
@@ -24,6 +26,7 @@ public class MenuItem extends BaseEntity {
 	public String href;
 
 	@Column(name = DISPLAY_ORDER)
+	@IntegerColumn()
 	public Integer displayOrder;
 
 	@Column(name = MENU_ID)

@@ -31,7 +31,7 @@ public class DataEncrypt {
     }   
 
     /**  对字符串进行MD5加密     */  
-    private static String encodeByMD5(String originString){   
+    public static String encodeByMD5(String originString){   
         if (originString != null){   
             try{   
                 //创建具有指定算法名称的信息摘要   

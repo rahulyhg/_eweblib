@@ -25,11 +25,10 @@ public class Menu extends BaseEntity {
 
 	public static final String TABLE_NAME = "Menu";
 
-
 	@Column(name = DISPLAY_ORDER)
 	public Integer displayOrder;
 
-	@Column(name = TITLE)
+	@Column(name = TITLE, nullable = false, length = 255)
 	public String title;
 
 	@Column(name = STYLE)
@@ -38,10 +37,9 @@ public class Menu extends BaseEntity {
 	@Column(name = CSS_NAME)
 	public String cssName;
 
-	
 	@Column(name = MENU_GROUP_ID)
 	public String menuGroupId;
-	
+
 	public String getMenuGroupId() {
 		return menuGroupId;
 	}
@@ -51,10 +49,8 @@ public class Menu extends BaseEntity {
 	}
 
 	public List<MenuItem> list;
-	
-	
+
 	public List<String> items;
-	
 
 	public List<String> getItems() {
 		return items;

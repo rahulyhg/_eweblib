@@ -42,6 +42,8 @@ import com.thoughtworks.xstream.XStream;
 public class EweblibUtil {
 
 	private static Logger logger = LogManager.getLogger(EweblibUtil.class);
+	
+	public static Map<String, VelocityEngine> engineMap = new HashMap<String, VelocityEngine>();
 
 	public static String concat(String symbole, String[] concats) {
 
@@ -559,15 +561,23 @@ public class EweblibUtil {
 		if (!template.endsWith(".vm") && !template.contains(".")) {
 			template = template.concat(".vm");
 		}
-		VelocityEngine ve = new VelocityEngine(); // 配置模板引擎
-		ve.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, resourcePath);// 模板文件所在的路径
-		ve.setProperty(Velocity.INPUT_ENCODING, "UTF-8");// 处理中文问题
-		ve.setProperty(Velocity.OUTPUT_ENCODING, "UTF-8");// 处理中文问题
+		String key = DataEncrypt.encodeByMD5(resourcePath);
+		VelocityEngine ve = null;
+		if (engineMap.get(key) == null) {
+			ve = new VelocityEngine(); // 配置模板引擎
+			ve.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, resourcePath);// 模板文件所在的路径
+			ve.setProperty(Velocity.INPUT_ENCODING, "UTF-8");// 处理中文问题
+			ve.setProperty(Velocity.OUTPUT_ENCODING, "UTF-8");// 处理中文问题
+			ve.init();// 初始化模板
+			engineMap.put(key, ve);
+		} else {
+			ve = engineMap.get(key);
+		}
+
 		String result = "";
 		try {
-			ve.init();// 初始化模板
-			result = VelocityEngineUtils.mergeTemplateIntoString(ve, template,
-					"UTF-8", model);
+			
+			result = VelocityEngineUtils.mergeTemplateIntoString(ve, template, "UTF-8", model);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

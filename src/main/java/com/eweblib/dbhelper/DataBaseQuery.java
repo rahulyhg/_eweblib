@@ -114,7 +114,7 @@ public class DataBaseQuery {
 			sqlStr = notValueOperation();
 			break;
 		case "is null":
-			sqlStr = notValueOperation();
+			sqlStr = nullValueOperation();
 			break;
 		case "is true":
 			sqlStr = notValueOperation();
@@ -128,6 +128,10 @@ public class DataBaseQuery {
 
 		return sqlStr;
 
+	}
+
+	private String nullValueOperation() {
+		return "(" + this.column + " " + this.operation.toString() + " or " + this.column + "=\"\")";
 	}
 
 	private String notValueOperation() {

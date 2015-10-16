@@ -29,7 +29,6 @@ public class RedisUtil {
 
 		try {
 			String value = connection.get(key);
-			logger.info("load cache from redis:  " + key + " = " + value);
 			return value;
 		} catch (Exception e) {
 			logger.error(e);
@@ -53,7 +52,6 @@ public class RedisUtil {
 	public static void set(String key, Object value) {
 		init();
 		if (value != null) {
-			logger.info("save cache into redis:  " + key + " = " + value);
 
 			try {
 				connection.set(key, value.toString());

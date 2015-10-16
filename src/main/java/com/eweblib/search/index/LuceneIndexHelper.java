@@ -251,7 +251,7 @@ public class LuceneIndexHelper {
 				reader.close();
 			} else {
 
-				log.warn("folder not exists: " + folder);
+				//log.warn("folder not exists: " + folder);
 			}
 
 		} catch (Exception e) {

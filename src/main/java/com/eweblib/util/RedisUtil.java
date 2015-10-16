@@ -14,17 +14,30 @@ public class RedisUtil {
 
 	public static void init() {
 
-		if (connection == null) {
-			RedisClient redisClient = new RedisClient(ConfigManager.getProperty("redis_server"));
-			connection = redisClient.connect();
+		try {
+			if (connection == null) {
+				RedisClient redisClient = new RedisClient(ConfigManager.getProperty("redis_server"));
+				connection = redisClient.connect();
+			}
+		} catch (Exception e) {
+			logger.error(e);
 		}
 	}
 
 	public static String loadValue(String key) {
 		init();
-		String value = connection.get(key);
-		logger.info("load cache from redis:  " + key + " = " + value);
-		return value;
+
+		try {
+			String value = connection.get(key);
+			logger.info("load cache from redis:  " + key + " = " + value);
+			return value;
+		} catch (Exception e) {
+			logger.error(e);
+			init();
+		}
+
+		return null;
+
 	}
 
 	public static Integer loadInt(String key) {
@@ -41,7 +54,13 @@ public class RedisUtil {
 		init();
 		if (value != null) {
 			logger.info("save cache into redis:  " + key + " = " + value);
-			connection.set(key, value.toString());
+
+			try {
+				connection.set(key, value.toString());
+			} catch (Exception e) {
+				logger.error(e);
+				init();
+			}
 		}
 	}
 

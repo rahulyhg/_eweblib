@@ -96,7 +96,7 @@ public class EweblibUtil {
 				try {
 					result = Integer.parseInt(String.valueOf(value));
 				} catch (NumberFormatException e1) {
-					logger.error(String.format("Integer parameter illegal [%s]", value), e);
+					logger.error(String.format("Integer parameter illegal [%s]", value));
 
 				}
 			}

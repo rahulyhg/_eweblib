@@ -9,12 +9,12 @@ public class OSCheck {
 	}
 
 	public static OSType checkOS(String userAgent) {
-		userAgent = userAgent.toLowerCase();
 
 		if (EweblibUtil.isEmpty(userAgent)) {
 
 			return null;
 		}
+		userAgent = userAgent.toLowerCase();
 
 		if (userAgent.contains("windows Phone".toLowerCase())) {
 

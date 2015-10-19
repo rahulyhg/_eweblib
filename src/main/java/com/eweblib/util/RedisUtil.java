@@ -50,12 +50,16 @@ public class RedisUtil {
 	}
 
 	public static void set(String key, Object value) {
+		set(key, value, 5 * 60);
+	}
+
+	public static void set(String key, Object value, int seconds) {
 		init();
 		if (value != null) {
 
 			try {
 				connection.set(key, value.toString());
-				connection.expire(key, 5 * 60);
+				connection.expire(key, seconds);
 			} catch (Exception e) {
 				logger.error(e);
 				init();

@@ -113,6 +113,13 @@ public enum DataBaseQueryOpertion {
 			return "like";
 		}
 
+	}, NOT_LIKE {
+
+		@Override
+		public String toString() {
+			return "not like";
+		}
+
 	};
 
 

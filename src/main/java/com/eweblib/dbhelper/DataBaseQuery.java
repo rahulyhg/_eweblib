@@ -104,6 +104,9 @@ public class DataBaseQuery {
 		case "like":
 			sqlStr = likeOperation();
 			break;
+		case "not like":
+			sqlStr = likeOperation();
+			break;
 		case "in":
 			sqlStr = inOperation();
 			break;

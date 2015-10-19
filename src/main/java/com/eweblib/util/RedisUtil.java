@@ -24,7 +24,7 @@ public class RedisUtil {
 		}
 	}
 
-	public static String loadValue(String key) {
+	public static String get(String key) {
 		init();
 
 		try {
@@ -39,8 +39,8 @@ public class RedisUtil {
 
 	}
 
-	public static Integer loadInt(String key) {
-		String value = loadValue(key);
+	public static Integer getInt(String key) {
+		String value = get(key);
 
 		if (EweblibUtil.isValid(value)) {
 
@@ -55,6 +55,7 @@ public class RedisUtil {
 
 			try {
 				connection.set(key, value.toString());
+				connection.expire(key, 5 * 60);
 			} catch (Exception e) {
 				logger.error(e);
 				init();

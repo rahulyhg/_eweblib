@@ -53,6 +53,16 @@ public class RedisUtil {
 		set(key, value, 5 * 60);
 	}
 
+	public static void remove(String key) {
+		init();
+		try {
+			connection.del(key);
+		} catch (Exception e) {
+			logger.error(e);
+			init();
+		}
+	}
+
 	public static void set(String key, Object value, int seconds) {
 		init();
 		if (value != null) {

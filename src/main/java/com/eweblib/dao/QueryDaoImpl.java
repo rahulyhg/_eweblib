@@ -291,7 +291,7 @@ public class QueryDaoImpl implements IQueryDao {
 
 	}
 
-	public <T extends BaseEntity> BaseEntity findByKeyValue(String key, String value, String table, Class<T> classzz) {
+	public <T extends BaseEntity> BaseEntity findByKeyValue(String key, Object value, String table, Class<T> classzz) {
 		DataBaseQueryBuilder builder = new DataBaseQueryBuilder(table);
 		builder.and(key, value);
 		return this.findOneByQuery(builder, classzz);

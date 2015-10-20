@@ -76,7 +76,7 @@ public interface IQueryDao {
 	
 	public <T extends BaseEntity> BaseEntity findById(String id, String table, Class<T> classzz);
 	
-	public <T extends BaseEntity> BaseEntity findByKeyValue(String key, String value, String table, Class<T> classzz);
+	public <T extends BaseEntity> BaseEntity findByKeyValue(String key, Object value, String table, Class<T> classzz);
 
 	public int count(DataBaseQueryBuilder builder);
 	

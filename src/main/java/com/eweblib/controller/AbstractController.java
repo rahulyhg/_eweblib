@@ -294,6 +294,7 @@ public abstract class AbstractController {
 
 	protected void responseWithTxt(HttpServletRequest request, HttpServletResponse response, String txt) {
 		try {
+			EWeblibThreadLocal.removeAll();
 
 			if (txt == null) {
 				txt = "";
@@ -309,6 +310,7 @@ public abstract class AbstractController {
 
 	protected void responseWithJs(HttpServletRequest request, HttpServletResponse response, String txt) {
 		try {
+			EWeblibThreadLocal.removeAll();
 			response.setContentType("text/javascript; charset=utf-8");
 			response.addHeader("Accept-Encoding", "gzip, deflate");
 			response.getWriter().write(txt);
@@ -320,6 +322,7 @@ public abstract class AbstractController {
 
 	protected void responseWithHtml(HttpServletRequest request, HttpServletResponse response, String txt) {
 		try {
+			EWeblibThreadLocal.removeAll();
 			response.setContentType("text/html;charset=UTF-8");
 			response.addHeader("Accept-Encoding", "gzip, deflate");
 			response.getWriter().write(txt);

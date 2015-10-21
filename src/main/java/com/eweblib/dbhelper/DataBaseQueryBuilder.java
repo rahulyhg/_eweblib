@@ -514,16 +514,17 @@ public class DataBaseQueryBuilder {
 	}
 
 	public DataBaseQueryBuilder update(String column, Object value) {
+		String updateStr = "";
 
 		if (value == null) {
-			value = "null";
-		}
-
-		String updateStr = "";
-		if (value instanceof String) {
-			updateStr = column + "=\"" + value + "\"";
+			updateStr = column + "=null";
 		} else {
-			updateStr = column + "=" + value;
+
+			if (value instanceof String) {
+				updateStr = column + "=\"" + value + "\"";
+			} else {
+				updateStr = column + "=" + value;
+			}
 		}
 
 		if (this.updateColumns == null) {

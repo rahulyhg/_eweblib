@@ -224,18 +224,15 @@ public class LuceneIndexHelper {
 				QueryParser parser = new QueryParser(queryField, analyzer);
 
 				Query query = parser.parse(queryString);
-				System.out.println("Searching for: " + query.toString(queryField)  + " from folder: " + folder);
 
-				Date start = new Date();
 				searcher.search(query, null, 100);
 
-				Date end = new Date();
-				System.out.println("Time: " + (end.getTime() - start.getTime()) + "ms");
 
 				TopDocs docResults = searcher.search(query, 10 * 1);
 				ScoreDoc[] hits = docResults.scoreDocs;
-
-				System.out.println("hits length: " + hits.length);
+//				System.out.println("Searching for: " + query.toString(queryField)  + " from folder: " + folder);
+//
+//				System.out.println("hits length: " + hits.length);
 
 				for (ScoreDoc sd : hits) {
 					DocumentResult dr = new DocumentResult();

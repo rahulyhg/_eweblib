@@ -54,7 +54,7 @@ public class BaseEntity {
 	@Expose
 	public String creatorId;
 	
-	public List<String> needUpdateColumns = new ArrayList<String>();;
+	public List<String> needUpdateColumns = null;
 
 	public BaseEntity() {
 
@@ -369,6 +369,11 @@ public class BaseEntity {
 		this.caculationColumnList();
 		StringBuilder sb = new StringBuilder();
 
+		if (needUpdateColumns == null) {
+
+			needUpdateColumns = new ArrayList<String>();
+		}
+
 		List<String> list = columnMap.get(this.getClass());
 		int i = 0;
 		for (String column : list) {
@@ -387,12 +392,16 @@ public class BaseEntity {
 
 	
 	public void addUpdateColumn(String column) {
+		
+		if(needUpdateColumns == null){
+			needUpdateColumns = new ArrayList<String>();
+		}
 		this.needUpdateColumns.add(column);
 	}
 	
 	public void addUpdateColumn(String[] columns) {
 		for (String column : columns) {
-			this.needUpdateColumns.add(column);
+			addUpdateColumn(column);
 		}
 	}
 	/**

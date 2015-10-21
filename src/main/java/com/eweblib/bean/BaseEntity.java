@@ -53,10 +53,23 @@ public class BaseEntity {
 	@Column(name = CREATOR_ID, length = 36)
 	@Expose
 	public String creatorId;
+	
+	public List<String> needUpdateColumns = new ArrayList<String>();;
 
 	public BaseEntity() {
 
 	}
+
+	
+	public List<String> getNeedUpdateColumns() {
+		return needUpdateColumns;
+	}
+
+
+	public void setNeedUpdateColumns(List<String> needUpdateColumns) {
+		this.needUpdateColumns = needUpdateColumns;
+	}
+
 
 	public Date getCreatedOn() {
 		return createdOn;
@@ -359,7 +372,10 @@ public class BaseEntity {
 		List<String> list = columnMap.get(this.getClass());
 		int i = 0;
 		for (String column : list) {
-			if (isNull(column) || column.equalsIgnoreCase(ID))
+			if (column.equalsIgnoreCase(ID))
+				continue;
+
+			if (isNull(column) && !needUpdateColumns.contains(column))
 				continue;
 
 			if (i++ != 0)
@@ -369,6 +385,16 @@ public class BaseEntity {
 		return sb.toString();
 	}
 
+	
+	public void addUpdateColumn(String column) {
+		this.needUpdateColumns.add(column);
+	}
+	
+	public void addUpdateColumn(String[] columns) {
+		for (String column : columns) {
+			this.needUpdateColumns.add(column);
+		}
+	}
 	/**
 	 * 打印类字段信息
 	 */

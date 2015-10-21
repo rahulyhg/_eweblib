@@ -42,6 +42,7 @@ public interface IQueryDao {
 	 * 
 	 * @param builder
 	 */
+	@Deprecated
 	public void updateByQuery(DataBaseQueryBuilder builder);
 
 	/**

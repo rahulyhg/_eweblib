@@ -113,7 +113,6 @@ public class LuceneIndexHelper {
 				String content = "";
 				content = toMapString(data, content);
 				doc.add(new TextField(CONTENT, content, Field.Store.YES));
-				System.out.println(content);
 				
 				logger.info("Add index to  folder : " + folder + "    with  content ::::::  " + content);
 				
@@ -288,7 +287,6 @@ public class LuceneIndexHelper {
 	public static void printDocumentResult(DocumentResult dr) {
 		Document doc = dr.getDocument();
 		ScoreDoc sd = dr.getScoreDoc();
-		System.out.println("doc=" + sd.doc + " score=" + sd.score + " id=" + doc.get("id"));
 	}
 
 	public static void printDocumentResult(List<DocumentResult> drresults) {

@@ -46,7 +46,6 @@ public class DBInitialService {
 
 		for (String pack : packs) {
 
-			System.out.println(pack);
 			if (EweblibUtil.isValid(pack)) {
 				for (BeanDefinition bd : scanner.findCandidateComponents(pack.trim())) {
 					Class<?> classzz = Class.forName(bd.getBeanClassName());
@@ -123,7 +122,6 @@ public class DBInitialService {
 		create = create + ") ENGINE=MyISAM DEFAULT CHARSET=utf8;";
 
 		dao.executeSql(create);
-		System.out.println(create);
 	}
 
 	public static String loadFiledSql(DBClomun column) {

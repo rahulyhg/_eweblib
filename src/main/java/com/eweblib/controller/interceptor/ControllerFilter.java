@@ -63,14 +63,13 @@ public class ControllerFilter extends AbstractController implements Filter {
 				} else if (e.getCause() instanceof SizeLimitExceededException || e.getCause() instanceof MaxUploadSizeExceededException) {
 					responseWithKeyValue("msg", "上传文件不能超过10M", srequest, sresponse);
 				} else {
-					logger.error("Fatal error when user try to call API ", e);
+					logger.fatal("Fatal error when user try to call API ", e);
 					responseServerError(e, (HttpServletRequest) request, (HttpServletResponse) response);
 
 				}
 			} else if (e instanceof LoginException) {
 				forceLogin((HttpServletRequest) request, (HttpServletResponse) response);
 			} else {
-				logger.error("Fatal error when user try to call API ", e);
 				responseServerError(e, (HttpServletRequest) request, (HttpServletResponse) response);
 			}
 

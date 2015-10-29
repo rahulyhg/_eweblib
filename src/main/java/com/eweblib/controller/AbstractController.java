@@ -340,6 +340,7 @@ public abstract class AbstractController {
 			temp.put(MSG, apiException.getMessage());
 			logger.error(apiException.getMessage());
 		} else {
+			logger.fatal("Fatal error when user try to call API ", throwable);
 			temp.put(CODE, ResponseStatus.FAIL.toString());
 			temp.put(MSG, "服务器错误，请稍后再试");
 		}

@@ -30,8 +30,8 @@ import org.apache.commons.validator.GenericValidator;
 import org.apache.commons.validator.Validator;
 import org.apache.commons.validator.ValidatorException;
 import org.apache.commons.validator.util.ValidatorUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.eweblib.constants.EWebLibConstants;
 import com.eweblib.exception.ResponseException;

@@ -6,8 +6,8 @@ import java.io.InputStreamReader;
 import javax.xml.transform.TransformerException;
 
 import org.apache.http.HttpResponse;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.xpath.XPathAPI;
 import org.cyberneko.html.parsers.DOMParser;
 import org.w3c.dom.Document;

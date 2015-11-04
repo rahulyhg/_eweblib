@@ -48,6 +48,16 @@ public class RedisUtil {
 		}
 		return null;
 	}
+	
+	public static Long getLong(String key) {
+		String value = get(key);
+
+		if (EweblibUtil.isValid(value)) {
+
+			return EweblibUtil.getLong(value);
+		}
+		return null;
+	}
 
 	public static void set(String key, Object value) {
 		set(key, value, 5 * 60);

@@ -329,7 +329,11 @@ public abstract class AbstractController {
 			EWeblibThreadLocal.removeAll();
 			response.setContentType("text/html;charset=UTF-8");
 			response.addHeader("Accept-Encoding", "gzip, deflate");
-			response.getWriter().write(txt);
+			PrintWriter writer = response.getWriter();
+			writer.write(txt);
+			
+			writer.flush();
+			writer.close();
 		} catch (IOException e) {
 			logger.fatal("Write response data to client failed!", e);
 		}

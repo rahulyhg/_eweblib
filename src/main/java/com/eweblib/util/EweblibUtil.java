@@ -1,12 +1,12 @@
 package com.eweblib.util;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -387,101 +387,127 @@ public class EweblibUtil {
 	public static <T extends BaseEntity> void updateJsonFieldWithType(Map<String, Object> params, Class<?> clz) {
 
 		if (params != null) {
-
 			Field[] fields = clz.getFields();
 
-			for (Field field : fields) {
+			Set<String> set = new HashSet<String>();
+
+			set.add("java.lang.Integer");
+			set.add("java.lang.Boolean");
+			set.add("java.util.Date");
+			set.add("java.lang.Double");
+			set.add("java.lang.Float");
+			set.add("java.lang.Long");
+			
+			List<Field> flist = new ArrayList<Field>();
+			for (Field f : fields) {
+
+				String gtype = f.getGenericType().toString();
+				if (set.contains(gtype)) {
+					flist.add(f);
+				}
+			}
+
+			for (Field field : flist) {
 				String name = field.getName();
 				Object object = params.get(name);
 
 				if (object != null) {
-					Annotation[] ats = field.getAnnotations();
-
-					for (Annotation at : ats) {
-						String cname = at.getClass().getName();
-						if (cname.equalsIgnoreCase(INTEGER_CLASS_NAME)) {
+					if (field.isAnnotationPresent(IntegerColumn.class)) {
+						if (object != null) {
 							params.put(name, getInteger(object, null));
-							break;
-						} else if (cname.equalsIgnoreCase(LONG_CLASS_NMAE)) {
+						}
+					}
+
+					else if (field.isAnnotationPresent(LongColumn.class)) {
+						if (object != null) {
 							params.put(name, getLong(object, null));
+						}
+					}
 
-							break;
-						} else if (cname.equalsIgnoreCase(DATE_CLASS_NAME)) {
+					else if (field.isAnnotationPresent(DateColumn.class)) {
+						if (object != null) {
 							params.put(name, DateUtil.getDateTime(object.toString()));
+						}
+					}
 
-							break;
-						} else if (cname.equalsIgnoreCase(FLOAT_CLASS_NAME)) {
+					else if (field.isAnnotationPresent(FloatColumn.class)) {
+						if (object != null) {
 							params.put(name, getFloat(object, null));
-							break;
-						} else if (cname.equalsIgnoreCase(DOUBLE_CLASS_NAME)) {
+						}
+					}
+
+					else if (field.isAnnotationPresent(DoubleColumn.class)) {
+						if (object != null) {
 							params.put(name, getDouble(object, null));
+						}
+					}
 
-							break;
-						} else if (cname.equalsIgnoreCase(BOOL_CLASS_NAME)) {
-							if (params != null && field != null) {
-								if (EweblibUtil.isValid(object)) {
-									String text = object.toString();
-									if (text.length() > 0) {
-										if (text.equalsIgnoreCase("1") || text.equalsIgnoreCase("true")) {
-											params.put(name, true);
-										} else {
-											params.put(name, false);
-										}
+					else if (field.isAnnotationPresent(BooleanColumn.class)) {
+
+						if (params != null && field != null) {
+							if (EweblibUtil.isValid(object)) {
+								String text = object.toString();
+								if (text.length() > 0) {
+									if (text.equalsIgnoreCase("1") || text.equalsIgnoreCase("true")) {
+										params.put(name, true);
 									} else {
-										params.put(name, null);
+										params.put(name, false);
 									}
-
 								} else {
 									params.put(name, null);
 								}
-							}
-							break;
-						} else if (cname.equalsIgnoreCase(OBJ_CLASS_NAME)) {
 
-							Object v = object;
-
-							if (EweblibUtil.isEmpty(v)) {
-								params.remove(name);
 							} else {
-								if (v instanceof Map) {
+								params.put(name, null);
+							}
+						}
+					}
+
+					else if (field.isAnnotationPresent(ObjectColumn.class)) {
+						Object v = object;
+
+						if (EweblibUtil.isEmpty(v)) {
+							params.remove(name);
+						} else {
+							if (v instanceof Map) {
+
+								try {
+									updateJsonFieldWithType((Map<String, Object>) v, Class.forName(field.getGenericType().toString().replaceAll("class", "").trim()));
+								} catch (ClassNotFoundException e) {
+									// do nothing
+								}
+							} else if (v instanceof List) {
+								List<Map<String, Object>> list = (List<Map<String, Object>>) v;
+								String className = field.getGenericType().toString().replaceAll("class", "").trim();
+								className = className.replaceAll("java.util.List", "");
+
+								className = className.replaceAll("<", "");
+								className = className.replaceAll(">", "");
+								for (Map<String, Object> data : list) {
 
 									try {
-										updateJsonFieldWithType((Map<String, Object>) v, Class.forName(field.getGenericType().toString().replaceAll("class", "").trim()));
+										updateJsonFieldWithType(data, Class.forName(className.trim()));
 									} catch (ClassNotFoundException e) {
+										e.printStackTrace();
 										// do nothing
 									}
-								} else if (v instanceof List) {
-									List<Map<String, Object>> list = (List<Map<String, Object>>) v;
-									String className = field.getGenericType().toString().replaceAll("class", "").trim();
-									className = className.replaceAll("java.util.List", "");
-
-									className = className.replaceAll("<", "");
-									className = className.replaceAll(">", "");
-									for (Map<String, Object> data : list) {
-
-										try {
-											updateJsonFieldWithType(data, Class.forName(className.trim()));
-										} catch (ClassNotFoundException e) {
-											e.printStackTrace();
-											// do nothing
-										}
-									}
-
 								}
 
 							}
-							break;
-						} else if (cname.equalsIgnoreCase(COPY_CLASS_NAME)) {
-							CopyColum cc = field.getAnnotation(CopyColum.class);
-							params.put(cc.name(), object);
 
-							break;
 						}
 					}
+
+					else if (field.isAnnotationPresent(CopyColum.class)) {
+						if (object != null) {
+							CopyColum cc = field.getAnnotation(CopyColum.class);
+							params.put(cc.name(), object);
+						}
+					}
+
 				}
 
 			}
-
 		}
 
 	}

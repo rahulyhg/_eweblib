@@ -1,5 +1,6 @@
 package com.eweblib.util;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -41,9 +42,43 @@ import com.thoughtworks.xstream.XStream;
 
 public class EweblibUtil {
 
-	private static Logger logger = LogManager.getLogger(EweblibUtil.class);
+	private static final String COPY_CLASS_NAME = CopyColum.class.getName();
+
+	private static final String OBJ_CLASS_NAME = ObjectColumn.class.getName();
+
+	private static final String BOOL_CLASS_NAME = BooleanColumn.class.getName();
+
+	private static final String DOUBLE_CLASS_NAME = DoubleColumn.class.getName();
+
+	private static final String FLOAT_CLASS_NAME = FloatColumn.class.getName();
+
+	private static final String DATE_CLASS_NAME = DateColumn.class.getName();
+
+	private static final String LONG_CLASS_NMAE = LongColumn.class.getName();
 	
+	public static String INTEGER_CLASS_NAME = IntegerColumn.class.getName();
+
+	private static Logger logger = LogManager.getLogger(EweblibUtil.class);
+
 	public static Map<String, VelocityEngine> engineMap = new HashMap<String, VelocityEngine>();
+	public static Gson creator = null;
+	static JsonSerializer<Date> ser = new JsonSerializer<Date>() {
+		@Override
+		public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
+			return src == null ? new JsonPrimitive("") : new JsonPrimitive(DateUtil.getDateStringByLong(src.getTime()));
+		}
+	};
+
+	static JsonDeserializer<Date> deser = new JsonDeserializer<Date>() {
+		@Override
+		public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+			return DateUtil.getDateTime(json.getAsString());
+		}
+	};
+	static {
+		creator = new GsonBuilder().registerTypeAdapter(Date.class, deser).create();
+
+	}
 
 	public static String concat(String symbole, String[] concats) {
 
@@ -127,7 +162,7 @@ public class EweblibUtil {
 			result = defaultValue;
 		return result;
 	}
-	
+
 	public static Long getLong(Object value, Long defaultValue) {
 		Long result = null;
 
@@ -254,31 +289,21 @@ public class EweblibUtil {
 		return result.toString();
 	}
 
-	static JsonSerializer<Date> ser = new JsonSerializer<Date>() {
-		@Override
-		public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
-			return src == null ? new JsonPrimitive("") : new JsonPrimitive(DateUtil.getDateStringByLong(src.getTime()));
-		}
-	};
-
-	static JsonDeserializer<Date> deser = new JsonDeserializer<Date>() {
-		@Override
-		public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-			return DateUtil.getDateTime(json.getAsString());
-		}
-	};
-
 	public static <T extends BaseEntity> BaseEntity toEntity(Map<String, Object> data, Class<T> classzz) {
+		
+
 		EweblibUtil.updateJsonFieldWithType(data, classzz);
+	
 
 		String json = new GsonBuilder().registerTypeAdapter(Date.class, ser).setDateFormat("yyyy-MM-dd HH:mm:ss").create().toJson(data);
 		return new GsonBuilder().registerTypeAdapter(Date.class, deser).create().fromJson(json, classzz);
 
 	}
 
-	public static <T extends BaseEntity> BaseEntity toEntity(String data, Class<T> classzz) {
+	@SuppressWarnings("unchecked")
+    public static <T extends BaseEntity> BaseEntity toEntity(String data, Class<T> classzz) {
 
-		return toEntity(new GsonBuilder().registerTypeAdapter(Date.class, deser).create().fromJson(data, Map.class), classzz);
+		return toEntity(creator.fromJson(data, Map.class), classzz);
 
 	}
 
@@ -290,7 +315,7 @@ public class EweblibUtil {
 	}
 
 	public static <T extends BaseEntity> List<T> toJsonList(Class<T> clz, Object data) {
-	    List<T> results = new ArrayList<T>();
+		List<T> results = new ArrayList<T>();
 
 		if (!EweblibUtil.isEmpty(data)) {
 			List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
@@ -308,14 +333,14 @@ public class EweblibUtil {
 
 		}
 		return results;
-    }
+	}
 
 	public static <T extends BaseEntity> List<T> toJsonList(Map<String, Object> params, Class<T> clz) {
 
 		return toJsonList(params, clz, "rows");
 
 	}
-	
+
 	public static <T extends BaseEntity> List<T> toJsonList(String data, Class<T> clz) {
 
 		return toJsonList(clz, data);
@@ -362,104 +387,101 @@ public class EweblibUtil {
 	public static <T extends BaseEntity> void updateJsonFieldWithType(Map<String, Object> params, Class<?> clz) {
 
 		if (params != null) {
+
 			Field[] fields = clz.getFields();
+
 			for (Field field : fields) {
-				if (field.isAnnotationPresent(IntegerColumn.class)) {
-					if (params.get(field.getName()) != null) {
-						params.put(field.getName(), getInteger(params.get(field.getName()), null));
-					}
-				}
-				
-				else if (field.isAnnotationPresent(LongColumn.class)) {
-					if (params.get(field.getName()) != null) {
-						params.put(field.getName(), getLong(params.get(field.getName()), null));
-					}
-				}
-				
-				else if (field.isAnnotationPresent(DateColumn.class)) {
-					if (params.get(field.getName()) != null) {
-						params.put(field.getName(), DateUtil.getDateTime(params.get(field.getName()).toString()));
-					}
-				}
+				String name = field.getName();
+				Object object = params.get(name);
 
-				else if (field.isAnnotationPresent(FloatColumn.class)) {
-					if (params.get(field.getName()) != null) {
-						params.put(field.getName(), getFloat(params.get(field.getName()), null));
-					}
-				}
+				if (object != null) {
+					Annotation[] ats = field.getAnnotations();
 
-				else if (field.isAnnotationPresent(DoubleColumn.class)) {
-					if (params.get(field.getName()) != null) {
-						params.put(field.getName(), getDouble(params.get(field.getName()), null));
-					}
-				}
+					for (Annotation at : ats) {
+						String cname = at.getClass().getName();
+						if (cname.equalsIgnoreCase(INTEGER_CLASS_NAME)) {
+							params.put(name, getInteger(object, null));
+							break;
+						} else if (cname.equalsIgnoreCase(LONG_CLASS_NMAE)) {
+							params.put(name, getLong(object, null));
 
-				else if (field.isAnnotationPresent(BooleanColumn.class)) {
+							break;
+						} else if (cname.equalsIgnoreCase(DATE_CLASS_NAME)) {
+							params.put(name, DateUtil.getDateTime(object.toString()));
 
-					if (params != null && field != null) {
-						if (EweblibUtil.isValid(params.get(field.getName()))) {
-							String text = params.get(field.getName()).toString();
-							if (text.length() > 0) {
-								if (text.equalsIgnoreCase("1") || text.equalsIgnoreCase("true")) {
-									params.put(field.getName(), true);
+							break;
+						} else if (cname.equalsIgnoreCase(FLOAT_CLASS_NAME)) {
+							params.put(name, getFloat(object, null));
+							break;
+						} else if (cname.equalsIgnoreCase(DOUBLE_CLASS_NAME)) {
+							params.put(name, getDouble(object, null));
+
+							break;
+						} else if (cname.equalsIgnoreCase(BOOL_CLASS_NAME)) {
+							if (params != null && field != null) {
+								if (EweblibUtil.isValid(object)) {
+									String text = object.toString();
+									if (text.length() > 0) {
+										if (text.equalsIgnoreCase("1") || text.equalsIgnoreCase("true")) {
+											params.put(name, true);
+										} else {
+											params.put(name, false);
+										}
+									} else {
+										params.put(name, null);
+									}
+
 								} else {
-									params.put(field.getName(), false);
+									params.put(name, null);
 								}
-							}else{
-								params.put(field.getName(), null);
 							}
+							break;
+						} else if (cname.equalsIgnoreCase(OBJ_CLASS_NAME)) {
 
-						}else{
-							params.put(field.getName(), null);
+							Object v = object;
+
+							if (EweblibUtil.isEmpty(v)) {
+								params.remove(name);
+							} else {
+								if (v instanceof Map) {
+
+									try {
+										updateJsonFieldWithType((Map<String, Object>) v, Class.forName(field.getGenericType().toString().replaceAll("class", "").trim()));
+									} catch (ClassNotFoundException e) {
+										// do nothing
+									}
+								} else if (v instanceof List) {
+									List<Map<String, Object>> list = (List<Map<String, Object>>) v;
+									String className = field.getGenericType().toString().replaceAll("class", "").trim();
+									className = className.replaceAll("java.util.List", "");
+
+									className = className.replaceAll("<", "");
+									className = className.replaceAll(">", "");
+									for (Map<String, Object> data : list) {
+
+										try {
+											updateJsonFieldWithType(data, Class.forName(className.trim()));
+										} catch (ClassNotFoundException e) {
+											e.printStackTrace();
+											// do nothing
+										}
+									}
+
+								}
+
+							}
+							break;
+						} else if (cname.equalsIgnoreCase(COPY_CLASS_NAME)) {
+							CopyColum cc = field.getAnnotation(CopyColum.class);
+							params.put(cc.name(), object);
+
+							break;
 						}
 					}
 				}
-
-				else if (field.isAnnotationPresent(ObjectColumn.class)) {
-					Object v = params.get(field.getName());
-
-					if (EweblibUtil.isEmpty(v)) {
-						params.remove(field.getName());
-					} else {
-						if (v instanceof Map) {
-
-							try {
-								updateJsonFieldWithType((Map<String, Object>) v, Class.forName(field.getGenericType().toString().replaceAll("class", "").trim()));
-							} catch (ClassNotFoundException e) {
-								// do nothing
-							}
-						} else if (v instanceof List) {
-							List<Map<String, Object>> list = (List<Map<String, Object>>) v;
-							String className = field.getGenericType().toString().replaceAll("class", "").trim();
-							className = className.replaceAll("java.util.List", "");
-
-							className = className.replaceAll("<", "");
-							className = className.replaceAll(">", "");
-							for (Map<String, Object> data : list) {
-
-								try {
-									updateJsonFieldWithType(data, Class.forName(className.trim()));
-								} catch (ClassNotFoundException e) {
-									e.printStackTrace();
-									// do nothing
-								}
-							}
-
-						}
-
-					}
-				}
-				
-				else if (field.isAnnotationPresent(CopyColum.class)) {
-					if (params.get(field.getName()) != null) {
-						CopyColum cc = field.getAnnotation(CopyColum.class);
-						params.put(cc.name(), params.get(field.getName()));
-					}
-				}
-				
-				
 
 			}
+
 		}
 
 	}
@@ -533,8 +555,7 @@ public class EweblibUtil {
 
 		return "http://".concat(ConfigManager.getProperty("WEI_XIN_HOST").toString()).concat("/").concat(path);
 	}
-	
-	
+
 	public static int generateRandom(int a, int b) {
 		int temp = 0;
 
@@ -547,8 +568,7 @@ public class EweblibUtil {
 		}
 
 	}
-	
-	
+
 	/**
 	 * @return 邮件主体
 	 * @param model
@@ -576,33 +596,29 @@ public class EweblibUtil {
 
 		String result = "";
 		try {
-			
+
 			result = VelocityEngineUtils.mergeTemplateIntoString(ve, template, "UTF-8", model);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return result;
 	}
-	
-	public static Float floatToFixed(float value){
-		
+
+	public static Float floatToFixed(float value) {
 
 		BigDecimal b = new BigDecimal(value);
 		float f1 = b.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
-		
+
 		return f1;
 	}
-	
-	public static Float floatToFixed(float value, int scale){
-		
+
+	public static Float floatToFixed(float value, int scale) {
 
 		BigDecimal b = new BigDecimal(value);
 		float f1 = b.setScale(scale, BigDecimal.ROUND_HALF_UP).floatValue();
-		
+
 		return f1;
 	}
-	
-	
 
 	/**
 	 * @param args

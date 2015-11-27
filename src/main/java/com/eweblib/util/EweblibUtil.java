@@ -561,7 +561,7 @@ public class EweblibUtil {
 		if (!template.endsWith(".vm") && !template.contains(".")) {
 			template = template.concat(".vm");
 		}
-		String key = DataEncrypt.encodeByMD5(resourcePath);
+		String key = resourcePath;
 		VelocityEngine ve = null;
 		if (engineMap.get(key) == null) {
 			ve = new VelocityEngine(); // 配置模板引擎

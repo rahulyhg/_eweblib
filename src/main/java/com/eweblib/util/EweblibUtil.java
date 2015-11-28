@@ -61,7 +61,7 @@ public class EweblibUtil {
 	private static Logger logger = LogManager.getLogger(EweblibUtil.class);
 
 	public static Map<String, VelocityEngine> engineMap = new HashMap<String, VelocityEngine>();
-	public static Gson creator = null;
+
 	static JsonSerializer<Date> ser = new JsonSerializer<Date>() {
 		@Override
 		public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
@@ -75,10 +75,7 @@ public class EweblibUtil {
 			return DateUtil.getDateTime(json.getAsString());
 		}
 	};
-	static {
-		creator = new GsonBuilder().registerTypeAdapter(Date.class, deser).create();
 
-	}
 
 	public static String concat(String symbole, String[] concats) {
 
@@ -302,8 +299,12 @@ public class EweblibUtil {
 
 	@SuppressWarnings("unchecked")
     public static <T extends BaseEntity> BaseEntity toEntity(String data, Class<T> classzz) {
-
-		return toEntity(creator.fromJson(data, Map.class), classzz);
+//		public static Gson creator = null;
+//		static {
+//			creator = new GsonBuilder().registerTypeAdapter(Date.class, deser).create();
+//
+//		}
+		return toEntity(new GsonBuilder().registerTypeAdapter(Date.class, deser).create().fromJson(data, Map.class), classzz);
 
 	}
 

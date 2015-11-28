@@ -19,15 +19,7 @@ public class DataEncrypt {
 	private final static Base64 base64encoder = new Base64();
 	private final static String encoding = "UTF-8";
 
-	private static MessageDigest md;
-	static {
-		try {
-			md = MessageDigest.getInstance("MD5");
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+
 	private final static Logger logger = LogManager.getLogger(DataEncrypt.class);
 
 	// 十六进制下数字到字符的映射数组
@@ -45,7 +37,7 @@ public class DataEncrypt {
 				// 创建具有指定算法名称的信息摘要
 				// MessageDigest md = MessageDigest.getInstance("MD5");
 				// 使用指定的字节数组对摘要进行最后更新，然后完成摘要计算
-				byte[] results = DataEncrypt.md.digest(originString.getBytes());
+				byte[] results = MessageDigest.getInstance("MD5").digest(originString.getBytes());
 				// 将得到的字节数组变成字符串返回
 				String resultString = byteArrayToHexString(results);
 				return resultString.toLowerCase();

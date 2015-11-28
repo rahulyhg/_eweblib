@@ -42,22 +42,6 @@ import com.thoughtworks.xstream.XStream;
 
 public class EweblibUtil {
 
-	private static final String COPY_CLASS_NAME = CopyColum.class.getName();
-
-	private static final String OBJ_CLASS_NAME = ObjectColumn.class.getName();
-
-	private static final String BOOL_CLASS_NAME = BooleanColumn.class.getName();
-
-	private static final String DOUBLE_CLASS_NAME = DoubleColumn.class.getName();
-
-	private static final String FLOAT_CLASS_NAME = FloatColumn.class.getName();
-
-	private static final String DATE_CLASS_NAME = DateColumn.class.getName();
-
-	private static final String LONG_CLASS_NMAE = LongColumn.class.getName();
-	
-	public static String INTEGER_CLASS_NAME = IntegerColumn.class.getName();
-
 	private static Logger logger = LogManager.getLogger(EweblibUtil.class);
 
 	public static Map<String, VelocityEngine> engineMap = new HashMap<String, VelocityEngine>();

@@ -280,23 +280,18 @@ public class EweblibUtil {
 	}
 
 	public static <T extends BaseEntity> BaseEntity toEntity(Map<String, Object> data, Class<T> classzz) {
-		
-
 		EweblibUtil.updateJsonFieldWithType(data, classzz);
-	
-
 		String json = G_CREATOR.toJson(data);
-		return D_CREATER.fromJson(json, classzz);
+		return toEntityNoCheck(json, classzz);
 
 	}
 
+	public static <T extends BaseEntity> T toEntityNoCheck(String json, Class<T> classzz) {
+	    return D_CREATER.fromJson(json, classzz);
+    }
+
 	@SuppressWarnings("unchecked")
     public static <T extends BaseEntity> BaseEntity toEntity(String data, Class<T> classzz) {
-//		public static Gson creator = null;
-//		static {
-//			creator = new GsonBuilder().registerTypeAdapter(Date.class, deser).create();
-//
-//		}
 		return toEntity(D_CREATER.fromJson(data, Map.class), classzz);
 
 	}

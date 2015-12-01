@@ -42,6 +42,7 @@ import com.thoughtworks.xstream.XStream;
 
 public class EweblibUtil {
 
+
 	private static Logger logger = LogManager.getLogger(EweblibUtil.class);
 
 	public static Map<String, VelocityEngine> engineMap = new HashMap<String, VelocityEngine>();
@@ -53,6 +54,7 @@ public class EweblibUtil {
 		}
 	};
 
+
 	static JsonDeserializer<Date> deser = new JsonDeserializer<Date>() {
 		@Override
 		public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -60,6 +62,13 @@ public class EweblibUtil {
 		}
 	};
 
+	private static final Gson GSON = new Gson();
+
+	private static final Gson G_CREATOR = new GsonBuilder().registerTypeAdapter(Date.class, ser).setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+
+	private static final Gson D_CREATER = new GsonBuilder().registerTypeAdapter(Date.class, deser).create();
+	
+	public static Gson C_CREATOR = new GsonBuilder().registerTypeAdapter(Date.class, ser).create();
 
 	public static String concat(String symbole, String[] concats) {
 
@@ -276,8 +285,8 @@ public class EweblibUtil {
 		EweblibUtil.updateJsonFieldWithType(data, classzz);
 	
 
-		String json = new GsonBuilder().registerTypeAdapter(Date.class, ser).setDateFormat("yyyy-MM-dd HH:mm:ss").create().toJson(data);
-		return new GsonBuilder().registerTypeAdapter(Date.class, deser).create().fromJson(json, classzz);
+		String json = G_CREATOR.toJson(data);
+		return D_CREATER.fromJson(json, classzz);
 
 	}
 
@@ -288,7 +297,7 @@ public class EweblibUtil {
 //			creator = new GsonBuilder().registerTypeAdapter(Date.class, deser).create();
 //
 //		}
-		return toEntity(new GsonBuilder().registerTypeAdapter(Date.class, deser).create().fromJson(data, Map.class), classzz);
+		return toEntity(D_CREATER.fromJson(data, Map.class), classzz);
 
 	}
 
@@ -306,7 +315,7 @@ public class EweblibUtil {
 			List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 			if (data instanceof String) {
 
-				list = (List<Map<String, Object>>) new Gson().fromJson((String) data, List.class);
+				list = (List<Map<String, Object>>) GSON.fromJson((String) data, List.class);
 			} else if (data instanceof List) {
 				list = (List<Map<String, Object>>) data;
 			}
@@ -333,23 +342,23 @@ public class EweblibUtil {
 	}
 
 	public static String toJson(BaseEntity entity) {
-		return new GsonBuilder().registerTypeAdapter(Date.class, ser).create().toJson(entity);
+		return C_CREATOR.toJson(entity);
 	}
 
 	public static String toJson(Object data) {
-		return new GsonBuilder().registerTypeAdapter(Date.class, ser).create().toJson(data);
+		return C_CREATOR.toJson(data);
 	}
 
 	public static Map<String, Object> toMap(BaseEntity entity) {
-		return new Gson().fromJson(entity.toString(), HashMap.class);
+		return GSON.fromJson(entity.toString(), HashMap.class);
 	}
 
 	public static Map<String, Object> toMap(String jsonStr) {
-		return new Gson().fromJson(jsonStr, HashMap.class);
+		return GSON.fromJson(jsonStr, HashMap.class);
 	}
 
 	public static String toString(Map<String, Object> data) {
-		return new Gson().toJson(data);
+		return GSON.toJson(data);
 	}
 
 	public static <T extends BaseEntity> Object fromXml(String txt, Class<T> claszz) {

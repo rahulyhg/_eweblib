@@ -282,7 +282,7 @@ public class EweblibUtil {
 	public static <T extends BaseEntity> BaseEntity toEntity(Map<String, Object> data, Class<T> classzz) {
 		EweblibUtil.updateJsonFieldWithType(data, classzz);
 		String json = G_CREATOR.toJson(data);
-		return toEntityNoCheck(json, classzz);
+		return D_CREATER.fromJson(json, classzz);
 
 	}
 
@@ -380,18 +380,19 @@ public class EweblibUtil {
 
 			Set<String> set = new HashSet<String>();
 
-			set.add("java.lang.Integer");
-			set.add("java.lang.Boolean");
-			set.add("java.util.Date");
-			set.add("java.lang.Double");
-			set.add("java.lang.Float");
-			set.add("java.lang.Long");
+			set.add("class java.lang.Integer");
+			set.add("class java.lang.Boolean");
+			set.add("class java.util.Date");
+			set.add("class java.lang.Double");
+			set.add("class java.lang.Float");
+			set.add("class java.lang.Long");
 			
 			List<Field> flist = new ArrayList<Field>();
 			for (Field f : fields) {
 
 				String gtype = f.getGenericType().toString();
 				if (set.contains(gtype)) {
+
 					flist.add(f);
 				}
 			}

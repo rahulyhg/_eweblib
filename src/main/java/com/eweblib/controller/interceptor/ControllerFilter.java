@@ -1,6 +1,7 @@
 package com.eweblib.controller.interceptor;
 
 import java.io.IOException;
+import java.util.Date;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -42,6 +43,7 @@ public class ControllerFilter extends AbstractController implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
+		long start = new Date().getTime();
 		HttpServletRequest srequest = (HttpServletRequest) request;
 		HttpServletResponse sresponse = (HttpServletResponse) response;
 		EWeblibThreadLocal.set(URL_PATH, srequest.getServletPath());
@@ -76,6 +78,8 @@ public class ControllerFilter extends AbstractController implements Filter {
 		}
 
 		EWeblibThreadLocal.removeAll();
+		
+		System.out.println(" P " + (new Date().getTime() - start));
 	}
 
 	@Override

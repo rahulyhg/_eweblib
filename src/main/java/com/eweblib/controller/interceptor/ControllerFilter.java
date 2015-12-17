@@ -43,9 +43,6 @@ public class ControllerFilter extends AbstractController implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
-		long start = new Date().getTime();
-		long c = 0;
-		long f = 0;
 		HttpServletRequest srequest = (HttpServletRequest) request;
 		HttpServletResponse sresponse = (HttpServletResponse) response;
 		if (srequest.getSession().getAttribute(BaseEntity.ID) != null) {
@@ -53,16 +50,8 @@ public class ControllerFilter extends AbstractController implements Filter {
 		}
 
 		try {
-
-			
 			roleCheck((HttpServletRequest) request);
-			c = new Date().getTime() - start;
-			start = new Date().getTime();
-			
-		
 			filterChain.doFilter(request, response);
-			f = new Date().getTime() - start;
-			start = new Date().getTime();
 		} catch (Exception e) {
 
 			if (e instanceof NestedServletException) {
@@ -85,9 +74,7 @@ public class ControllerFilter extends AbstractController implements Filter {
 
 		}
 		EWeblibThreadLocal.removeAll();
-		long r = new Date().getTime() - start;
 
-		System.out.println(" c " + c + " f " + f + " r " + r);
 	}
 
 	@Override

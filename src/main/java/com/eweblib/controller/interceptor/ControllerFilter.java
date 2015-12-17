@@ -44,16 +44,22 @@ public class ControllerFilter extends AbstractController implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
 
 		long start = new Date().getTime();
+		long c = 0;
+		long f = 0;
 		HttpServletRequest srequest = (HttpServletRequest) request;
 		HttpServletResponse sresponse = (HttpServletResponse) response;
-		EWeblibThreadLocal.set(URL_PATH, srequest.getServletPath());
 		if (srequest.getSession().getAttribute(BaseEntity.ID) != null) {
 			EWeblibThreadLocal.set(BaseEntity.ID, srequest.getSession().getAttribute(BaseEntity.ID));
 		}
 
 		try {
-
+			c = new Date().getTime() - start;
+			start = new Date().getTime();
+			
 			roleCheck((HttpServletRequest) request);
+			
+			f = new Date().getTime() - start;
+			start = new Date().getTime();
 			filterChain.doFilter(request, response);
 		} catch (Exception e) {
 
@@ -76,10 +82,10 @@ public class ControllerFilter extends AbstractController implements Filter {
 			}
 
 		}
-
+		long r = new Date().getTime() - start;
 		EWeblibThreadLocal.removeAll();
 		
-		System.out.println(" P " + (new Date().getTime() - start));
+		System.out.println(" c " + c + " f " + f + " r " + r);
 	}
 
 	@Override

@@ -34,7 +34,14 @@ public interface IQueryDao {
 	 * 
 	 * @param entity
 	 */
+	@Deprecated
 	public void updateById(BaseEntity entity);
+	
+	public  <T extends BaseEntity> void updateById(BaseEntity entity, String[] columns);
+
+	
+	
+
 
 	/**
 	 * 传人DataBaseQueryBuilder对象，
@@ -42,7 +49,6 @@ public interface IQueryDao {
 	 * 
 	 * @param builder
 	 */
-	@Deprecated
 	public void updateByQuery(DataBaseQueryBuilder builder);
 
 	/**

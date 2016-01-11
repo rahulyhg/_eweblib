@@ -233,19 +233,46 @@ public class QueryDaoImpl implements IQueryDao {
 	}
 
 	@Override
+	@Deprecated
 	public void updateById(BaseEntity entity) {
 
 		if (EweblibUtil.isEmpty(entity.getId())) {
 			throw new IllegalArgumentException("Must have id value when call updateById method");
 		}
 		// not need update created on field
-		entity.setUpdatedOn(new Date());
-
+		//entity.setUpdatedOn(new Date());
 
 		dao.updateById(entity);
 
 	}
 
+	
+	public <T extends BaseEntity> void updateById(BaseEntity entity, String[] columns) {
+
+		if (EweblibUtil.isEmpty(entity.getId())) {
+			throw new IllegalArgumentException("Must have id value when call updateById method");
+		}
+
+		entity.setUpdatedOn(new Date());
+
+		if (columns == null || columns.length == 0) {
+			throw new IllegalArgumentException("Must set update column names");
+
+		}
+		Map<String, Object> data = entity.toMap();
+		DataBaseQueryBuilder query = new DataBaseQueryBuilder(entity.getTable());
+		query.and(BaseEntity.ID, entity.getId());
+
+		for (String column : columns) {
+
+			query.update(column, data.get(column));
+
+		}
+		this.dao.updateByQuery(query);
+
+	}
+	
+	
 	public void executeSql(String sql) {
 
 		dao.executeSql(sql);
@@ -255,7 +282,6 @@ public class QueryDaoImpl implements IQueryDao {
 	public void updateByQuery(DataBaseQueryBuilder builder) {
 
 		if (EweblibUtil.isValid(builder.getQueryStr()) && EweblibUtil.isValid(builder.getUpdateColumns())) {
-
 			dao.updateByQuery(builder);
 		}
 

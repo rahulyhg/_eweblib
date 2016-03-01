@@ -4,7 +4,7 @@ public class OSCheck {
 
 	public enum OSType {
 
-		WINDOWS, WINDOWS_PHONE, ANDROID, IPHONE, IPAD, MAC, ANDROID_PAD
+		WINDOWS, WINDOWS_PHONE, ANDROID, IPHONE, IPAD, MAC, ANDROID_PAD, LINUX
 
 	}
 
@@ -19,7 +19,7 @@ public class OSCheck {
 		if (userAgent.contains("Windows Phone".toLowerCase())) {
 
 			return OSType.WINDOWS_PHONE;
-		} else if (userAgent.contains("Windows NT".toLowerCase())) {
+		} else if (userAgent.contains("Windows NT".toLowerCase()) || userAgent.contains("WinNT".toLowerCase()) || userAgent.contains("Windows".toLowerCase())) {
 
 			return OSType.WINDOWS;
 		} else if (userAgent.contains("Android".toLowerCase()) && userAgent.contains("pad")) {
@@ -37,6 +37,9 @@ public class OSCheck {
 		} else if (userAgent.contains("Macintosh".toLowerCase())) {
 
 			return OSType.MAC;
+		}else if (userAgent.contains("Linux".toLowerCase())) {
+
+			return OSType.LINUX;
 		}
 
 		return null;

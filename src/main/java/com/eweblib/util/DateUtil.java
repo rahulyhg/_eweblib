@@ -2,6 +2,7 @@ package com.eweblib.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
@@ -107,4 +108,12 @@ public class DateUtil {
 		return time;
 	}
 
+	public static void setTimeZero(Calendar c) {
+	    c.set(Calendar.HOUR_OF_DAY, 0);
+	    c.set(Calendar.MINUTE, 0);
+	    c.set(Calendar.SECOND, 0);
+	    c.set(Calendar.MILLISECOND, 0);
+    }
+	
+	
 }

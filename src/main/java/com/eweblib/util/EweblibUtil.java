@@ -355,6 +355,10 @@ public class EweblibUtil {
 	public static String toString(Map<String, Object> data) {
 		return GSON.toJson(data);
 	}
+	
+	public static String toString(Object data) {
+		return GSON.toJson(data);
+	}
 
 	public static <T extends BaseEntity> Object fromXml(String txt, Class<T> claszz) {
 		XStream xs = new XStream();

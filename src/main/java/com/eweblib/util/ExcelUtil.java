@@ -82,11 +82,12 @@ public class ExcelUtil {
 		Sheet sheet = wb.getSheetAt(sheetIndex);
 
 		for (Row row : sheet) {
-
+			Cell cell = null;
+			String[] singleRow = null;
 			if (row.getLastCellNum() > 0) {
-				String[] singleRow = new String[row.getLastCellNum()];
+				singleRow = new String[row.getLastCellNum()];
 				for (int i = 0; i < row.getLastCellNum(); i++) {
-					Cell cell = row.getCell(i, Row.CREATE_NULL_AS_BLANK);
+					cell = row.getCell(i, Row.CREATE_NULL_AS_BLANK);
 					switch (cell.getCellType()) {
 					case Cell.CELL_TYPE_BLANK:
 						singleRow[i] = "";
@@ -159,6 +160,7 @@ public class ExcelUtil {
 	}
 
 	public String[] getRowData(int sheetIndex, int rowIndex) {
+		getAllData(sheetIndex);
 		String[] dataArray = null;
 		if (rowIndex > this.getRowNum(sheetIndex)) {
 			return dataArray;

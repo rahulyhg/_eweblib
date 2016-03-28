@@ -1,38 +1,86 @@
 package com.eweblib.util;
 
+import java.util.Set;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.eweblib.cfg.ConfigManager;
-import com.lambdaworks.redis.RedisClient;
-import com.lambdaworks.redis.RedisConnection;
+
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 public class RedisUtil {
 	public static Logger logger = LogManager.getLogger(RedisUtil.class);
 
-	private static RedisConnection<String, String> connection = null;
+	private static JedisPool jedisPool;// 非切片连接池
 
-	public static void init() {
+	private static void initialPool() {
 
-		try {
-			if (connection == null) {
-				RedisClient redisClient = new RedisClient(ConfigManager.getProperty("redis_server"));
-				connection = redisClient.connect();
-			}
-		} catch (Exception e) {
-			logger.error(e);
+		if (jedisPool == null) {
+			// 池基本配置
+			JedisPoolConfig config = new JedisPoolConfig();
+			config.setMaxTotal(200);
+			config.setMaxIdle(50);
+			config.setTestOnBorrow(false);
+
+			jedisPool = new JedisPool(config, ConfigManager.getProperty("redis_server"), 6379);
 		}
 	}
 
+	public static String getApMac(String key) {
+		String upKey = key.toUpperCase();
+		try {
+			initialPool();
+			Jedis jedis = jedisPool.getResource();
+			String value = jedis.hget(upKey, "advertise");
+			jedis.close();
+			return value;
+
+		} catch (Exception e) {
+			logger.fatal("query ap mac from redis server failed with user mac[{}]", upKey, e);
+			return null;
+		}
+	}
+
+	public static String getApGroupInfo(String key) {
+		String lowerKey = key.toLowerCase();
+		try {
+			initialPool();
+			Jedis jedis = jedisPool.getResource();
+			String value = jedis.hget(lowerKey, "group_id_name");
+			jedis.close();
+			return value;
+
+		} catch (Exception e) {
+			logger.fatal("query ap group from redis server failed with user mac[{}]", lowerKey, e);
+			return null;
+		}
+	}
+
+	public static void print() {
+		initialPool();
+		Jedis jedis = jedisPool.getResource();
+		Set<String> keys = jedis.keys("*");
+
+		for (String key : keys) {
+			System.out.println(key + " = " + getApMac(key));
+		}
+
+		jedis.close();
+	}
+
 	public static String get(String key) {
-		init();
+		initialPool();
 
 		try {
-			String value = connection.get(key);
+			Jedis jedis = jedisPool.getResource();
+			String value = jedis.get(key);
 			return value;
 		} catch (Exception e) {
 			logger.error(e);
-			init();
+			initialPool();
 		}
 
 		return null;
@@ -48,7 +96,7 @@ public class RedisUtil {
 		}
 		return null;
 	}
-	
+
 	public static Long getLong(String key) {
 		String value = get(key);
 
@@ -64,25 +112,27 @@ public class RedisUtil {
 	}
 
 	public static void remove(String key) {
-		init();
+		initialPool();
 		try {
-			connection.del(key);
+			Jedis jedis = jedisPool.getResource();
+			jedis.del(key);
 		} catch (Exception e) {
 			logger.error(e);
-			init();
+			initialPool();
 		}
 	}
 
 	public static void set(String key, Object value, int seconds) {
-		init();
+		initialPool();
 		if (value != null) {
 
 			try {
-				connection.set(key, value.toString());
-				connection.expire(key, seconds);
+				Jedis jedis = jedisPool.getResource();
+				jedis.set(key, value.toString());
+				jedis.expire(key, seconds);
 			} catch (Exception e) {
 				logger.error(e);
-				init();
+				initialPool();
 			}
 		}
 	}

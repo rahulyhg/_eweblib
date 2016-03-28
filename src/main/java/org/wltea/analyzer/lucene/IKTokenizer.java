@@ -61,7 +61,7 @@ public final class IKTokenizer extends Tokenizer {
 	 * @param useSmart
 	 */
 	public IKTokenizer(Reader in , boolean useSmart){
-	    super(in);
+	    //super(in);
 	    offsetAtt = addAttribute(OffsetAttribute.class);
 	    termAtt = addAttribute(CharTermAttribute.class);
 	    typeAtt = addAttribute(TypeAttribute.class);

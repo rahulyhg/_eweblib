@@ -5,7 +5,7 @@
 	<groupId>com.eweblib</groupId>
 	<artifactId>eweblib</artifactId>
 	<version>1.0</version>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 
 	<name>eweblib</name>
 	<url>http://maven.apache.org</url>
@@ -225,51 +225,47 @@
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-core</artifactId>
-			<version>4.10.0</version>
+			<version>5.4.1</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-analyzers-common</artifactId>
-			<version>4.10.0</version>
+			<version>5.4.1</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-queries</artifactId>
-			<version>4.10.0</version>
+			<version>5.4.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-queryparser</artifactId>
-			<version>4.10.0</version>
+			<version>5.4.1</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-highlighter</artifactId>
-			<version>4.10.0</version>
+			<version>5.4.1</version>
 		</dependency>
 
 
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-analyzers-smartcn</artifactId>
-			<version>4.10.0</version>
+			<version>5.4.1</version>
 		</dependency>
 
 
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-codecs</artifactId>
-			<version>4.10.0</version>
+			<version>5.4.1</version>
 		</dependency>
 
-		<dependency>
-			<groupId>com.lambdaworks</groupId>
-			<artifactId>lettuce</artifactId>
-			<version>1.1.0</version>
-		</dependency>
+	
 		<dependency>
 			<groupId>nekohtml</groupId>
 			<artifactId>nekohtml</artifactId>
@@ -280,8 +276,11 @@
 			<artifactId>xalan</artifactId>
 			<version>2.7.1</version>
 		</dependency>
-
-
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>2.7.3</version>
+		</dependency>
 
 		<!-- <dependency> <groupId>com.chenlb.mmseg4j</groupId> <artifactId>mmseg4j-solr</artifactId> 
 			<version>2.0.0</version> </dependency> <dependency> <groupId>org.apache.mahout</groupId> 
@@ -296,8 +295,8 @@
 			</dependency> -->
 
 		<!-- <dependency> <groupId>org.apache.lucene</groupId> <artifactId>lucene-demo</artifactId> 
-			<version>4.10.0</version> </dependency> <dependency> <groupId>org.apache.lucene</groupId> 
-			<artifactId>lucene-demo</artifactId> <version>4.10.0</version> </dependency> -->
+			<version>5.4.1</version> </dependency> <dependency> <groupId>org.apache.lucene</groupId> 
+			<artifactId>lucene-demo</artifactId> <version>5.4.1</version> </dependency> -->
 	</dependencies>
 
 	<build>

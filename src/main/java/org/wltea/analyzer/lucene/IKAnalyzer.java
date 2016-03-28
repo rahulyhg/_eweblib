@@ -68,12 +68,17 @@ public final class IKAnalyzer  extends Analyzer{
 		this.useSmart = useSmart;
 	}
 
-	/**
-	 * 重载Analyzer接口，构造分词组件
-	 */
+//	/**
+//	 * 重载Analyzer接口，构造分词组件
+//	 */
+//	protected TokenStreamComponents createComponents(String fieldName, final Reader in) {
+//		Tokenizer _IKTokenizer = new IKTokenizer(in , this.useSmart());
+//		return new TokenStreamComponents(_IKTokenizer);
+//	}
+
 	@Override
-	protected TokenStreamComponents createComponents(String fieldName, final Reader in) {
-		Tokenizer _IKTokenizer = new IKTokenizer(in , this.useSmart());
+	protected TokenStreamComponents createComponents(String fieldName) {
+		Tokenizer _IKTokenizer = new IKTokenizer(null , this.useSmart());
 		return new TokenStreamComponents(_IKTokenizer);
 	}
 

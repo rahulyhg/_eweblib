@@ -2,6 +2,7 @@ package com.eweblib.search.index;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -151,14 +152,15 @@ public class LuceneIndexHelper {
 		
 		File file = new File(folder);
 		file.mkdirs();
-		IndexWriterConfig config = new IndexWriterConfig(Version.LATEST, analyzer);
+		IndexWriterConfig config = new IndexWriterConfig(analyzer);
 
 		config.setOpenMode(OpenMode.CREATE_OR_APPEND);
-		FSDirectory directory = FSDirectory.open(file);
-
-		if (IndexWriter.isLocked(directory)) {
-			IndexWriter.unlock(directory);
-		}
+		
+		FSDirectory directory = FSDirectory.open(Paths.get(folder));
+//
+//		if (IndexWriter.isLocked(directory)) {
+//			IndexWriter.unlock(directory);
+//		}
 		IndexWriter writer = new IndexWriter(directory, config);
 
 		return writer;
@@ -213,7 +215,7 @@ public class LuceneIndexHelper {
 
 			if (new File(folder).exists()) {
 				File file = new File(folder);
-				reader = DirectoryReader.open(FSDirectory.open(file));
+				reader = DirectoryReader.open(FSDirectory.open(Paths.get(folder)));
 				IndexSearcher searcher = new IndexSearcher(reader);
 				// :Post-Release-Update-Version.LUCENE_XY:
 

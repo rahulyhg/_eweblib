@@ -230,7 +230,6 @@ public class LuceneIndexHelper {
 
 				TopDocs docResults = searcher.search(query, 100 * 1);
 				ScoreDoc[] hits = docResults.scoreDocs;
-				System.out.println("Searching for: " + query.toString(queryField)  + " from folder: " + folder + " and hits length: " + hits.length);
 
 
 				for (ScoreDoc sd : hits) {

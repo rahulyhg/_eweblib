@@ -48,7 +48,6 @@ public class RedisUtil {
 		String value = get(key);
 
 		if (EweblibUtil.isValid(value)) {
-
 			return EweblibUtil.getInteger(value, 0);
 		}
 		return null;

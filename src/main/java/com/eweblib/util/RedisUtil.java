@@ -20,7 +20,8 @@ public class RedisUtil {
             // 池基本配置
             JedisPoolConfig config = new JedisPoolConfig();
             config.setMaxTotal(2000);
-            config.setMaxIdle(50);
+            config.setMaxIdle(200);
+            config.setMaxWaitMillis(30 * 1000);
             config.setTestOnBorrow(false);
 
             jedisPool = new JedisPool(config, ConfigManager.getProperty("redis_server"), 6379);

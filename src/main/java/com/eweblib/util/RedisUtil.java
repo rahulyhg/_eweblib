@@ -28,32 +28,6 @@ public class RedisUtil {
 		}
 	}
 
-	public static String getApMac(String key) {
-		String upKey = key.toUpperCase();
-		try {
-			initialPool();
-			String value = jedis.hget(upKey, "advertise");
-			return value;
-
-		} catch (Exception e) {
-			logger.fatal("query ap mac from redis server failed with user mac[{}]", upKey, e);
-			return null;
-		}
-	}
-
-	public static String getApGroupInfo(String key) {
-		String lowerKey = key.toLowerCase();
-		try {
-			initialPool();
-			String value = jedis.hget(lowerKey, "group_id_name");
-			return value;
-
-		} catch (Exception e) {
-			logger.fatal("query ap group from redis server failed with user mac[{}]", lowerKey, e);
-			return null;
-		}
-	}
-
 
 	public static String get(String key) {
 		initialPool();
@@ -97,7 +71,6 @@ public class RedisUtil {
 	public static void remove(String key) {
 		initialPool();
 		try {
-			Jedis jedis = jedisPool.getResource();
 			jedis.del(key);
 		} catch (Exception e) {
 			logger.error(e);
@@ -110,7 +83,6 @@ public class RedisUtil {
 		if (value != null) {
 
 			try {
-				Jedis jedis = jedisPool.getResource();
 				jedis.set(key, value.toString());
 				jedis.expire(key, seconds);
 			} catch (Exception e) {

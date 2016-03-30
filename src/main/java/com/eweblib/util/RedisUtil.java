@@ -1,7 +1,5 @@
 package com.eweblib.util;
 
-import java.util.Set;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,17 +13,18 @@ public class RedisUtil {
 	public static Logger logger = LogManager.getLogger(RedisUtil.class);
 
 	private static JedisPool jedisPool;// 非切片连接池
-
+	private static Jedis jedis;
 	private static void initialPool() {
 
 		if (jedisPool == null) {
 			// 池基本配置
 			JedisPoolConfig config = new JedisPoolConfig();
-			config.setMaxTotal(200);
+			config.setMaxTotal(2000);
 			config.setMaxIdle(50);
 			config.setTestOnBorrow(false);
 
 			jedisPool = new JedisPool(config, ConfigManager.getProperty("redis_server"), 6379);
+			jedis = jedisPool.getResource();
 		}
 	}
 
@@ -33,9 +32,7 @@ public class RedisUtil {
 		String upKey = key.toUpperCase();
 		try {
 			initialPool();
-			Jedis jedis = jedisPool.getResource();
 			String value = jedis.hget(upKey, "advertise");
-			jedis.close();
 			return value;
 
 		} catch (Exception e) {
@@ -48,9 +45,7 @@ public class RedisUtil {
 		String lowerKey = key.toLowerCase();
 		try {
 			initialPool();
-			Jedis jedis = jedisPool.getResource();
 			String value = jedis.hget(lowerKey, "group_id_name");
-			jedis.close();
 			return value;
 
 		} catch (Exception e) {
@@ -59,23 +54,11 @@ public class RedisUtil {
 		}
 	}
 
-	public static void print() {
-		initialPool();
-		Jedis jedis = jedisPool.getResource();
-		Set<String> keys = jedis.keys("*");
-
-		for (String key : keys) {
-			System.out.println(key + " = " + getApMac(key));
-		}
-
-		jedis.close();
-	}
 
 	public static String get(String key) {
 		initialPool();
 
 		try {
-			Jedis jedis = jedisPool.getResource();
 			String value = jedis.get(key);
 			return value;
 		} catch (Exception e) {

@@ -295,6 +295,9 @@ public class ExcelUtil {
 		return f.getAbsolutePath();
 	}
 
+    public static <T extends BaseEntity> String createExcelListFileByEntity(List<T> list, String[] colunmTitleHeaders, String[] colunmHeaders, String f) {
+        return createExcelListFileByEntity(list, colunmTitleHeaders, colunmHeaders, new File(f));
+    }
 	
 	public static <T extends BaseEntity> String createExcelListFileByEntity(List<T> list, String[] colunmTitleHeaders, String[] colunmHeaders, File f) {
 		

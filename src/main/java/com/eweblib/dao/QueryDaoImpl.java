@@ -239,8 +239,7 @@ public class QueryDaoImpl implements IQueryDao {
 		if (EweblibUtil.isEmpty(entity.getId())) {
 			throw new IllegalArgumentException("Must have id value when call updateById method");
 		}
-		// not need update created on field
-		//entity.setUpdatedOn(new Date());
+		entity.setUpdatedOn(new Date());
 
 		dao.updateById(entity);
 

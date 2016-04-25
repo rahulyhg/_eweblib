@@ -346,7 +346,7 @@ public abstract class AbstractController {
 		if (throwable instanceof ResponseException) {
 			ResponseException apiException = (ResponseException) throwable;
 			temp.put(MSG, apiException.getMessage());
-			logger.error(apiException.getMessage());
+			logger.debug(apiException.getMessage());
 		} else {
 			logger.fatal("Fatal error when user try to call API ", throwable);
 			temp.put(CODE, ResponseStatus.FAIL.toString());

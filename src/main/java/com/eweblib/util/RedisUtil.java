@@ -13,7 +13,7 @@ public class RedisUtil {
     public static Logger logger = LogManager.getLogger(RedisUtil.class);
 
     private static JedisPool jedisPool;// 非切片连接池
-
+    public static boolean SERVER_CRASHED = false;
     private static void initialPool() {
 
         if (jedisPool == null) {
@@ -38,8 +38,8 @@ public class RedisUtil {
             jedis.close();
             return value;
         } catch (Exception e) {
-            logger.error(e);
-            initialPool();
+            SERVER_CRASHED = true;
+            logger.error("get value from redis failed with key: " + key, e);
         }
 
         return null;
@@ -76,8 +76,8 @@ public class RedisUtil {
             jedis.del(key);
             jedis.close();
         } catch (Exception e) {
-            logger.error(e);
-            initialPool();
+            SERVER_CRASHED = true;
+            logger.error("remove redis with key: " + key + " failed", e);
         }
     }
 
@@ -91,8 +91,8 @@ public class RedisUtil {
                 jedis.expire(key, seconds);
                 jedis.close();
             } catch (Exception e) {
-                logger.error(e);
-                initialPool();
+                SERVER_CRASHED = true;
+                logger.error("save data to  redis  failed", e);
             }
         }
     }

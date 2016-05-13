@@ -38,7 +38,6 @@ public class RedisUtil {
             jedis.close();
             return value;
         } catch (Exception e) {
-            SERVER_CRASHED = true;
             logger.error("get value from redis failed with key: " + key, e);
         }
 
@@ -76,7 +75,6 @@ public class RedisUtil {
             jedis.del(key);
             jedis.close();
         } catch (Exception e) {
-            SERVER_CRASHED = true;
             logger.error("remove redis with key: " + key + " failed", e);
         }
     }
@@ -91,7 +89,6 @@ public class RedisUtil {
                 jedis.expire(key, seconds);
                 jedis.close();
             } catch (Exception e) {
-                SERVER_CRASHED = true;
                 logger.error("save data to  redis  failed", e);
             }
         }

@@ -14,18 +14,36 @@ public class RedisUtil {
 
     private static JedisPool jedisPool;// 非切片连接池
     public static boolean SERVER_CRASHED = false;
+
     private static void initialPool() {
 
         if (jedisPool == null) {
-            // 池基本配置
-            JedisPoolConfig config = new JedisPoolConfig();
-            config.setMaxTotal(2000);
-            config.setMaxIdle(200);
-            config.setMaxWaitMillis(30 * 1000);
-            config.setTestOnBorrow(false);
-
-            jedisPool = new JedisPool(config, ConfigManager.getProperty("redis_server"), 6379);
+            intial();
         }
+    }
+
+    private static void intial() {
+        // 池基本配置
+        JedisPoolConfig config = new JedisPoolConfig();
+        config.setMaxTotal(2000);
+        config.setMaxIdle(200);
+        config.setMaxWaitMillis(30 * 1000);
+        config.setTestOnBorrow(false);
+
+        jedisPool = new JedisPool(config, ConfigManager.getProperty("redis_server"), 6379);
+    }
+
+    public static void reInitialPool() {
+
+        if (jedisPool != null) {
+            try {
+                jedisPool.close();
+            } catch (Exception e) {
+                logger.error("shutdown redis client failed ", e);
+            }
+        }
+        intial();
+
     }
 
     public static String get(String key) {

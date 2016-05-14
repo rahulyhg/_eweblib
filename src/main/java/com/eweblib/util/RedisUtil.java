@@ -29,11 +29,18 @@ public class RedisUtil {
         }
     }
 
-
-
     public static String get(String key) {
         initialPool();
 
+        if (!SERVER_CRASHED) {
+            return forceGet(key);
+        }
+
+        return null;
+
+    }
+
+    public static String forceGet(String key) {
         try {
             Jedis jedis = jedisPool.getResource();
 
@@ -43,9 +50,7 @@ public class RedisUtil {
         } catch (Exception e) {
             logger.error("get value from redis failed with key: " + key, e);
         }
-
         return null;
-
     }
 
     public static Integer getInt(String key) {
@@ -73,27 +78,32 @@ public class RedisUtil {
 
     public static void remove(String key) {
         initialPool();
-        try {
-            Jedis jedis = jedisPool.getResource();
-            jedis.del(key);
-            jedis.close();
-        } catch (Exception e) {
-            logger.error("remove redis with key: " + key + " failed", e);
+        if (!SERVER_CRASHED) {
+            try {
+                Jedis jedis = jedisPool.getResource();
+                jedis.del(key);
+                jedis.close();
+            } catch (Exception e) {
+                logger.error("remove redis with key: " + key + " failed", e);
+            }
         }
     }
 
     public static void set(String key, Object value, int seconds) {
         initialPool();
-        if (value != null) {
+        if (value != null && !SERVER_CRASHED) {
+            forceSet(key, value, seconds);
+        }
+    }
 
-            try {
-                Jedis jedis = jedisPool.getResource();
-                jedis.set(key, value.toString());
-                jedis.expire(key, seconds);
-                jedis.close();
-            } catch (Exception e) {
-                logger.error("save data to  redis  failed", e);
-            }
+    public static void forceSet(String key, Object value, int seconds) {
+        try {
+            Jedis jedis = jedisPool.getResource();
+            jedis.set(key, value.toString());
+            jedis.expire(key, seconds);
+            jedis.close();
+        } catch (Exception e) {
+            logger.error("save data to  redis  failed", e);
         }
     }
 

@@ -30,7 +30,6 @@ public class RedisUtil {
     }
 
     public static String get(String key) {
-        initialPool();
 
         if (!SERVER_CRASHED) {
             return forceGet(key);
@@ -41,6 +40,8 @@ public class RedisUtil {
     }
 
     public static String forceGet(String key) {
+        initialPool();
+
         try {
             Jedis jedis = jedisPool.getResource();
 
@@ -90,13 +91,14 @@ public class RedisUtil {
     }
 
     public static void set(String key, Object value, int seconds) {
-        initialPool();
         if (value != null && !SERVER_CRASHED) {
             forceSet(key, value, seconds);
         }
     }
 
     public static void forceSet(String key, Object value, int seconds) {
+        initialPool();
+
         try {
             Jedis jedis = jedisPool.getResource();
             jedis.set(key, value.toString());

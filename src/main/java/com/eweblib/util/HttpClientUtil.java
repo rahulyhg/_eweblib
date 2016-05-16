@@ -23,10 +23,9 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
-//import org.apache.http.entity.mime.MultipartEntity;
-//import org.apache.http.entity.mime.content.FileBody;
-//import org.apache.http.entity.mime.content.StringBody;
+
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
@@ -216,6 +215,7 @@ public class HttpClientUtil {
 		
 		    
 			httpget.setParams(params);
+			
 			// httpget.setHeader("Accept-Encoding", "gzip, deflate");
 			httpget.setHeader("User-Agent", userAgents[index]);
 			httpget.setHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
@@ -330,6 +330,28 @@ public class HttpClientUtil {
 		}
 		return null;
 	}
+	
+	public static byte[] doBodyBytePost(String url, byte[] data) {
+        HttpClient httpClient = new DefaultHttpClient();
+        HttpResponse response = null;
+        HttpPost method = new HttpPost(url);
+
+        try {
+            ByteArrayEntity bae = new ByteArrayEntity(data);
+            method.setEntity(bae);
+            response = httpClient.execute(method);
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                return EntityUtils.toByteArray(entity);
+            }
+
+        } catch (ClientProtocolException e) {
+            logger.error("ClientProtocolException when try to post data to ".concat(url), e);
+        } catch (IOException e) {
+            logger.error("IOException when try to post data to ".concat(url), e);
+        }
+        return null;
+    }
 
 	public static void downloadFile(String url, Map<String, Object> parameters, String savePath) {
 

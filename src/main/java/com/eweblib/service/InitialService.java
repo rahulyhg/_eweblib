@@ -13,7 +13,7 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.eweblib.annotation.controller.LoginRequired;
+import com.eweblib.annotation.role.LoginRequired;
 import com.eweblib.dao.IQueryDao;
 
 public class InitialService {

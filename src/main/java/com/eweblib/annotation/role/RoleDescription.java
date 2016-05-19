@@ -1,4 +1,4 @@
-package com.eweblib.annotation.controller;
+package com.eweblib.annotation.role;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

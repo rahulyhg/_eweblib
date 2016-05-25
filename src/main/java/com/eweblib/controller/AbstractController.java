@@ -55,15 +55,26 @@ public abstract class AbstractController {
 	}
 
     protected String getRemortIP(HttpServletRequest request) {
+        String ip = null;
         String forwardAddress = request.getHeader("x-forwarded-for");
         if (forwardAddress == null) {
-            return request.getRemoteAddr();
-        }
+            ip = request.getRemoteAddr();
+        } else {
 
-        if (forwardAddress.contains(",")) {
-            return forwardAddress.split(",")[0];
+            String[] addresses = forwardAddress.split(",");
+
+            if (addresses.length > 1) {
+                if (addresses[0].startsWith("10.1")) {
+                    ip = addresses[1];
+                } else {
+                    ip = addresses[0];
+                }
+            } else {
+                ip = addresses[0];
+            }
+
         }
-        return forwardAddress;
+        return ip;
     }
 
 	protected <T extends BaseEntity> List<T> parserListJsonParameters(HttpServletRequest request, boolean emptyParameter, Class<T> claszz) {

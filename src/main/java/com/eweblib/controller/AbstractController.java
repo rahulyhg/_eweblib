@@ -54,12 +54,17 @@ public abstract class AbstractController {
 
 	}
 
-	protected String getRemortIP(HttpServletRequest request) {
-		if (request.getHeader("x-forwarded-for") == null) {
-			return request.getRemoteAddr();
-		}
-		return request.getHeader("x-forwarded-for");
-	}
+    protected String getRemortIP(HttpServletRequest request) {
+        String forwardAddress = request.getHeader("x-forwarded-for");
+        if (forwardAddress == null) {
+            return request.getRemoteAddr();
+        }
+
+        if (forwardAddress.contains(",")) {
+            return forwardAddress.split(",")[0];
+        }
+        return forwardAddress;
+    }
 
 	protected <T extends BaseEntity> List<T> parserListJsonParameters(HttpServletRequest request, boolean emptyParameter, Class<T> claszz) {
 		Map<String, Object> params = this.parserJsonParameters(request, false);

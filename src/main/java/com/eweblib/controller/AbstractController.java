@@ -74,7 +74,7 @@ public abstract class AbstractController {
             }
 
         }
-        return ip;
+        return ip.trim();
     }
 
 	protected <T extends BaseEntity> List<T> parserListJsonParameters(HttpServletRequest request, boolean emptyParameter, Class<T> claszz) {

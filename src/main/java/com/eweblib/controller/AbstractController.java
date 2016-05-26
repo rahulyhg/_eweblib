@@ -64,7 +64,7 @@ public abstract class AbstractController {
             String[] addresses = forwardAddress.split(",");
 
             if (addresses.length > 1) {
-                if (addresses[0].startsWith("10.1") || addresses[0].startsWith("172.")) {
+                if (addresses[0].startsWith("10.1") || addresses[0].startsWith("172.") || addresses[0].startsWith("192.168.") || addresses[0].startsWith("127.0.")) {
                     ip = addresses[1];
                 } else {
                     ip = addresses[0];

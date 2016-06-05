@@ -11,19 +11,19 @@ import org.apache.logging.log4j.Logger;
 public class DateUtil {
 
 	private static Logger logger = LogManager.getLogger(DateUtil.class);
-	public static final String format = "yyyy-MM-dd HH:mm:ss";
+	public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
-	public static final String formatSimple = "yyyy-MM-dd";
+	public static final String DATE_FORMAT = "yyyy-MM-dd";
 	
-	public static final String FORMATE_2 = "yyyyMMdd";
+	public static final String DATE_FORMATE_2 = "yyyyMMdd";
 
 	public static String getDateStringTime(Date date) {
-		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_TIME_FORMAT);
 		return sdf.format(date);
 	}
 
 	public static Date getDateTime(Date date) {
-		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_TIME_FORMAT);
 
 		if (EweblibUtil.isEmpty(date)) {
 			return null;
@@ -31,7 +31,7 @@ public class DateUtil {
 		try {
 			return sdf.parse(sdf.format(date));
 		} catch (ParseException e) {
-			sdf = new SimpleDateFormat(formatSimple);
+			sdf = new SimpleDateFormat(DATE_FORMAT);
 			try {
 				return sdf.parse(sdf.format(date));
 			} catch (ParseException e1) {
@@ -52,14 +52,14 @@ public class DateUtil {
 		if (EweblibUtil.isEmpty(date)) {
 			return null;
 		}
-		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_TIME_FORMAT);
 		if (EweblibUtil.isEmpty(date)) {
 			return null;
 		}
 		try {
 			return sdf.parse(date);
 		} catch (ParseException e) {
-			sdf = new SimpleDateFormat(formatSimple);
+			sdf = new SimpleDateFormat(DATE_FORMAT);
 			try {
 				return sdf.parse(date);
 			} catch (ParseException e1) {
@@ -76,7 +76,7 @@ public class DateUtil {
 	}
 
 	public static String getDateString(Date date) {
-		SimpleDateFormat sdf = new SimpleDateFormat(formatSimple);
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 		return sdf.format(date);
 	}
 	
@@ -97,7 +97,7 @@ public class DateUtil {
 	}
 
 	public static String getDateStringByLong(Long times) {
-		SimpleDateFormat sdf = new SimpleDateFormat(format);
+		SimpleDateFormat sdf = new SimpleDateFormat(DATE_TIME_FORMAT);
 		String time = sdf.format(new Date(times));
 
 		// FIXME other solution for date field not datetime field?

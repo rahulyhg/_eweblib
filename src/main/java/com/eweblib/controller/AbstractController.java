@@ -177,7 +177,6 @@ public abstract class AbstractController {
 			parametersMap.put("body", postStr);
 		}
 
-		//logger.debug(String.format("--------------Client post parameters for path [%s] is [%s]", request.getServletPath(), parametersMap));
 
 		return parametersMap;
 	}

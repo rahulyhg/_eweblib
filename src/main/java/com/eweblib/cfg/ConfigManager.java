@@ -3,6 +3,7 @@ package com.eweblib.cfg;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Properties;
 
 import org.apache.logging.log4j.LogManager;
@@ -43,11 +44,12 @@ public class ConfigManager {
 
 				// load resource from class root path
 				InputStream resourceAsStream = ConfigManager.class.getResourceAsStream("/".concat(file));
-				if (resourceAsStream != null) {
-					logger.info("Load config from file :::: " + file);
-					properties.load(resourceAsStream);
-				}
-
+				
+				InputStreamReader reader = new InputStreamReader(resourceAsStream, "UTF-8");
+                if (reader != null) {
+                    logger.info("Load config from file :::: " + file);
+                    properties.load(reader);
+                }				
 			} catch (IOException e) {
 				logger.fatal("Load property file failed: ".concat(file), e);
 			}

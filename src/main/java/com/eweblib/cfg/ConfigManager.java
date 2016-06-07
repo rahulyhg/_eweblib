@@ -60,7 +60,7 @@ public class ConfigManager {
                     try {
                         reader.close();
                     } catch (IOException e) {
-                        logger.fatal("close reder of file {} failed: ", file);
+                        logger.fatal("close reader of file {} failed: ", file);
                     }
 
                 }

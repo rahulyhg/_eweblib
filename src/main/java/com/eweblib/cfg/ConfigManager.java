@@ -23,120 +23,133 @@ import com.eweblib.util.EweblibUtil;
 public class ConfigManager {
     private static final String ENVIROMENT_PRODUCT = "product";
 
-	private static final String ENVIROMENT = "enviroment";
+    private static final String ENVIROMENT = "enviroment";
 
-	//索引路径
-	private static final String LUCENE_INDEX_DIR = "lucene_index_dir";
+    // 索引路径
+    private static final String LUCENE_INDEX_DIR = "lucene_index_dir";
 
-	private static Logger logger = LogManager.getLogger(ConfigManager.class);
+    private static Logger logger = LogManager.getLogger(ConfigManager.class);
 
-	private static Properties properties = new Properties();
+    private static Properties properties = new Properties();
 
-	public static IQueryDao dao;
+    public static IQueryDao dao;
 
-	public static void setConfiguraion(String configFiles, IQueryDao dao) {
-		ConfigManager.dao = dao;
+    public static void setConfiguraion(String configFiles, IQueryDao dao) {
+        ConfigManager.dao = dao;
 
-		String files[] = configFiles.split(",");
+        String files[] = configFiles.split(",");
 
-		for (String file : files) {
-			try {
+        for (String file : files) {
+            InputStreamReader reader = null;
+            InputStream resourceAsStream = null;
+            try {
 
-				// load resource from class root path
-				InputStream resourceAsStream = ConfigManager.class.getResourceAsStream("/".concat(file));
-				
-				InputStreamReader reader = new InputStreamReader(resourceAsStream, "UTF-8");
+                // load resource from class root path
+                resourceAsStream = ConfigManager.class.getResourceAsStream("/".concat(file));
+
+                reader = new InputStreamReader(resourceAsStream, "UTF-8");
                 if (reader != null) {
                     logger.info("Load config from file :::: " + file);
                     properties.load(reader);
-                }				
-			} catch (IOException e) {
-				logger.fatal("Load property file failed: ".concat(file), e);
-			}
+                }
 
-		}
+            } catch (IOException e) {
+                logger.fatal("Load property file failed: ".concat(file), e);
+            } finally {
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                        logger.fatal("close reder of file {} failed: ", file);
+                    }
 
-	}
+                }
 
-	public static String getProperty(String key) {
-		return properties.getProperty(key);
-	}
+            }
 
-	public static void setProperties(String key, String value) {
-		properties.setProperty(key, value);
-	}
+        }
 
-	public static void setProperties(String key, Object value) {
-		properties.put(key, value);
+    }
 
-	}
+    public static String getProperty(String key) {
+        return properties.getProperty(key);
+    }
 
-	public static Object getPropertyObject(String key) {
+    public static void setProperties(String key, String value) {
+        properties.setProperty(key, value);
+    }
 
-		return properties.get(key);
+    public static void setProperties(String key, Object value) {
+        properties.put(key, value);
 
-	}
+    }
 
-	public static String getLuceneIndexDir(String folder) {
+    public static Object getPropertyObject(String key) {
 
-		String dir = ConfigManager.getProperty(LUCENE_INDEX_DIR);
+        return properties.get(key);
 
-		if (EweblibUtil.isEmpty(dir)) {
-			throw new ConfigException("lucene_index_dir must be set into config.properties");
-		}
+    }
 
-		if (EweblibUtil.isValid(folder)) {
+    public static String getLuceneIndexDir(String folder) {
 
-			return dir + folder + File.separator;
-		}
+        String dir = ConfigManager.getProperty(LUCENE_INDEX_DIR);
 
-		return dir + File.separator;
+        if (EweblibUtil.isEmpty(dir)) {
+            throw new ConfigException("lucene_index_dir must be set into config.properties");
+        }
 
-	}
+        if (EweblibUtil.isValid(folder)) {
 
-	public static boolean isProductEnviroment() {
-		String env = ConfigManager.getProperty(ENVIROMENT);
+            return dir + folder + File.separator;
+        }
 
-		if (EweblibUtil.isEmpty(env)) {
-			return false;
-		}
+        return dir + File.separator;
 
-		if (ConfigManager.getProperty(ENVIROMENT).equalsIgnoreCase(ENVIROMENT_PRODUCT)) {
-			return true;
-		}
+    }
 
-		return false;
-	}
+    public static boolean isProductEnviroment() {
+        String env = ConfigManager.getProperty(ENVIROMENT);
 
-	public static boolean isDevEnviroment() {
-		return !isProductEnviroment();
-	}
+        if (EweblibUtil.isEmpty(env)) {
+            return false;
+        }
 
-	public static boolean isPQ() {
-		String db = ConfigManager.getProperty("DB_NAME");
+        if (ConfigManager.getProperty(ENVIROMENT).equalsIgnoreCase(ENVIROMENT_PRODUCT)) {
+            return true;
+        }
 
-		if (db != null && db.equalsIgnoreCase("pq")) {
-			return true;
-		}
+        return false;
+    }
 
-		return false;
+    public static boolean isDevEnviroment() {
+        return !isProductEnviroment();
+    }
 
-	}
+    public static boolean isPQ() {
+        String db = ConfigManager.getProperty("DB_NAME");
 
-	/**
-	 * 是否记录日志
-	 * 
-	 * @return
-	 */
-	public static boolean enableLog() {
-		String enableLog = ConfigManager.getProperty("ENABLE_LOG");
+        if (db != null && db.equalsIgnoreCase("pq")) {
+            return true;
+        }
 
-		if (enableLog != null && enableLog.equalsIgnoreCase("true")) {
-			return true;
-		}
+        return false;
 
-		return false;
+    }
 
-	}
+    /**
+     * 是否记录日志
+     * 
+     * @return
+     */
+    public static boolean enableLog() {
+        String enableLog = ConfigManager.getProperty("ENABLE_LOG");
+
+        if (enableLog != null && enableLog.equalsIgnoreCase("true")) {
+            return true;
+        }
+
+        return false;
+
+    }
 
 }
